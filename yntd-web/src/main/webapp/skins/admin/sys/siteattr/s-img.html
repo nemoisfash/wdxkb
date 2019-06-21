@@ -1,0 +1,71 @@
+<#assign modulePath="${adminPath}/content/siteattr" />
+<@layout.override name="body">
+<ol class="breadcrumb">
+  <li><a href="javascript:;">网站徽标</a></li>
+  <li><a href="javascript:;">编辑</a></li>
+</ol>
+
+<div class="container-fluid">
+
+<#include "_tabs_site.html" />
+
+<form action="${modulePath}/savesImg.html" class="form-horizontal" role="form" method="post">
+
+  <hr class="spk-hr" />
+  <div class="row form-group">
+    <label class="control-label col-sm-2">移动端二维码</label>
+    <div class="col-sm-3">
+      <input type="file" id="upload" name="upload" onchange="upLoadfile()" class="form-control input-sm" />
+    </div>
+    <div class="col-sm-2">
+      <p class="form-control-static">logo_qr_mobile</p>
+    </div>
+    <div class="col-sm-3">
+      <img id="logo_member-prev" src="${(attr['logo_qr_mobile'].value)!}" width="319" height="70"/>
+    </div>
+    <input type="hidden" name="Mobilelogo" id="Mobilelogo">
+  </div>
+  <hr class="spk-hr" />
+   <div class="row form-group">
+    <div class="col-sm-8 col-sm-offset-3">
+      <button type="submit" class="btn btn-primary btn-sm">保存</button>
+    </div>
+  </div>
+</form>
+
+</div>
+<script type="text/javascript">
+function upLoadfile() {
+	if ($("#upload").val() != '') {
+		$.ajaxFileUpload({
+			url : '/member/upload/avatar.json', //用于文件上传的服务器端请求地址
+			secureuri : false,
+			fileElementId : 'upload', //文件上传域的ID
+			dataType : 'json', //返回值类型 一般设置为json
+			success : function(data, status) {//服务器成功响应处理函数
+				layer.closeAll();
+				if (data.success) {
+					$("#Mobilelogo").val(data.filename);
+				} else {
+					layer.msg(data.message);
+					setTimeout(function() {
+						location.href = '';
+					}, 2000);
+				}
+			},
+			error: function (data, status, e) {
+				layer.msg(e);
+            }
+		});
+	}
+};
+</script>
+</@layout.override>
+<@layout.override name="css">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="js">
+<@layout.super/>
+<script type="text/javascript" src="/themes/ui/js/ajaxfileupload.js"></script>
+</@layout.override>
+<@layout.extends name="../../_layouts/bootstrap.html"/>

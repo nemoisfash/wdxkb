@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.tdds.mapper.LogRecordMapper">
+	<!-- 单表查询映射结果 -->
+    <sql id="Base_Column_List">
+    </sql>
+    <select id="findRunningData" resultType="java.lang.Double">
+		SELECT
+			IFNULL(TIMESTAMPDIFF(MINUTE,MIN(record_time),MAX(record_time)),0)  AS timed
+		FROM znzz_running_record
+		WHERE
+		 <choose>
+		 	<when test="map.date!=null and map.date!=''">
+		 		 DATE(record_time) =#{map.date}
+		 	</when>
+		 	<otherwise>
+		 		DATE(record_time) =CURRENT_DATE
+		 	</otherwise>
+		 </choose>
+		 <if test="map.machineId!=null and map.machineId!=''">
+		  AND machine_id =#{map.machineId}
+		 </if>
+    </select>
+     <select id="findPoweroffData" resultType="java.lang.Double">
+		SELECT
+			IFNULL(TIMESTAMPDIFF(MINUTE,MIN(record_time),MAX(record_time)),0)  AS timed
+		FROM znzz_poweroff_record
+		WHERE
+		 <choose>
+		 	<when test="map.date!=null and map.date!=''">
+		 		 DATE(record_time) =#{map.date}
+		 	</when>
+		 	<otherwise>
+		 		DATE(record_time) =CURRENT_DATE
+		 	</otherwise>
+		 </choose>
+		 <if test="map.machineId!=null and map.machineId!=''">
+		  AND machine_id =#{map.machineId}
+		 </if>
+    </select>
+     <select id="findAlarmData" resultType="java.lang.Double">
+		SELECT
+			IFNULL(TIMESTAMPDIFF(MINUTE,MIN(record_time),MAX(record_time)),0)  AS timed
+		FROM znzz_warning_record
+		WHERE
+		 <choose>
+		 	<when test="map.date!=null and map.date!=''">
+		 		 DATE(record_time) =#{map.date}
+		 	</when>
+		 	<otherwise>
+		 		DATE(record_time) =CURRENT_DATE
+		 	</otherwise>
+		 </choose>
+		 <if test="map.machineId!=null and map.machineId!=''">
+		  AND machine_id =#{map.machineId}
+		 </if>
+    </select>
+     <select id="findWaittingData" resultType="java.lang.Double">
+		SELECT
+			IFNULL(TIMESTAMPDIFF(MINUTE,MIN(record_time),MAX(record_time)),0)  AS timed
+		FROM znzz_waiting_record
+		WHERE
+		 <choose>
+		 	<when test="map.date!=null and map.date!=''">
+		 		 DATE(record_time) =#{map.date}
+		 	</when>
+		 	<otherwise>
+		 		DATE(record_time) =CURRENT_DATE
+		 	</otherwise>
+		 </choose>
+		 <if test="map.machineId!=null and map.machineId!=''">
+		  AND machine_id =#{map.machineId}
+		 </if>
+    </select>
+    <select id="findManaulData" resultType="java.lang.Double">
+		SELECT
+			IFNULL(TIMESTAMPDIFF(MINUTE,MIN(record_time),MAX(record_time)),0)  AS timed
+		FROM znzz_manual_record
+		WHERE
+		 <choose>
+		 	<when test="map.date!=null and map.date!=''">
+		 		 DATE(record_time) =#{map.date}
+		 	</when>
+		 	<otherwise>
+		 		DATE(record_time) =CURRENT_DATE
+		 	</otherwise>
+		 </choose>
+		 <if test="map.machineId!=null and map.machineId!=''">
+		  AND machine_id =#{map.machineId}
+		 </if>
+    </select>
+   <select id="selectRankData" resultType="java.lang.Double">
+		SELECT
+			IFNULL(TIMESTAMPDIFF(SECOND,MIN(record_time),MAX(record_time)),0)  AS timed
+		FROM znzz_running_record
+		WHERE machine_id =#{machineId}
+		AND DATE(record_time) =CURRENT_DATE
+    </select>
+</mapper>

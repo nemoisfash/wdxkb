@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html class="ui-page-login">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="/themes/weixin/css/mui.css" />
+		<link rel="stylesheet" type="text/css" href="/themes/weixin/css/aui.css" />
+		<link rel="stylesheet" type="text/css" href="/themes/weixin/css/login.css" />
+		
+		<script type="text/javascript" src="/themes/weixin/js/jquery-3.3.1.min.js"></script>
+		<script type="text/javascript" src="/assets/layui/layer.min.js"></script>
+		<script type="text/javascript" src="/themes/admin/js/afx.js"></script>
+	</head>
+
+	<body class="bg">
+		<div class="login_top">
+			<img class="login_pic" src="/themes/weixin/img/zsyLOGO.png";/>
+			<p style="float:left;color: white;line-height: 40px;margin-left: 10px;">数字化食堂</p>
+		</div>
+		<div class="login_box">
+			<form id="validateForm" class="mui-input-group" action="" method="post" style="padding-bottom:5px;">
+				<div class="mui-input-row">
+					<label><i class="aui-iconfont aui-icon-my"></i></label>
+					<input id="username" name="username" type="text" class="mui-input-clear mui-input" placeholder="请输入账号">
+				</div>
+				<div class="mui-input-row">
+					<label><i class="aui-iconfont aui-icon-lock"></i></label>
+					<input id="password" name="password" type="password" class="mui-input-clear mui-input" placeholder="请输入密码">
+				</div>
+				<div class="mui-input-row">
+					<span ><label for="captcha" style="width:auto;float:left;padding-top:15px;color:#666;font-size: 14px;">验证码</label></span>
+					<input type="text" class="ipt" id="captcha" name="captcha" value="" style="width:30%;float:left;color:#666;"/>
+					<a class="captcha" href="javascript:;" ><img style="margin-top:7px;width:30%;float:right;margin-right:5px;" src="/captcha.png" class="captcha"></a>
+				</div>
+			</form>
+			<div class="mui-content-padded">
+				<button id='login' type="button" onclick="doLogin();" class="mui-btn mui-btn-block mui-btn-primary" style="line-height: 8px;">登&nbsp;&nbsp;&nbsp;录</button>
+			</div>
+		</div>
+	</body>
+<script type="text/javascript">
+$(function(){
+	$("a.captcha,img.captcha").on("click",function(){ $("img.captcha").prop("src","/captcha.png?"+Math.random()); });
+});
+function doLogin() {
+var password=$("#password").val();
+var username=$("#username").val();
+var captcha=$("#captcha").val();
+	if(username==""){
+		layer.msg("账号不能为空！");
+		return false;
+	}
+	if(password==""){
+		layer.msg("密码不能为空！");
+		return false;
+	}
+	if(captcha==""){
+		layer.msg("验证码不能为空！");
+		return false;
+	}else{
+		$.ajax({
+			url: "/wap/doLogin.json",
+			type: "post",
+			data: {"username":username,"password":password,"captcha":captcha},
+	        success: function(data) {
+	        	if(data.success){
+	        		 self.location.href = data.url;
+	             }else{
+	            	 layer.msg(data.message);
+	            	 $("img.captcha").prop("src", "/captcha.png?" + Math.random());
+	             }
+	        },
+			error: function(request) {
+	            alert("Connection error");
+	        }
+		}); 
+	}
+}
+</script>
+<#if message?? && message?length gt 0>
+<script type="text/javascript">
+layer.msg("${message!}");
+</script>
+</#if>
+</html>

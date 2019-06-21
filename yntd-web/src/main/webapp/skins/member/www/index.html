@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>看板首页</title>
+	    <script src="/assets/jquery/dist/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<!-- <script src="../js/machinestatus.js"></script>  -->
+		<script src="/themes/website/js/jquery.liMarquee.js"></script>
+		<script src="/assets/angular/angular.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="/assets/echarts/echarts.min.js"></script>
+		<script src="/themes/website/mycharts/controller/option/barOption.js"></script>
+		<script src="/themes/website/mycharts/controller/option/lineOption.js"></script>
+		<script src="/themes/website/mycharts/controller/option/pieOption.js"></script>
+		<script src="/themes/website/mycharts/controller/option/customOption.js"></script>
+		<script src="/themes/website/mycharts/controller/option/timelineOption.js"></script>
+		<script src="/themes/website/mycharts/controller/option/mywebsocket.js"></script>
+		<link href="/assets/fonts/font-awesome4.7.0/font-awesome.css" rel="stylesheet" type="text/css" media="all" />
+  		<link href="/assets/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet" type="text/css" media="all" />
+		<link href="/themes/website/css/index.css" rel="stylesheet" type="text/css" media="all" />
+	</head>
+	<body ng-app="myApp" ng-controller="myCtrl">
+		<section class="header" style="background-color:#06091000;height:8%;">
+			<img width="100%" height="100%" src="/themes/website/images/title2.png">
+			<div class="clock">2019-06-22 11:56:33</div>
+		</section>
+		<section class="content" style="margin:14px;">
+			<div class="row">
+				<section class="col-lg-6 connectedSortable ui-sortable">
+					<!-----内边框颜色 4d91d8----->
+					<div class="nav-tabs-custom" style="background-color:#081639a1;height:24.625rem;margin-top:20px;">
+						<span class="label label-default">车间设备分布</span>
+						<div style="background-color:#07132d00;width:100%;height:80%;margin-top:11px">
+							<img width="100%" height="100%" src="/themes/website/images/wdx/wdxbj.png"></img>
+							<!-- <span class="circle circle-running headerBox" style="top:13%;left:15%;">
+								 M1
+							</span> -->
+							<span id="QTN250_m" class="circle circle-running headerBox" style="top:13%;left:25%;">
+							</span>
+							<span id="QTN150_m" class="circle circle-running headerBox" style="top:13%;left:36%;">
+							</span>
+							<span id="VMP50A_m" class="circle circle-running headerBox" style="top:13%;left:69%;">
+							</span>
+						 	<span id="VMP30A_m" class="circle circle-running headerBox" style="top:13%;left:81%;">
+							</span> 
+							 <span id="QSM200L_m" class="circle circle-running headerBox" style="top:5%;left:26%;">
+							</span>
+							<span id="FIC350L_m" class="circle circle-running headerBox" style="top:5%;left:36%;">
+							</span>
+							<span id="GSVM1580D_m" class="circle circle-running headerBox" style="top:5%;left:56%;">
+							</span>
+							<span id="V850_m" class="circle circle-running headerBox" style="top:5%;left:67%;">
+							</span>
+							<!-- <span class="circle circle-alarm headerBox" style="top:5%;left:77%;">
+								VMP32A
+							</span> -->
+						</div>
+						<div style="width:100%;height:2.25rem;text-align:center;line-height:2.25rem;">
+							<a class="btn btn-success btn-sx"></a>
+							<span style="color:#FFFFFF">运行<span>
+							<a class="btn btn-warning btn-sx"></a>
+							<span style="color:#FFFFFF">报警<span>
+							<a class="btn btn-danger btn-sx"></a>
+							<span style="color:#FFFFFF">等待<span>
+							<a class="btn btn-default btn-sx"></a>
+							<span style="color:#FFFFFF">停机<span>
+						</div>
+					</div>
+					<div class="nav-tabs-custom" style="background-color:#081639a1;height:21.625rem;margin-top:20px;">
+						<span class="label label-default">设备运行分析</span>
+					</div>
+					<div class="nav-tabs-custom" style="background-color:#081639a1;height:28.625rem;margin-top:20px;">
+						<span class="label label-default">时间线</span>
+					</div>
+				</section>
+				<section class="col-lg-6 connectedSortable ui-sortable">
+					<div class="nav-tabs-custom" style="background-color:#081639a1;height:19.625rem;margin-top:20px;">
+						<span class="label label-default">设备生产计划与执行数据</span>
+					</div>
+					<div class="nav-tabs-custom" style="background-color:#081639a1;height:23.625rem;margin-top:20px;">
+						<span class="label label-default">设备实时数据</span>
+					</div>
+					<div class="nav-tabs-custom" style="background-color:#081639a1;height:31.625rem;margin-top:20px; ">
+						<span class="label label-default">设备报警列表</span>
+					</div>
+				</section>
+			</div>
+		</section>
+	</body>
+<script src="/themes/website/mycharts/controller/controller.js"></script>
+<!-- <script src="/themes/website/mycharts/controller/index.js"> -->
+</html>

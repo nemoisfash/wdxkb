@@ -1,0 +1,104 @@
+<#assign modulePath="${adminPath}/affait" />
+<@layout.override name="body">
+<#if entity?? && entity.id??>
+	<#assign titleName="编辑">
+<#else>
+	<#assign titleName="添加">
+</#if>
+<ol class="breadcrumb">
+  <li><a href="${modulePath}/list.html">部门列表</a></li>
+  <li><a href="javascript:;">${titleName}</a></li>
+</ol>
+<div class="container-fluid">
+
+  <ul class="nav nav-tabs">
+	<li role="presentation"><a href="/admin/affait/list.html">列表</a></li>
+	<li role="presentation" class="active"><a href="javascript:;">${titleName}</a></li>
+  </ul>
+  
+  <form id="validateForm" action="${modulePath!}/save.html" class="form-horizontal" role="form" method="post" >
+     
+	  <div class="row form-group" style="margin-top: 12px;">
+	  	 <label class="control-label col-sm-2"><font color="red">*&nbsp;</font>部门名称</label>
+	     <div class="col-sm-5">
+	      	<input type="text" name="name" id="name" value="${(entity.name)!}" class="form-control input-sm">
+	     </div>
+	  </div>
+	  
+	  <div class="row form-group">
+	  	 <label class="control-label col-sm-2"><font color="red">*&nbsp;</font>部门类型</label>
+	     <div class="col-sm-5">
+	     	<select id="affaitType" name="affaitType" class="form-control input-sm">
+                  <option value="" >请选择类型</option>
+                  <@sys.optionList code="affait_type"; item>
+                  <option value="${(item.id)!}" ${(entity.affaitType?? && item.id==entity.affaitType)?string('selected','')}>${(item.name)!}</option>
+                  </@sys.optionList>
+         	</select>
+	     </div>
+	  </div>
+	  
+	  <div class="row form-group">
+	  	
+	     <label class="control-label col-sm-2">负责人</label>
+	     <div class="col-sm-2">
+	     	<input type="text" name="linkman" id="linkman" value="${(entity.linkman)!}" class="form-control input-sm">
+	     </div>
+	     <label class="control-label col-sm-1">联系电话</label>
+	     <div class="col-sm-2">
+	     	<input type="text" name="phone" id="phone" value="${(entity.phone)!}" class="form-control input-sm">
+	     </div>
+	  </div>
+	  
+	  <div class="row form-group">
+	    <label class="control-label col-sm-2"><em class="spk-required"></em>备注</label>
+	    <div class="col-sm-5">
+		  	<textarea cols="20" rows="7" id="description" name="description" class="form-control input-sm" style="resize:none;">${(entity.description)!}</textarea>
+		</div>
+	  </div>
+	  <hr class="spk-hr" />
+	  <div class="row form-group">
+	    <div class="col-sm-8 col-sm-offset-4">
+	      <button type="button" onclick="doSubmit()" class="btn btn-info btn-sm">保存</button>
+	      <button type="button" class="btn btn-primary btn-sm" onclick="on_return()">返回</button>
+	    </div>
+	  </div>
+	  <input type="hidden" name="id" value="${(entity.id)!}">
+  </form>
+</div>
+<script type="text/javascript">
+var validateForm;
+$(document).ready(function(){
+	validateForm = $("#validateForm").validate();	
+});
+
+$("#validateForm").validate({
+	rules:{
+		name:{ required:true },
+		type:{ required:true },
+	},
+	messages : {
+		name:{ required:"请输入部门名称！" },
+		type:{ required:"请选择部门类型！" },
+	}
+});
+
+function doSubmit(){
+	if(!validateForm.form()){
+		return false;
+	}
+	$("#validateForm").submit();
+}
+
+function on_return(){
+	history.back(-1);
+}
+</script>
+</@layout.override>
+<@layout.override name="css">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="js">
+<@layout.super/>
+<script type="text/javascript" src="/themes/ui/js/ajaxfileupload.js"></script>
+</@layout.override>
+<@layout.extends name="../_layouts/bootstrap.html"/>

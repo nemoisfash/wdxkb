@@ -1,0 +1,205 @@
+<#assign modulePath="${adminPath}/cms/news/${channel.code}" />
+<@layout.override name="css">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="js">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="body">
+<ol class="breadcrumb">
+	<li><a href="javascript:;">${(channel.name)!}</a></li>
+	<li><a href="javascript:;">列表</a></li>
+</ol>
+
+<div class="container-fluid">
+
+<ul class="nav nav-tabs">
+		<li role="presentation" class="active"><a href="javascript:;">列表</a></li>
+	<#if groupId?? && groupId == 2>
+		<li role="presentation"><a href="${modulePath}/edit.html">添加</a></li>
+	</#if>
+</ul>
+  
+<div class="form-inline btn-toolbar spk-toolbar" role="toolbar">
+	<div class="btn-group btn-group-sm pull-left">
+		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">批量<span class="caret"></span></button>
+		<ul class="dropdown-menu" role="menu">
+			<li><a href="javascript:;" onclick="on_remove_batch()">删除</a></li>
+		</ul>
+	</div>
+	<div class="input-group input-group-sm">
+       	<span class="input-group-addon">条件</span>
+		<select id="prop-key" class="form-control input-sm pull-left">
+			<option value="title">标题</option>
+		</select>
+	</div>
+	<div class="input-group input-group-sm">
+		<input type="text" id="prop-val" class="form-control" value="${(filters['title'])!}" placeholder="关键字" />
+		<span class="input-group-btn">
+			<button type="button" class="btn btn-info" onclick="on_search()">搜索</button>
+		</span>
+	</div>
+	<button type="button" class="btn btn-sm btn-warning search_adv_btn">高级搜索</button>
+</div>
+  
+<div class="search_adv_box">
+<#--
+	<div class="search_adv_row">
+		<div class="search_adv_label">是否置顶</div>
+		<div class="search_adv_items">
+			<a href="javascript:;" onclick="removeCriteria('sticky')" class="${fn.search_adv_item_cur(filters, 'sticky')}">不限</a>
+			<a href="javascript:;" onclick="updateCriteria('sticky', true)" class="${fn.search_adv_item_cur(filters, 'sticky', 'true')}">是</a>
+			<a href="javascript:;" onclick="updateCriteria('sticky', false)" class="${fn.search_adv_item_cur(filters, 'sticky', 'false')}">否</a>
+		</div>
+	</div>
+    
+	<div class="search_adv_row">
+		<div class="search_adv_label">是否推荐</div>
+		<div class="search_adv_items">
+			<a href="javascript:;" onclick="removeCriteria('promote')" class="${fn.search_adv_item_cur(filters, 'promote')}">不限</a>
+			<a href="javascript:;" onclick="updateCriteria('promote', true)" class="${fn.search_adv_item_cur(filters, 'promote', 'true')}">是</a>
+			<a href="javascript:;" onclick="updateCriteria('promote', false)" class="${fn.search_adv_item_cur(filters, 'promote', 'false')}">否</a>
+		</div>
+	</div>
+-->
+	<div class="search_adv_row">
+		<div class="search_adv_label">是否启用</div>
+		<div class="search_adv_items">
+			<a href="javascript:;" onclick="removeCriteria('enabled')" class="${fn.search_adv_item_cur(filters, 'enabled')}">不限</a>
+			<a href="javascript:;" onclick="updateCriteria('enabled', true)" class="${fn.search_adv_item_cur(filters, 'enabled', 'true')}">是</a>
+			<a href="javascript:;" onclick="updateCriteria('enabled', false)" class="${fn.search_adv_item_cur(filters, 'enabled', 'false')}">否</a>
+		</div>
+	</div>
+</div>
+
+<table class="table table-striped table-condensed expander spk-gridview">
+	<tr class="row-head">
+		<th class="column-tiny"><input type="checkbox" onclick="Fw.checkEach('ids')" /></th>
+		<th class="column-auto">名称</th>
+		<#if groupId?? && (groupId==1 || groupId == 4)>
+			<th class="column-attr">所属食堂</th>
+		</#if>
+		<th class="column-attr">创建时间</th>
+		<th class="column-attr">修改时间</th>
+		<th class="column-tool">推荐</th>
+		<th class="column-tool">启用</th>
+		<th class="column-tool">操作</th>
+	</tr>
+<#list entities.content as item>
+	<tr class="row-data">
+		<td class="column-tiny"><input type="checkbox" name="ids" value="${(item.id)!}"/></td>
+		<td class="column-auto">${(item.title)!}</td>
+		<#if groupId?? && (groupId==1 || groupId == 4)>
+			<@szst.canteen id='${(item.canteenId)!}'; canteen>
+				<td class="column-attr"><span>${(canteen.name)!}</span></td>
+			</@szst.canteen>
+		</#if>
+		<td class="column-attr">${((item.createTime)?string('yyyy-MM-dd'))!}</td>
+		<td class="column-attr">${((item.updateTime)?string('yyyy-MM-dd'))!}</td>
+		<td class="column-tool">
+		 	<#if item.promote ??>
+			<@ui.btnBoolean entity=item field="promote" onclick="on_promote(${(item.id)},'${(item.promote?string)!}')" />
+			</#if>
+		</td> 
+		<td class="column-tool">
+			<#if item.enabled ??>
+			<@ui.btnBoolean entity=item field="enabled" onclick="on_enable(${(item.id)},'${(item.enabled?string)!}')" />
+			</#if>
+		</td>
+		<td class="column-tool">
+		<span>
+		<a href="${modulePath}/edit.html?id=${item.id}" class="btn btn-info btn-xs">修改</a>
+		<a href="javascript:;" onclick="on_remove(${(item.id)!})" class="btn btn-danger btn-xs">删除</a>
+		</span>
+		</td>
+	</tr>
+</#list>
+<#if entities.numberOfElements lt entities.size>
+<#list 1..(entities.size - entities.numberOfElements) as row>
+	<tr>
+		<td colspan="8">&nbsp;</td>
+	</tr>
+</#list>
+</#if>
+	<tr class="row-foot">
+		<td colspan="8">
+			<div class="pull-right tcdPageCode"></div>
+		</td>
+	</tr>
+</table>
+
+</div><#--/.container-->
+<script type="text/javascript">
+function updateCriteria(key, value){
+	Fw.updateFilter('${filters.uuid!}', key, value);
+}
+function removeCriteria(key){
+	Fw.removeFilter('${filters.uuid!}', key);
+}
+function on_search(){
+	var val = $("input[id='prop-val']").val();
+	if (val == "")
+		removeCriteria('title');
+	else
+		updateCriteria('title',val);
+}
+function on_enable(id){
+	$.post("${modulePath}/enable.json", {
+		"id" : id
+	}, function(data, status) {
+		if (data.success)
+			self.location.reload();
+	});
+}
+function on_remove(id){
+	top.layer.confirm("<@spring.message 'msg.remove'/>", function(idx) {
+		top.layer.close(idx);
+		$.post("${modulePath}/remove.json", {
+			"id" : id
+		}, function(data, status) {
+			if (data.success)
+				self.location.reload();
+		});
+	});
+}
+function on_promote(id){
+	$.post("${modulePath}/promote.json", {
+		"id" : id
+	}, function(data, status) {
+		if (data.success)
+			self.location.reload();
+	});
+}
+function on_remove_batch(){
+	if($("input:checkbox[name='ids']:checked").length == 0) {
+		top.layer.msg("请至少选择一条记录.");
+		return;
+	}
+	top.layer.confirm("<@spring.message 'msg.remove'/>", function(idx) {
+		top.layer.close(idx);
+		var arrIds = new Array();
+		$("input:checkbox[name='ids']:checked").each(function(){  
+			arrIds.push($(this).val());
+		});
+		top.layer.msg(arrIds.toString());
+		$.post("${modulePath}/remove/batch.json", {
+			"ids" : arrIds.toString()
+		}, function(data, status) {
+			if (data.success)
+				self.location.reload();
+		});
+	})
+}
+$(function(){
+	$(".tcdPageCode").createPage({
+		elementCount : ${(entities.totalElements)!},
+		pageCount : ${(entities.totalPages)!},
+		current : ${(entities.number)!},
+		backFn : function(to){
+			Fw.updateFilter($("#uuid").val(), 'page', to);
+		}
+	})
+});
+</script>
+</@layout.override>
+<@layout.extends name="../../_layouts/bootstrap.html"/>

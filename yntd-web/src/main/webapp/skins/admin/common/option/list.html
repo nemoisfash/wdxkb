@@ -1,0 +1,135 @@
+<#assign modulePath="${adminPath}/common/option" />
+<#assign t=groupId />
+<#function params t='' prefix='?'>
+	<#if (t?? && t?length gt 0)>
+		<#return '${prefix}t=${t}' />
+	<#else>
+		<#return ''/>
+	</#if>
+</#function>
+<@layout.override name="body">
+<ol class="breadcrumb">
+  <li><a href="javascript:;">字典</a></li>
+  <li><a href="javascript:;">维护</a></li>
+</ol>
+
+<div class="container-fluid">
+
+  <h4 class="spk-header">字典维护</h4>
+
+  <div class="form-inline btn-toolbar spk-toolbar" role="toolbar">
+    <div class="btn-group btn-group-sm pull-left">
+      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">批量<span class="caret"></span></button>
+      <ul class="dropdown-menu" role="menu">
+        <li class="divider"></li>
+        <li><a href="javascript:;" onclick="doRemoveBatch()"><i class="fa fa-trash-o fa-lg"></i>删除</a></li>
+      </ul>
+      <div class="input-group input-group-sm">
+        <span class="input-group-addon" id="change-group">分类</span>
+        <select class="form-control" onchange="on_change_group(this)" aria-describedby="change-group">
+          <#list groups.content as item>
+          <option value="${item.id!}" ${(t?? && (item.id == t))?string('selected','')}>${item.name!}</option>
+          </#list>
+        </select>
+      </div>
+    </div>
+    <div class="btn-group btn-group-sm pull-right">
+      <button type="button" class="btn btn-default" onclick="on_create()">新建</button>
+<#if parent??>
+      <button type="button" class="btn btn-default" onclick="on_return()">返回</button>
+</#if>
+    </div>
+  </div>
+
+<form id="batchForm" action="" method="post">
+<table class="table table-striped table-condensed expander spk-gridview">
+  <tr class="row-head">
+    <td class="column-tiny"><input type="checkbox" onclick="checkEach('ids',this.checked)" /></td>
+    <td class="column-auto">名称</td>
+    <td class="column-attr">数值</td>
+    <td class="column-attr">优先级</td>
+    <td class="column-tool">启用</td>
+    <td class="column-tool">操作</td>
+  </tr>
+  <#list entities.content as item>
+  <tr class="row-data">
+    <td class="column-tiny"><input type="checkbox" name="ids" value="${(item.id)!}"/></td>
+    <td class="column-auto">${(item.name)!}</td>
+    <td class="column-attr">${(item.value)!}</td>
+    <td class="column-attr"><input type="text" name="priority" value="${(item.priority)!}" style="width:48px" readonly="readonly" /></td>
+    <td class="column-tool"><@ui.btnBoolean entity=item field="enabled" onclick="on_enable(${(item.id)},${(item.enabled?string)!})" /></td>
+    <td class="column-tool">
+      <span>
+        <@ui.btnInfo text="修改" onclick="on_update(${(item.id)!})" />&nbsp;
+        <@ui.btnWarn text="删除" onclick="on_remove(${(item.id)})" />&nbsp;
+      </span>
+    </td>
+  </tr>
+  </#list>
+  <tr class="row-foot">
+    <td colspan="6">
+      <span class="pull-right count">共&nbsp;${(entities.totalElements)!}&nbsp;条</span>
+      <div class="pull-right tcdPageCode"></div>
+    </td>
+  </tr>
+</table>
+</form>
+
+<script type="text/javascript">
+function doRemoveBatch(){
+	if($("input[name='ids']:checked").length == 0) {
+	    layer.msg("请至少选择一条记录！");
+	    return false;
+	 }
+	dialogConfirm("<@spring.message 'msg.confirm.remove'/>", function(){
+		$("#batchForm").attr("action","${modulePath}/remove/batch.html?${params(t,'&')}").submit();
+	});
+}
+
+function on_create(){
+    jumpTo("${modulePath}/edit.html${params(t)}");
+}
+function on_update(id){
+    jumpTo("${modulePath}/edit.html?id="+id+"${params(t,'&')}");
+}
+function on_enable(id,curr){
+    jumpTo("${modulePath}/enable/"+id+".html?curr="+curr+"${params(t,'&')}");
+}
+function on_remove(id){
+	dialogConfirm('<@spring.message "confirm.remove"/>', function(){
+		jumpTo("${modulePath}/remove/"+id+".html?${params(t,'&')}");
+	});
+}
+function on_change_group(obj){
+	jumpTo("${modulePath}/list.html?t="+obj.value);
+};
+$(function(){
+	$(".tcdPageCode").createPage({
+		pageCount : ${(entities.totalPages)!},
+		current : ${(entities.number)!},
+		backFn : function(page){
+			self.location.href = "${modulePath}/list.html?page="+page+"${params(t,'&')}"; 
+		}
+	});
+});
+function turnPages(){
+	var userPage =$("#gotoPage").val();
+	var allPage = ${(entities.totalPages)!};
+	if(userPage=='' || userPage<1){
+		userPage=1;
+	}
+	if(userPage>allPage){
+		userPage=allPage;
+	}
+	self.location.href = "${modulePath}/list.html?page="+userPage+"${params(t,'&')}"; 
+}
+</script>
+</div>
+</@layout.override>
+<@layout.override name="css">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="js">
+<@layout.super/>
+</@layout.override>
+<@layout.extends name="../../_layouts/bootstrap.html"/>

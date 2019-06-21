@@ -1,0 +1,49 @@
+<#assign title="订单"/>
+<@layout.override name="body">
+<div style="margin-top: 45px;">
+	<div style="height:60px;line-height:40px;border-bottom: 1px solid #EEEEEE;padding:10px;background: white;">
+		<b style="float: left; margin-top:10px;">我的订单</b>
+		<a href="/wap/indentall.html" style="float: right;font-size: 14px;color: #555555; margin-top:10px;">全部订单<i class="aui-iconfont aui-icon-right "></i></a>
+	</div>
+	<div style="background: #EEEEEE;">
+		<p class="aui-margin-l-10"><i class="aui-iconfont aui-icon-edit aui-margin-r-10"></i>最近订单</p>
+	</div>
+	<div class="middle">
+		<ul class="ul_2">
+		<#list entities as item>
+			<li>
+				<div class="li_ft">
+					<div></div>
+					<div class="aui-col-xs-8 li_zj" style="margin-left: 15px;">
+						<div class="img_box">
+							<img src="../../themes/weixin/img/1.png" alt="">
+						</div>
+						<p style="font-size:12px;">订单编号：<span>${(item.indentNum)!}</span></p>
+						<p>总价：￥${(item.totPrice)!}</p>
+					</div>
+					<div class="li_rt aui-col-xs-3" style="text-align:center;">
+						<p class="pl_text">
+						<a href="/wap/indentDetails.html?id=${(item.id)!}" style="font-size:12px;">
+							<i class="aui-iconfont aui-icon-comment aui-margin-r-10"></i>订单详情
+						</a>
+						</p>
+					</div>
+				</div>
+			</li>
+		</#list>
+		</ul>
+	</div>
+</div>
+<script type="text/javascript">
+</script>
+</@layout.override>
+<@layout.override name="title">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="css">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="js">
+<@layout.super/>
+</@layout.override>
+<@layout.extends name="layout/normal.html"/>

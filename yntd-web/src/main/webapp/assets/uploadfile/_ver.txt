@@ -1,0 +1,61 @@
+@ResponseBody
+	@RequestMapping(value = "/{code}/uploadImg", method = RequestMethod.POST)
+	public Object uploadFile(HttpServletRequest request,
+			@RequestParam(value = "upload", required = false) MultipartFile file, HttpServletResponse response) {
+		String realPath = null;
+		try {
+			realPath = WebUtils.getRealPath(request.getSession().getServletContext(), "/");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		return AjaxFileUploadUtil.uploadFile(realPath, file);
+	}
+
+	@RequestMapping(value = "/{code}/removeImage", method = RequestMethod.GET)
+	@ResponseBody
+	public void deleteImg(HttpServletRequest request, @RequestParam(value = "imageUri") String imageUri) {
+		UploadUtils.deleteFile(request, imageUri);
+	}	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<#if entity.imageUri?? && entity.imageUri!="">
+			<div class="col-sm-2" id="preview_btn">
+				<p class="form-control-static">
+					<a href="javascript:void(0);">预览</a>
+				</p>
+				<input id="logoUri" type="hidden" name="logoUri">
+			</div>
+		<#else>
+			<div class="col-sm-2" id="preview_btn" style="display:none">
+				<p class="form-control-static">
+					<a href="javascript:;">预览</a>
+				</p>
+				<input id="logoUri" type="hidden" name="logoUri">
+			</div>
+		</#if>  
+		
+		
+<div id="boxPreview" style="display:none; text-align:center; margin:0px auto;">
+	<div class="thumbnail">
+		<img id="imgPreview" src="${(entity.imageUri)!}" alt="图片预览" class="img-responsive img-thumbnail" data-src="holder.js/480x360?text=图片预览">
+	</div>
+</div>
+
+var Uploader=new Uploader({
+	filedInput:"upload",
+	fileUriContainer:"imageUri",
+	previewArea:"boxPreview",
+	previewBtn:"preview_btn",
+	image:"imgPreview",
+	uploadServer:"${modulePath!}/uploadImg.json",
+	deleteServer:"${modulePath!}/removeImage.html",
+})

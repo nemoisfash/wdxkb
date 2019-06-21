@@ -1,0 +1,137 @@
+<@layout.override name="body">
+<section class="content-header">
+  <h1><small></small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><a href="#"><i class="fa fa-dashboard"></i>主页</a></li>
+    <li class="active">控制面板</li>
+  </ol>
+</section>
+
+<section class="content" ng-app="dashboradApp" ng-controller="myCon">
+  <div class="row">
+    <div class="col-lg-3 col-xs-6" style="width:25%">
+      <div class="small-box" style="background-color:#00FF00;color:#FFFFF">
+        <div class="inner" style="color:#FFFFFF">
+          <h3>{{runningTimes}}分钟</h3>
+          <p>运行</p>
+        </div>
+        <div class="icon">
+          <i class="fa fa-database" aria-hidden="true"></i>
+        </div>
+      </div>
+    </div>
+    <!-- ./col -->
+    <div class="col-lg-3 col-xs-6" style="width:25%">
+      <div class="small-box" style="background-color:#696969">
+        <div class="inner" style="color:#FFFFFF">
+          <h3>{{poweroffTimes}}分钟</h3>
+          <p>停机</p>
+        </div>
+        <div class="icon">
+          <i class="fa fa-database" aria-hidden="true"></i>
+        </div>
+      </div>
+    </div>
+    <!-- ./col -->
+    <div class="col-lg-3 col-xs-6" style="width:25%">
+      <!-- small box -->
+      <div class="small-box" style="background-color:#DC143C">
+        <div class="inner" style="color:#FFFFFF">
+          <h3>{{alarmTimes}}分钟</h3>
+          <p>报警</p>
+        </div>
+        <div class="icon">
+          <i class="fa fa-database" aria-hidden="true"></i>
+        </div>
+      </div>
+    </div>
+    <!-- ./col -->
+    <div class="col-lg-3 col-xs-6" style="width:25%">
+      <!-- small box -->
+      <div class="small-box" style="background-color:#FFFF00">
+        <div class="inner" style="color:#FFFFFF">
+          <h3>{{waitingTimes}}分钟</h3>
+          <p>等待</p>
+        </div>
+        <div class="icon">
+          <i class="fa fa-database" aria-hidden="true"></i>
+        </div>
+      </div>
+    </div>
+<!--     <div class="col-lg-3 col-xs-6" style="width:20%">
+      small box
+      <div class="small-box" style="background-color:#7FFF00">
+        <div class="inner" style="color:#FFFFFF">
+          <h3>{{manualTimes}}分钟</h3>
+          <p>MANUAL</p>
+        </div>
+        <div class="icon">
+          <i class="fa fa-database" aria-hidden="true"></i>
+        </div>
+      </div>
+    </div> -->
+  </div>
+  <div class="row">
+    <section class="col-lg-6 connectedSortable">
+    	<div class="box" style="height:492px;">
+    		<div class="box-header ui-sortable-handle" style="cursor: move;">
+              <h3 class="box-title">每台设备运行状态</h3>
+            </div>
+            <div class="box-body" style="height:100%;width:95%">
+		    	<div id="stackBar" style="height:100%;width:95%">
+		    		 
+		    	</div>
+	    	</div>
+    	</div>
+    </section>
+    <section class="col-lg-5 connectedSortable ui-sortable" style="width:49.666667%">
+           <div class="box" style="height:492px;">
+            <div class="box-header ui-sortable-handle" style="cursor:move;height:16%">
+              <h3 class="box-title">设备实时运行状态</h3>
+            </div>
+            <div class="box-body" style="height:84%;width:95%">
+				<table class="table table-striped" style="height:75%">
+                <thead>
+					<tr>
+				 		<th>设备名称</th>
+				 		<th>运转模式</th>
+				 		<th>设备状态</th>
+				 		<th>维护信号</th>
+				 		<th>快进倍率</th>
+				 		<th>主轴倍率</th>
+				 		<th>切削倍率</th>
+				 		<th>主轴模式</th>
+				 		<th>设备运行状态</th>
+				 	</tr>
+                </thead>
+                <tbody>
+	                <tr ng-repeat="item in entities">
+			      		<td>{{item.machineName}}</td>
+			      		<td>{{item.machineMode}}</td>
+			      		<td>{{item.machineStatus}}</td>
+			      		<td>{{item.maintenanceSignal}}</td>
+			      		<td>{{item.overrideRapid}}</td>
+			      		<td>{{item.overrideFeed}}</td>
+			      		<td>{{item.overrideSpindle}}</td>
+			      		<td>{{item.spindleMode}}</td>
+			      		<td ng-if="item.machineSignal=='RUNNING'" style="background-color:#00FF00"></td>
+			      		<td ng-if="item.machineSignal=='POWEROFF'" style="background-color:#696969"></td>
+			      		<td ng-if="item.machineSignal=='ALARM'" style="background-color:#DC143C"></td>
+			      		<td ng-if="item.machineSignal=='WAITING'" style="background-color:#FFFF00"></td>
+<!-- 			      		<td ng-if="item.machineSignal=='MANUAL'" style="background-color:#7FFF00"></td>
+ -->    				</tr>
+                </tbody>
+              </table>
+             </div>
+          </div>
+        </section>
+  </div>
+</section>
+</@layout.override>
+<@layout.override name="js">
+<@layout.super/>
+<script src="/themes/admin/machine/js/barOption.js"></script>
+<script src="/themes/admin/index/dashboard.js"></script>
+</@layout.override>
+<@layout.extends name="_layouts/bootstrap1.html"/>

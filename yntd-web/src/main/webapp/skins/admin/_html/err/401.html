@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<#-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+<meta name="description" content="">
+<meta name="author" content="">
+<link rel="icon" href="/assets/favicon.ico">
+<title><@spring.message code="app.name" /></title>
+<#-- Bootstrap core CSS -->
+<link rel="stylesheet" type="text/css" href="/assets/bootstrap/css/bootstrap.min.css">
+<#-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+<!--[if lt IE 9]>
+<script src="/assets/js/ie8-responsive-file-warning.js"></script>
+<![endif]-->
+<script src="/assets/js/ie-emulation-modes-warning.js"></script>
+<#-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+<!--[if lt IE 9]>
+<script src="/assets/html5shiv/3.7.2/html5shiv.min.js"></script>
+<script src="/assets/respond/1.4.2/respond.min.js"></script>
+<![endif]-->
+</head>
+<body>
+<div class="container">
+<br/><br/><br/><br/>
+<div class="jumbotron">
+  <h1><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> <small>HTTP 401</small></h1>
+  <p>HTTP 401.3 错误 - 未授权</p>
+  <hr/>
+  <p></p>
+</div>
+<#if exception??>
+<div style="display:none">
+<pre>
+${exception!}
+	<#list exception.stackTrace as row>
+	${row!}
+	</#list>
+</pre>
+</div>
+</#if>
+</div>
+</body>
+</html>

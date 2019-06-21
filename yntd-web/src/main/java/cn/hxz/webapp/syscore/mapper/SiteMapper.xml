@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.hxz.webapp.syscore.mapper.SiteMapper">
+
+	<!-- 单表查询映射结果 -->
+	<resultMap id="BaseResultMap" type="cn.hxz.webapp.syscore.entity.Site">
+		<id column="id" property="id" />
+		<result column="name" property="name" />
+		<result column="title" property="title" />
+		<result column="logo" property="logo" />
+		<result column="enabled" property="enabled" />
+		<result column="template" property="template" />
+	</resultMap>
+
+    <!-- 单表查询结果列 -->
+    <sql id="Base_Column_List">
+        id, name, title, logo, enabled, template
+    </sql>
+
+</mapper>

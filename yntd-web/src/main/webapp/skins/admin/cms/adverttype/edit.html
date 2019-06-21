@@ -1,0 +1,106 @@
+<#assign modulePath="${adminPath}/cms/adverttype" />
+<@layout.override name="css">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="js">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="body">
+<ol class="breadcrumb">
+	<li><a href="javascript:;">广告类型</a></li>
+	<li><a href="javascript:;">编辑</a></li>
+</ol>
+
+<div class="container">
+
+<ul class="nav nav-tabs">
+	<li role="presentation"><a href="${modulePath}/list.html">列表</a></li>
+	<li role="presentation" class="active"><a href="javascript:;"><#if (entity.id)??>修改<#else>添加</#if></a></li>
+</ul>
+<br/>
+
+<form id="validateForm" class="form-horizontal" role="form" method="post">
+<@spring.formHiddenInput path='entity.id'/>
+<@spring.formHiddenInput path='entity.siteId'/>
+  
+	<div class="row form-group">
+		<label class="control-label col-sm-2"><em class="spk-required">*</em>名称</label>
+		<div class="col-sm-3">
+			<@spring.formInput path='entity.name' attributes='class="form-control input-sm" required' />
+			<@spring.showErrors separator='&nbsp;' classOrStyle='help-block' />
+		</div>
+		<label class="control-label col-sm-2"><em class="spk-required">*</em>标识</label>
+		<div class="col-sm-3">
+			<@spring.formInput path='entity.code' attributes='class="form-control input-sm" required' />
+			<@spring.showErrors separator='&nbsp;' classOrStyle='help-block' />
+		</div>
+	</div>
+  
+	<div class="row form-group">
+		<label class="control-label col-sm-2">列表大小</label>
+		<div class="col-sm-2">
+			<@spring.formInput path='entity.size' attributes='class="form-control input-sm" placeholder="单位(个)" required' />
+			<@spring.showErrors separator='&nbsp;' classOrStyle='help-block' />
+		</div>
+		<label class="control-label col-sm-1">宽度</label>
+		<div class="col-sm-2">
+			<@spring.formInput path='entity.width' attributes='class="form-control input-sm" placeholder="单位(px)" required' />
+			<@spring.showErrors separator='&nbsp;' classOrStyle='help-block' />
+		</div>
+		<label class="control-label col-sm-1">高度</label>
+		<div class="col-sm-2">
+			<@spring.formInput path='entity.height' attributes='class="form-control input-sm" placeholder="单位(px)" required' />
+			<@spring.showErrors separator='&nbsp;' classOrStyle='help-block' />
+		</div>
+	</div>
+
+	<div class="row form-group">
+		<label class="control-label col-sm-2">备注说明</label>
+		<div class="col-sm-8">
+			<@spring.formTextarea path='entity.remarks' attributes='class="form-control input-sm ckeditor" rows="4"' />
+			<@spring.showErrors separator='' classOrStyle='help-block' />
+		</div>
+	</div>
+  
+	<div class="row form-group">
+		<label class="control-label col-sm-2">显示顺序</label>
+		<div class="col-sm-3">
+			<@spring.formInput path='entity.priority' attributes='class="form-control input-sm" placeholder=""' />
+			<@spring.showErrors separator='&nbsp;' classOrStyle='help-block' />
+		</div>
+		<label class="control-label col-sm-2">是否启用</label>
+		<div class="col-sm-3">
+			<@spring.formRadioButtons path='entity.enabled' options={"true":"是","false":"否"} separator='&nbsp;' attributes='class="radio-inline"' />
+			<@spring.showErrors separator='&nbsp;' classOrStyle='help-block' />
+		</div>
+	</div>
+  
+	<hr class="spk-hr" />
+	<div class="row form-group">
+		<div class="col-sm-8 col-sm-offset-2">
+			<button type="submit" class="btn btn-primary btn-sm">保存</button>
+		</div>
+	</div>
+</form>
+<script type="text/javascript">
+jQuery.validator.addMethod("unique", function(value, element) {
+	var unique = (value!='');
+	$.ajax({
+		url: "${modulePath}/unique/code.json",
+		type: "post",
+		data: {"id":"${entity.id!}", "code":"value"},
+		async:false,
+		dataType: "json",
+		success: function(data){
+			unique = data.success;
+		}
+	});
+	return unique;
+}, '标识已存在');
+$(function(){
+	$("#validateForm").attr("action","${modulePath}/save.html").validate({rules:{code:{unique:true}}});
+});
+</script>
+</div>
+</@layout.override>
+<@layout.extends name="../../_layouts/bootstrap.html"/>

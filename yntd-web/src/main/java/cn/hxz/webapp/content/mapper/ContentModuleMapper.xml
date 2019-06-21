@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.hxz.webapp.content.mapper.ContentModuleMapper">
+    
+	<select id="selectJoinTest" resultType="map">
+    <![CDATA[
+        SELECT a.title, c.name FROM cms_article a LEFT JOIN cms_channel c ON c.id=a.channel_id
+    ]]>
+    </select>
+    
+</mapper>

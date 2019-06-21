@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.hxz.webapp.content.mapper.NavlinkTypeMapper">
+
+	<!-- 单表查询映射结果 -->
+	<resultMap id="BaseResultMap" type="cn.hxz.webapp.content.entity.NavlinkType">
+		<id column="id" property="id" />
+		<result column="site_id" property="siteId" />
+		<result column="name" property="name" />
+		<result column="code" property="code" />
+		<result column="enabled" property="enabled" />
+		<result column="trashed" property="trashed" />
+		<result column="priority" property="priority" />
+	</resultMap>
+
+    <!-- 单表查询结果列 -->
+    <sql id="Base_Column_List">
+        id, site_id AS siteId, name, code, enabled, trashed, priority
+    </sql>
+</mapper>

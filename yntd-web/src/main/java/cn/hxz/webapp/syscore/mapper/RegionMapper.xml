@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.hxz.webapp.syscore.mapper.RegionMapper">
+
+	<!-- 单表查询映射结果 -->
+	<resultMap id="BaseResultMap" type="cn.hxz.webapp.syscore.entity.Region">
+		<id column="id" property="id" />
+		<result column="parent_id" property="parentId" />
+		<result column="name" property="name" />
+		<result column="name_en" property="nameEn" />
+		<result column="name_ar" property="nameAr" />
+		<result column="priority" property="priority" />
+		<result column="letter" property="letter" />
+		<result column="enabled" property="enabled" />
+		<result column="trashed" property="trashed" />
+	</resultMap>
+
+    <!-- 单表查询结果列 -->
+    <sql id="Base_Column_List">
+        id, parent_id AS parentId, name, name_en AS nameEn, name_ar AS nameAr, priority, letter, enabled, trashed
+    </sql>
+</mapper>

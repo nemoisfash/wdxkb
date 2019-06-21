@@ -1,0 +1,120 @@
+<#assign modulePath="${adminPath}/cms/navlinktype" />
+<@layout.override name="css">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="js">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="body">
+<ol class="breadcrumb">
+	<li><a href="javascript:;">导航类型</a></li>
+	<li><a href="javascript:;">列表</a></li>
+</ol>
+<div class="container-fluid">
+
+<ul class="nav nav-tabs">
+	<li role="presentation" class="active"><a href="javascript:;">列表</a></li>
+	<li role="presentation"><a href="${modulePath}/edit.html">添加</a></li>
+</ul>
+
+<div class="btn-toolbar spk-toolbar" role="toolbar">
+	<div class="btn-group btn-group-sm pull-left">
+		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">批量<span class="caret"></span></button>
+		<ul class="dropdown-menu" role="menu">
+			<li><a href="javascript:;" onclick="on_remove_batch()">删除</a></li>
+		</ul>
+	</div>
+</div>
+
+<table class="table table-striped table-condensed expander spk-gridview">
+	<tr class="row-head">
+		<th class="column-tiny"><input type="checkbox" onclick="Fw.checkEach('ids')" /></th>
+		<th class="column-auto">名称</th>
+		<th class="column-attr">标识</th>
+		<th class="column-attr">排序</th>
+		<th class="column-tool">启用</th>
+		<th class="column-tool">操作</th>
+	</tr>
+<#list entities.content as item>
+	<tr class="row-data">
+		<td class="column-tiny"><input type="checkbox" name="ids" value="${(item.id)!}"/></td>
+		<td class="column-auto">${(item.name)!} </td>
+		<td class="column-attr">${(item.code)!} </td>
+		<td class="column-attr"><input type="text" name="priority" value="${(item.priority)!}" style="width:48px" readonly="readonly" /></td>
+		<td class="column-tool"><@ui.btnBool entity=item field="enabled" onclick="on_enable(${(item.id)})" /></td>
+		<td class="column-tool">
+		<span>
+			<@ui.btnInfo text="修改" href="${modulePath}/edit.html?id=${item.id!}" />
+			<@ui.btnWarn text="删除" onclick="on_remove('${(item.id)!}')" />
+		</span>
+		</td>
+	</tr>
+</#list>
+<#if entities.numberOfElements lt entities.size>
+<#list 1..(entities.size - entities.numberOfElements) as row>
+	<tr>
+		<td colspan="6">&nbsp;</td>
+	</tr>
+</#list>
+</#if>
+	<tr class="row-foot">
+		<td colspan="6">
+			<div class="pull-right tcdPageCode"></div>
+		</td>
+	</tr>
+</table>
+
+</div>
+<script type="text/javascript">
+function on_enable(id){
+	$.post("${modulePath}/enable.json", {
+		"id" : id
+	}, function(data, status) {
+		if (data.success)
+			self.location.reload();
+	});
+}
+function on_remove(id){
+	top.layer.confirm("<@spring.message 'msg.remove'/>", function(idx) {
+		top.layer.close(idx);
+		$.post("${modulePath}/remove.json", {
+			"id" : id
+		}, function(data, status) {
+			if (data.success)
+				self.location.reload();
+		});
+	});
+}
+function on_remove_batch(){
+	if($("input:checkbox[name='ids']:checked").length == 0) {
+		top.layer.msg("请至少选择一条记录.");
+		return;
+	}
+	top.layer.confirm("<@spring.message 'msg.remove'/>", function(idx) {
+		top.layer.close(idx);
+		var arrIds = new Array();
+		$("input:checkbox[name='ids']:checked").each(function(){  
+			arrIds.push($(this).val());
+		});
+		top.layer.msg(arrIds.toString());
+		$.post("${modulePath}/remove/batch.json", {
+			"ids" : arrIds.toString()
+		}, function(data, status) {
+			if (data.success)
+				self.location.reload();
+		});
+	})
+}
+$(function(){
+	$(".tcdPageCode").createPage({
+		elementCount : ${(entities.totalElements)!},
+		pageCount : ${(entities.totalPages)!},
+		current : ${(entities.number)!},
+		backFn : function(to){
+			Fw.updateFilter('${filters.uuid!}', 'page', to);
+		}
+	});
+});
+</script>
+</@layout.override>
+<@layout.extends name="../../_layouts/bootstrap.html"/>

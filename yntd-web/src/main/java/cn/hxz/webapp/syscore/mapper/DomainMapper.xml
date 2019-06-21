@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.hxz.webapp.syscore.mapper.DomainMapper">
+
+	<!-- 单表查询映射结果 -->
+	<resultMap id="BaseResultMap" type="cn.hxz.webapp.syscore.entity.Domain">
+		<id column="id" property="id" />
+		<result column="domain" property="domain" />
+		<result column="port" property="port" />
+		<result column="skin" property="skin" />
+		<result column="site_id" property="siteId" />
+	</resultMap>
+
+    <!-- 单表查询结果列 -->
+    <sql id="Base_Column_List">
+        id, domain, port, skin, site_id AS siteId
+    </sql>
+<!--
+    <select id="findSite" resultType="cn.feeboo.webapp.syscore.entity.Domain">
+     SELECT * FROM sys_domain where site_id = ${map.siteId}
+    </select>
+    
+    <select id="selectSiteId" resultType="cn.feeboo.webapp.syscore.entity.Domain">
+     SELECT sd.domain FROM sys_domain as sd where site_id = #{site}
+    </select>
+-->
+</mapper>

@@ -1,0 +1,25 @@
+<@layout.override name="css">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="js">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="body">
+<div class="container-fluid">
+<br/>
+<ul class="nav nav-tabs" role="tablist" >
+	<li role="presentation" class="active"><a href="#rolePanel" aria-controls="extPanel" role="tab" data-toggle="tab">角色</a></li>
+</ul>
+<div class="tab-content">
+	<div role="tabpanel" class="tab-pane active" id="rolePanel">
+		<div id="extTree" class="permission-tree">
+			<ul>
+			<@sys.permission code="ext"; node>
+				<@permissionTree node />
+			</@sys.permission>
+			</ul>
+		</div>
+	</div>
+</div>
+</@layout.override>
+<@layout.extends name="../_layouts/dialog.html"/>

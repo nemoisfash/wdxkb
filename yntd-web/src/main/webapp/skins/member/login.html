@@ -1,0 +1,342 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<title>数字化食堂管理平台</title>
+<link rel="icon" type="image/ico" href="/assets/app.ico">
+<link rel="stylesheet" type="text/css" href="/assets/bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="/assets/fonts/css/font-awesome.min.css">
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+<script type="text/javascript" src="/assets/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/assets/js/jquery.validate.min.js"></script>
+<script type="text/javascript" src="/assets/layui/layer.min.js"></script>
+<script src="/themes/ui/js/validate.layer.js" type="text/javascript"></script>
+<script type="text/javascript">
+	if (self != top) {
+		top.location.href = self.location.href;
+	}
+</script>
+</head>
+<style type="text/css">
+body {
+	width: 100%;
+	height: auto;
+	background: url(/themes/triz/images/login-bj.jpg) no-repeat;
+	background-attachment: fixed;
+	background-repeat: no-repeat;
+	background-size: cover;
+	-moz-background-size: cover;
+	-webkit-background-size: cover;
+}
+
+.login-wrap {
+	/*margin-top: 20%;*/
+	height: 260px;
+}
+
+.login-wrap-r {
+	width: 100%;
+	height: 100%;
+	padding-bottom: 20px;
+	border-radius: 3px;
+	background: rgba(0, 0, 0, 0.3);
+}
+
+.login-wrap-nav {
+	width: 100%;
+	height: 40px;
+	line-height: 40px;
+	color: white;
+	padding-left: 0;
+}
+
+.login-wrap-nav li {
+	height: 40px;
+	line-height: 40px;
+	padding: 0;
+	color: #333333;
+	background-color: rgba(0, 0, 0, 0.3);
+	list-style-type: none;
+	cursor: pointer
+}
+
+.login-wrap-nav .active {
+	background-color: rgba(0, 0, 0, 0.5);
+	color: white;
+	border-bottom: 2px solid #009AD6;
+}
+.captcha {
+    width: 112px;
+    height: 32px;
+}
+</style>
+<body>
+	<div class="container" style="position: absolute;left: 37%;top: 32%; width: 1000px">
+		<div class="row text-center login-wrap">
+				<div class="col-lg-6" style="padding: 0;">
+					<div class="row" style="margin: 0;">
+						<p style="font: bold 34px/34px '宋体'; color: #FFF;">
+							数字化食堂管理平台
+						</p>
+					</div>
+					<div class="row login-wrap-r" style="margin: 0">
+						<ul class="row login-wrap-nav" style="margin: 0;">
+							<li class="col-lg-12 active"
+								style="height: 40px; margin-bottom: 15px; border-radius: 3px 0 0 0;">
+								<p>用户登录</p>
+							</li>
+						</ul>
+						<div style="clear: both;">
+							<div class="row login-wrap-box ">
+								<form id="validateForm" action="" method="post">
+									<div class="col-lg-1 "></div>
+									<div class="col-lg-10 ">
+
+										<div class="input-group">
+											<span class="input-group-addon" id="basic-addon1"><i
+												class="fa fa-user fa-lg" style="font-size: 1.19em;"></i></span> 
+											<input id="username" name="username" type="text" class="form-control" placeholder="用户名" >
+										</div>
+										<br>
+										<!--密码输入框-->
+										<div class="input-group">
+											<span class="input-group-addon" id="basic-addon1"><i
+												class="glyphicon glyphicon-lock"></i></span> <input type="password"
+												id="password" name="password" type="text"
+												class="form-control" placeholder="密码"
+												aria-describedby="basic-addon1">
+										</div>
+										<div class="row">
+											<div class="col-lg-6">
+												<div class="checkbox text-left">
+													<label><input type="checkbox" name="rememberMe">记住密码</label>
+												</div>
+											</div>
+
+											<div class="col-lg-6">
+												<div class="text-right checkbox">
+													<!-- <a href="" style="color: #333;">忘记密码？</a> -->
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-lg-6">
+												<div class="input-group">
+													<input name="captcha" type="text" class="form-control"
+														placeholder="验证码" aria-describedby="basic-addon1"
+														style="border-radius: 3px;">
+												</div>
+											</div>
+											<div class="col-lg-6 text-left">
+												<img src="/captcha.png" class="captcha">
+											</div>
+										</div>
+										<br>
+										<!--登陆按钮-->
+										<button type="button"
+											style="width: 100%; background: #37DDFF; color: white; border: none;"
+											class="btn btn-default" onclick="doLogin();">登 录</button>
+									</div>
+								<div class="col-lg-1 "></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			<div class="col-lg-1"></div>
+		</div>
+	</div>
+</body>
+<script type="text/javascript">
+function doLogin(){
+	if(!validateForm.form()){
+		return false;
+	}
+	var username = $("input[name='username']").val();
+	var password = $("input[name='password']").val();
+	var captcha = $("input[name='captcha']").val();
+	$.ajax({
+		url: "/caterer/login.json",
+		type: "post",
+		data: {"username":username,"password":password,"captcha":captcha},
+        success: function(data) {
+        	if(data.success){
+        		 self.location.href = data.url;
+             }else{
+            	 layer.msg(data.message);
+            	 $("img.captcha").prop("src", "/captcha.png?" + Math.random());
+             }
+        },
+		error: function(request) {
+            alert("Connection error");
+        }
+	}); 
+}
+
+var validateForm;
+$(function() {
+	validateForm = $("#validateForm").validate({
+		rules : {
+			username : {
+				required : true
+			},
+			password : {
+				required : true
+			},
+			captcha : {
+				required : true
+			},
+		},
+		messages : {
+			username : {
+				required : "用户名不能为空"
+			},
+			password : {
+				required : "密码不能为空"
+			},
+			captcha : {
+				required : "验证码不能为空"
+			},
+		}
+	});
+
+	$("a.captcha,img.captcha").on("click", function() {
+		$("img.captcha").prop("src", "/captcha.png?" + Math.random());
+	});
+});
+
+var isUsernameExist = true;
+function checkUname() {
+	var username = $("#regUserName").val();
+	$.ajax({
+		type : 'post',
+		url : '/api/exist/account.json',
+		data : {
+			'username' : username
+		},
+		success : function(resp) {
+			if (resp.success) {
+				layer.tips("该用户名已存在", "#regUserName", {
+					tips : [ 2, '#303030' ]
+				});
+				isUsernameExist = false;
+			} else {
+				isUsernameExist = true;
+			}
+		}
+	});
+}
+
+var regForm;
+$(document).ready(function() {
+	regForm = $("#regForm").validate();
+});
+
+$("#regForm").validate({
+	rules : {
+		regUserName : {
+			required : true
+		},
+		regPwd : {
+			required : true,
+			rangelength : [ 6, 20 ]
+		},
+		regRePwd : {
+			required : true,
+			equalTo : "#regPwd"
+		},
+		regEmail : {
+			required : true,
+			email : true
+		},
+		regCaptcha : {
+			required : true
+		},
+		regName : {
+			required : true
+		},
+	},
+	messages : {
+		regUserName : {
+			required : "用户名不能为空"
+		},
+		regPwd : {
+			required : "密码不能为空",
+			rangelength : "密码需在 6-20个字符之内"
+		},
+		regRePwd : {
+			required : "确认密码不能为空",
+			equalTo : "两次密码不一致"
+		},
+		regEmail : {
+			required : "邮箱不能为空！",
+			email : "请输入有效的邮箱格式"
+		},
+		regCaptcha : {
+			required : "验证码不能为空"
+		},
+		regName : {
+			required : "用户姓名不能为空"
+		},
+	}
+});
+
+function doRegister() {
+	if (!regForm.form()) {
+		return false;
+	}
+
+	if (!isUsernameExist) {
+		layer.tips("该用户名已存在", "#regUserName", {
+			tips : [ 2, '#303030' ]
+		});
+		return false;
+	}
+	var regType = $("input[name='regType']:checked").val();
+	var regUserName = $("#regUserName").val();
+	var regPwd = $("#regPwd").val();
+	var regName = $("#regName").val();
+	var regEmail = $("#regEmail").val();
+	var regCaptcha = $("input[name='regCaptcha']").val();
+	$.ajax({
+		url: "/register/imcmp/member.json",
+		type: "post",
+		data: {"regType":regType,"regUserName":regUserName,"regPwd":regPwd,"regName":regName,"regEmail":regEmail,"regCaptcha":regCaptcha},
+        success: function(data) {
+        	if(data.success){
+        		 self.location.href = data.url;
+             }else{
+            	 layer.msg(data.message);
+            	 $("img.captcha").prop("src", "/captcha.png?" + Math.random());
+             }
+        }
+	}); 
+}
+
+$(document).ready(function() {
+	$(".login-wrap-box:gt(0)").hide();
+	var hdw = $(".login-wrap-nav li");
+	hdw.click(function() {
+		$(this).addClass("active").siblings().removeClass("active");
+		var a = hdw.index(this);
+		$(".login-wrap-box").eq(a).show().siblings().hide();
+	});
+})
+//居中	
+/* $(window).resize(function() {
+	$(".container").css({
+		position : "absolute",
+		left : ($(window).width() - $(".container").outerWidth()) *2,
+		top : ($(window).height() - $(".container").outerHeight()) / 1.8
+	});
+}); */
+$(function() {
+	$(window).resize();
+});
+</script>
+
+<#if message?? && message?length gt 0>
+<script type="text/javascript">
+	layer.msg("${message!}");
+</script>
+</#if>
+</html>

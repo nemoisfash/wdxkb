@@ -1,0 +1,43 @@
+<#assign title="个人中心"/>
+<@layout.override name="body">
+<div class="header_img">
+	<img src="../../themes/weixin/img/gywm.jpg" alt="">
+</div>
+<!-- 主体 -->
+<div class="middle text_p" style="padding:10px;">
+	<div style="height:60px;line-height:60px;border-bottom: 1px solid #EEEEEE;">
+		<b style="float: left;">登陆用户：啊啊啊</b>
+	</div>
+	<div style="height:60px;line-height:60px;border-bottom: 1px solid #EEEEEE;">
+		<b style="float: left;"><i class="aui-iconfont aui-icon-edit aui-margin-r-10"></i>我的订单</b>
+		<a href="/wap/indentall.html" style="float: right;font-size: 14px;color: #555555;">全部订单<i class="aui-iconfont aui-icon-right "></i></a>
+	</div>
+	<div style="height:60px;line-height:60px;border-bottom: 1px solid #EEEEEE;">
+		<b style="float: left;"><i class="aui-iconfont aui-icon-info aui-margin-r-10"></i>
+		<a href="javascript:;" onclick="onLogout()" style="color: #666666;">注销账号</a></b>
+	</div>
+</div>
+<script type="text/javascript">
+function onLogout(){
+	layer.confirm('确认要注销吗？',{
+	    btn: ['确认','取消'],
+	    icon:7,
+	    title:"提示"
+		}, function(){
+			window.location.href="/wap/logout.html";
+		}, function(){
+			layer.closeAll();
+		});
+}
+</script>
+</@layout.override>
+<@layout.override name="title">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="css">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="js">
+<@layout.super/>
+</@layout.override>
+<@layout.extends name="layout/normal.html"/>

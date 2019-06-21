@@ -1,0 +1,427 @@
+<#import "/WEB-INF/ftl/fw_fn_v1_0.ftl" as fn>
+<#import "/WEB-INF/ftl/fw_ui_v1_0.ftl" as ui>
+<#import "/WEB-INF/ftl/module_sys.ftl" as sys>
+<#import "/WEB-INF/ftl/module_cms.ftl" as cms>
+<#import "/WEB-INF/ftl/module_triz.ftl" as triz>
+<#import "/WEB-INF/ftl/module_szst.ftl" as szst>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>小牛自动化设备生命</title>
+<link rel="icon" type="image/ico" href="/assets/app.ico">
+<@layout.block name="css">
+<link rel="stylesheet" type="text/css" href="/assets/fonts/css/font-awesome.min.css">
+<link rel="stylesheet" type="text/css" href="/assets/bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="/assets/AdminLTE/2.3.11/css/AdminLTE.min.css">
+<link rel="stylesheet" type="text/css" href="/assets/AdminLTE/2.3.11/css/skins/_all-skins.min.css">
+<link rel="stylesheet" type="text/css" href="/themes/ui/css/jquery.page.css">
+<link rel="stylesheet" type="text/css" href="/themes/admin/afx/css/afx.css">
+</@layout.block>
+<!--[if lt IE 9]>
+<script type="text/javascript" src="/assets/js/html5shiv.min.js"></script>
+<script type="text/javascript" src="/assets/js/respond.min.js"></script>
+<![endif]-->
+<@layout.block name="js">
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+<script src="/assets/ueditor/utf8-jsp/ueditor.config.js" type="text/javascript"></script>
+<script src="/assets/ueditor/utf8-jsp/ueditor.all.js" type="text/javascript"></script>
+<script src="/assets/ueditor/utf8-jsp/lang/zh-cn/zh-cn.js"></script>
+<script type="text/javascript" src="/assets/js/jquery.cookie.min.js"></script>
+<script type="text/javascript" src="/assets/js/jquery.validate.min.js"></script>
+<script type="text/javascript" src="/assets/js/jquery.validate.messages_zh.js"></script>
+<script type="text/javascript" src="/assets/js/holder.min.js"></script>
+<script type="text/javascript" src="/assets/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/assets/layui/layer.min.js"></script>
+<script type="text/javascript" src="/assets/layui/laydate.min.js"></script>
+<script type="text/javascript" src="/themes/ui/js/jquery.page.js"></script>
+<script type="text/javascript" src="/themes/ui/js/jquery.validate.layer.js"></script>
+<script type="text/javascript" src="/themes/admin/afx/js/afx.js"></script>
+<script type="text/javascript" src="/themes/admin/WdatePicker.js"></script>
+<script type="text/javascript" src="/assets/js/fileUploadByFormData.js"></script>
+</@layout.block>
+</head>
+<body class="hold-transition skin-blue sidebar-mini" >
+<@sys.currentUser; user>
+<div class="wrapper">
+<header class="main-header">
+	<a href="${adminPath}/workbench.html" class="logo">
+		<span class="logo-mini">设备生命周期关怀平台</span>
+		<span class="logo-lg" style="font-size:16px">设备生命周期关怀平台</span>
+	</a>
+	<nav class="navbar navbar-static-top">
+		<a href="javascript:;" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+			<span class="sr-only">toggle</span>
+		</a>
+		<div class="navbar-custom-menu">
+			<ul class="nav navbar-nav">
+				<li class="dropdown user user-menu">
+					<a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
+						<span class="hidden-xs">${(user.name)!}</span>
+					</a>
+					<ul class="dropdown-menu">
+						<li class="user-header">
+							<p>${(user.name)!}<small>${(user.username)!}</small></p>
+						</li>
+						<li class="user-footer">
+							<div class="pull-left"> 
+								<a id="btn-passwd" href="${adminPath}/passwd.html" class="btn btn-default btn-flat">修改密码</a>
+							</div>
+							<div class="pull-right">
+								<a id="btn-logout" href="javascript:;" class="btn btn-default btn-flat">安全退出</a>
+							</div>
+						</li>
+					</ul>
+				</li>
+				<li><a href="javascript:;" data-toggle="control-sidebar"><i class="fa fa-fw fa-gears"></i></a></li>
+			</ul>
+		</div>
+	</nav>
+</header>
+
+<aside class="main-sidebar">
+<section class="sidebar">
+	<ul class="nav nav-tabs nav-justified control-sidebar-tabs afx-sidebar-tabs">
+		<li><a href="#nav-sidebar-sys-tab" data-toggle="tab"><i class="fa fa-fw fa-gears"></i></a></li>
+		<li><a href="#nav-sidebar-ext-tab" data-toggle="tab"><i class="fa fa-fw fa-retweet"></i></a></li> 
+		<#-- <li><a href="#nav-sidebar-cms-tab" data-toggle="tab"><i class="fa fa-fw fa-home"></i></a></li> -->
+	</ul>
+    <div class="tab-content">
+<#--系统设置-->
+<div class="tab-pane afx-sidebar-pane" id="nav-sidebar-sys-tab">
+	<ul class="sidebar-menu">
+				<li class="header">系统管理</li>
+				<#-- 我的账号 -->
+					<li class="treeview">
+						<a href="javascript:;">
+							<i class="fa fa-fw fa-folder-open"></i> <span> 我的账号</span>
+							<span class="pull-right-container"><i class="fa fa-fw fa-angle-left pull-right"></i></span>
+						</a>
+						<ul class="treeview-menu">
+							<li><a href="${adminPath}/aboutme.html"><i class="fa fa-fw fa-file-text"></i> <span>账号信息</span></a></li>
+							<li><a href="${adminPath}/passwd.html"><i class="fa fa-fw fa-file-text"></i> <span>修改密码</span></a></li>
+						</ul>
+					</li>
+				<#--系统设置-->	
+					<li class="treeview">
+						<a href="javascript:;" >
+							<i class="fa fa-fw fa-folder-open"></i> <span>系统设置</span>
+							<span class="pull-right-container"><i class="fa fa-fw fa-angle-left pull-right"></i></span>
+						</a>
+						<ul class="treeview-menu">
+							<li><a href="${adminPath}/cms/channel/list.html"><i class="fa fa-fw fa-file-text"></i> <span>栏目设置</span></a></li>
+							<li><a href="${adminPath}/html/cache/clear.html"><i class="fa fa-fw fa-file-text"></i> <span>缓存清理</span></a></li>
+							<li><a href="${adminPath}/content/siteattr/s-img/edit.html"><i class="fa fa-fw fa-file-text"></i> <span>网站设置</span></a></li>
+						</ul>
+					</li>
+				<#-- 选项字典 -->
+					<#-- 	<li class="treeview">
+							<a href="javascript:;" >
+								<i class="fa fa-fw fa-folder-open"></i> <span>选项字典</span>
+								<span class="pull-right-container"><i class="fa fa-fw fa-angle-left pull-right"></i></span>
+							</a>
+							<ul class="treeview-menu">
+								<li><a href="${adminPath}/common/optiongroup/list.html"><i class="fa fa-fw fa-file-text"></i> <span>字典定义</span></a></li>
+								<li><a href="${adminPath}/common/option/list.html"><i class="fa fa-fw fa-file-text"></i> <span>字典维护</span></a></li>
+								<li><a href="${adminPath}/common/region/list.html"><i class="fa fa-fw fa-file-text"></i> <span>区域管理</span></a></li>
+							</ul>
+						</li> -->
+	
+						<li class="treeview">
+							<a href="javascript:;">
+								<i class="fa fa-fw fa-folder-open"></i> <span> 账号授权</span>
+								<span class="pull-right-container"><i class="fa fa-fw fa-angle-left pull-right"></i></span>
+							</a>
+							<ul class="treeview-menu">
+								<li><a href="${adminPath}/sys/role/list.html"><i class="fa fa-fw fa-file-text"></i> <span>系统角色</span></a></li> 
+								<li><a href="${adminPath}/sys/group/list.html"><i class="fa fa-fw fa-file-text"></i> <span>用户组</span></a></li>
+								<li><a href="${adminPath}/sys/user/list.html"><i class="fa fa-fw fa-file-text"></i> <span>管理员</span></a></li>
+							</ul>
+						</li>
+	</ul>
+</div>
+
+<#--门户管理-->
+<div class="tab-pane afx-sidebar-pane" id="nav-sidebar-ext-tab">
+	<ul class="sidebar-menu">
+        <li class="header">门户管理</li>
+        <li class="treeview">
+        	<a href="${adminPath}/workbench.html" ><i class="fa fa-fw fa-desktop"></i> <span>首页</span></a>
+        </li>
+        	  <li class= "treeview">
+	            <a href="javascript:;">
+	            	<i class="fa fa-fw fa-folder-open"></i>产品生产计划
+	              <span class="pull-right-container">
+	                <i class="fa fa-fw fa-angle-left pull-right"></i>
+	              </span>
+	            </a>
+	            <ul class="treeview-menu">
+					<li><a href="${adminPath}/tdds/plan/list" title="生产计划"><i class="fa fa-fw fa-file-text"></i>生产计划</a></li>
+	            </ul>
+	        </li>
+        	  <li class= "treeview">
+	            <a href="javascript:;">
+	            	<i class="fa fa-fw fa-folder-open"></i>产品采购管理
+	              <span class="pull-right-container">
+	                <i class="fa fa-fw fa-angle-left pull-right"></i>
+	              </span>
+	            </a>
+	            <ul class="treeview-menu">
+					<li><a href="${adminPath}/tdds/cgjh/list" title="采购记录"><i class="fa fa-fw fa-file-text"></i>采购记录</a></li>
+	            </ul>
+	        </li>
+	        
+        	  <li class= "treeview">
+	            <a href="javascript:;">
+	            	<i class="fa fa-fw fa-folder-open"></i>设备点检
+	              <span class="pull-right-container">
+	                <i class="fa fa-fw fa-angle-left pull-right"></i>
+	              </span>
+	            </a>
+	            <ul class="treeview-menu">
+					<li><a href="${adminPath}/tdds/jtdj/list" title="维修"><i class="fa fa-fw fa-file-text"></i>点检记录</a></li>
+	            </ul>
+	        </li>
+	        
+	         <#--  <li class= "treeview">
+	            <a href="javascript:;">
+	            	<i class="fa fa-fw fa-folder-open"></i>设备资产管理
+	              <span class="pull-right-container">
+	                <i class="fa fa-fw fa-angle-left pull-right"></i>
+	              </span>
+	            </a>
+	            <ul class="treeview-menu">
+					<li><a href="/admin/tdds/list.html" title="报废"><i class="fa fa-fw fa-file-text"></i>报废</a></li>
+	            </ul>
+	        </li> -->
+	        
+	         <li class= "treeview">
+	            <a href="javascript:;">
+	            	<i class="fa fa-fw fa-folder-open"></i>产品管理
+	              <span class="pull-right-container">
+	                <i class="fa fa-fw fa-angle-left pull-right"></i>
+	              </span>
+	            </a>
+	            <ul class="treeview-menu">
+		               <li><a href="${adminPath}/tdds/product/list" title="产品管理"><i class="fa fa-fw fa-file-text"></i>产品管理</a></li>
+	            </ul>
+	        </li>
+	        
+	          <li class= "treeview">
+	            <a href="javascript:;">
+	            	<i class="fa fa-fw fa-folder-open"></i>客戶管理
+	              <span class="pull-right-container">
+	                <i class="fa fa-fw fa-angle-left pull-right"></i>
+	              </span>
+	            </a>
+	            <ul class="treeview-menu">
+	               <li><a href="${adminPath}/tdds/khxx/list" title="产品管理">
+	               		<i class="fa fa-fw fa-file-text"></i>客戶信息</a>
+               		</li>
+	            </ul>
+	        </li>
+	</ul>
+</div>
+<#-- /.tab-pane -->
+
+<#-- 递归生成栏目树 -->
+<#macro nodeTree node>
+<#if (node.enabled)?? && node.enabled && node.modelId == 1>
+	<@cms.channelList site="${(site.id)!}" node="${(node.node)!}" isIterate="false"; children>
+	<#if children?size gt 0>
+		<li class="treeview">
+			<a href="javascript:;" title="${(node.name)!}">
+				<i class="fa fa-fw fa-folder-open"></i> <span>${(node.name)!}</span>
+				<span class="pull-right-container"><i class="fa fa-fw fa-angle-left pull-right"></i></span>
+			</a>
+			<ul class="treeview-menu">
+				<#list children as child>
+					<#if (child.enabled)?? && child.enabled>
+						<@nodeTree node=child/>
+					</#if>
+				</#list>
+			</ul>
+		</li>
+	</#if>
+	</@cms.channelList>
+<#else>
+	<li><a href="${fn.cms_admin_uri(node)}" title="${(node.name)!}"><i class="fa fa-fw fa-file-text"></i> <span>${(node.name)!}</span></a></li>
+</#if>
+</#macro>
+<#--
+ <div class="tab-pane afx-sidebar-pane" id="nav-sidebar-cms-tab">
+	<ul class="sidebar-menu">
+	<li class="header">内容管理</li>
+		<ul class="sidebar-menu">
+			<li class="treeview">
+				<a href="javascript:;">
+					<i class="fa fa-fw fa-folder-open"></i><span>文章管理</span>
+					<span class="pull-right-container"><i class="fa fa-fw fa-angle-left pull-right"></i></span>
+				</a>
+				<ul class="treeview-menu">
+					<@cms.channelList site="${(site.id)!}" node="root" ; root>
+						<#if root.node!="" && root.node!="tzggspc">
+							<@nodeTree node=root/>
+						</#if>
+					</@cms.channelList>
+				</ul>
+			</li>
+		</ul>
+		
+		<ul class="sidebar-menu">
+				<li class="treeview">
+					<a href="javascript:;">
+						<i class="fa fa-fw fa-folder-open"></i><span>通知公告</span>
+						<span class="pull-right-container"><i class="fa fa-fw fa-angle-left pull-right"></i></span>
+					</a>
+					<ul class="treeview-menu">
+							<li class="treeview">
+								<a href="/admin/cms/news/${(item.node)!}/list.html"><i class="fa fa-fw fa-file-text"></i>${(item.name)!}
+								</a>
+							</li>
+					</ul>
+				</li>
+			</@cms.channel>
+		</ul>
+		
+		<ul class="sidebar-menu">
+			<li class="treeview">
+				<a href="javascript:;">
+					<i class="fa fa-fw fa-folder-open"></i><span>条幅管理</span>
+					<span class="pull-right-container"><i class="fa fa-fw fa-angle-left pull-right"></i></span>
+				</a>
+				<ul class="treeview-menu">
+					<li><a href="${adminPath}/cms/advert/list.html"><i class="fa fa-fw fa-file-text"></i>条幅管理</a></li>
+					<li><a href="${adminPath}/cms/adverttype/list.html"><i class="fa fa-fw fa-file-text"></i>条幅定义</a></li>
+				</ul>
+			</li>
+		</ul>
+		<ul class="sidebar-menu">
+			<li class="treeview">
+				<a href="javascript:;">
+					<i class="fa fa-fw fa-folder-open"></i><span>导航管理</span>
+					<span class="pull-right-container"><i class="fa fa-fw fa-angle-left pull-right"></i></span>
+				</a>
+				<ul class="treeview-menu">
+						<li><a href="${adminPath}/cms/navlink/list.html"><i class="fa fa-fw fa-file-text"></i>导航管理</a></li>
+						<li><a href="${adminPath}/cms/navlinktype/list.html"><i class="fa fa-fw fa-file-text"></i>导航定义</a></li>
+				</ul>
+			</li>
+		</ul>
+	</ul>
+</div>
+-->
+	</div>
+</section>
+</aside>
+
+<div class="content-wrapper">
+	<@layout.block name="body"></@layout.block>
+	<div style="clear:both;"></div>
+</div>
+	
+<footer class="main-footer">
+	<div class="pull-right hidden-xs"><b>version</b> 1.0.0</div><strong>feesite</strong>
+</footer>
+
+<aside class="control-sidebar control-sidebar-dark">
+	<ul class="nav nav-tabs nav-justified control-sidebar-tabs">
+		<li><a href="#control-sidebar-home-tab" data-toggle="tab"><i class="fa fa-fw fa-home"></i></a></li>
+		<li><a href="#control-sidebar-settings-tab" data-toggle="tab"><i class="fa fa-fw fa-gears"></i></a></li>
+	</ul>
+	<div class="tab-content">
+		<div class="tab-pane" id="control-sidebar-home-tab">Home tab content</div>
+		<div class="tab-pane" id="control-sidebar-stats-tab">Stats Tab Content</div>
+		<div class="tab-pane" id="control-sidebar-settings-tab">Settings tab content</div>
+	</div>
+</aside>
+  
+	<div class="control-sidebar-bg"></div>
+</div>
+<script type="text/javascript" src="/assets/AdminLTE/2.3.11/js/app.js"></script>
+<script type="text/javascript" src="/themes/admin/js/app.js"></script>
+<script type="text/javascript">
+$(function(){
+    $("#btn-logout").on("click", function(){
+    	layer.confirm("退出登录？", {icon: 3, title:'提示'}, function(index){
+			layer.close(index);
+			top.location.href = "${adminPath}/logout.html";
+		});
+    });
+    currNav();
+    bindClick();
+});
+
+var tKey="__tab_curr_sn";
+var mKey="__lnk_curr_sn";
+function bindClick(){
+	$("ul.afx-sidebar-tabs a").each(function(idx,obj) {
+		$(this).on("click", function(){
+			setCookie(tKey,idx);
+		});
+	});
+	$("div.afx-sidebar-pane ul.sidebar-menu a").each(function(idx,obj){
+		$(this).on("click", function(){
+			if (obj.href!='javascript:;'){
+				setCookie(mKey,idx);
+			}
+		});
+	});
+}
+
+function currNav(){
+	tVal = getCookie(tKey);
+	mVal = getCookie(mKey);
+ 
+	if(tVal!=null && tVal!=''){
+		$($("ul.afx-sidebar-tabs a")[parseInt(tVal)]).parent("li").addClass("active");
+		$($("div.afx-sidebar-pane")[parseInt(tVal)]).addClass("active");
+	}else{
+		$($("ul.afx-sidebar-tabs a")[1]).parent("li").addClass("active");
+		$($("div.afx-sidebar-pane")[1]).addClass("active");
+	}
+	if(mVal!=null && mVal!=''){
+		var lnk = $("div.afx-sidebar-pane ul.sidebar-menu a")[parseInt(mVal)];
+		$(lnk).parent("li").addClass("active");
+		$(lnk).parents("li.treeview").each(function(){
+			$(this).addClass("active");
+		});
+	}
+}
+
+function setCookie(name,value){
+	$.ajax({
+		url: "/api/cookie.json",
+		type: "post",
+		data: {"name":name,"value":value},
+		dataType: "json",
+		success: function(data){
+			if(data.success){
+				console.info(name+""+value);
+			}
+		}
+	});
+}
+
+function getCookie(name){
+	var strCookie = document.cookie;
+	var arrCookie = strCookie.split("; ");
+	for ( var i = 0; i < arrCookie.length; i++) {
+		var arr = arrCookie[i].split("=");
+		if (arr[0] == name){
+			return arr[1];
+		}
+	}
+	return "";
+}
+</script>
+<#if message?? && message?length gt 0>
+<script type="text/javascript">
+layer.msg("${message!}");
+</script>
+</#if>
+</@sys.currentUser>
+</body>
+</html>

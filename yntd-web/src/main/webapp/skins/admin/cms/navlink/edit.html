@@ -1,0 +1,76 @@
+<#import "/WEB-INF/ftl/fw_fn_v1_0.ftl" as fn>
+<#import "/WEB-INF/ftl/module_sys.ftl" as sys>
+<#import "/WEB-INF/ftl/module_cms.ftl" as cms>
+<#assign modulePath="${adminPath}/cms/navlink/${(type.code)}" />
+<@layout.override name="css">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="js">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="body">
+<ol class="breadcrumb">
+	<li><a href="javascript:;">导航管理</a></li>
+	<li><a href="javascript:;">编辑</a></li>
+</ol>
+
+<div class="container">
+
+<ul class="nav nav-tabs">
+	<li role="presentation"><a href="${modulePath}/list.html">列表</a></li>
+	<li role="presentation" class="active"><a href="javascript:;"><#if (entity.id)??>修改<#else>添加</#if></a></li>
+</ul>
+<br/>
+
+<form id="validateForm" enctype="multipart/form-data" class="form-horizontal" role="form" method="post">
+<@spring.formHiddenInput path='entity.id'/>
+<@spring.formHiddenInput path='entity.typeId'/>
+
+  <div class="row form-group">
+    <label class="control-label col-sm-2"><em class="spk-required">*</em>名称</label>
+    <div class="col-sm-3">
+      <@spring.formInput path='entity.name' attributes='class="form-control input-sm"' />
+      <@spring.showErrors separator='&nbsp;' classOrStyle='help-block' />
+    </div>
+    <label class="control-label col-sm-2">类型</label>
+    <div class="col-sm-3">
+      <p class="form-control-static">${(type.name)!}</p>
+    </div>
+  </div>
+  
+  <div class="row form-group">
+    <label class="control-label col-sm-2">显示顺序</label>
+    <div class="col-sm-3">
+      <@spring.formInput path='entity.priority' attributes='class="form-control input-sm" placeholder=""' />
+      <@spring.showErrors separator='&nbsp;' classOrStyle='help-block' />
+    </div>
+    <label class="control-label col-sm-2">是否启用</label>
+    <div class="col-sm-3">
+      <@spring.formRadioButtons path='entity.enabled' options={"true":"是","false":"否"} separator=' ' attributes='class="radio-inline"' />
+      <@spring.showErrors separator='&nbsp;' classOrStyle='help-block' />
+    </div>
+  </div>
+  
+  <div class="row form-group">
+    <label class="control-label col-sm-2">链接到</label>
+    <div class="col-sm-8">
+      <@spring.formInput path='entity.link' attributes='class="form-control input-sm"' />
+      <@spring.showErrors separator='&nbsp;' classOrStyle='help-block' />
+    </div>
+  </div>
+  
+	<hr class="spk-hr" />
+	<div class="row form-group">
+		<div class="col-sm-8 col-sm-offset-2">
+			<button type="submit" class="btn btn-primary btn-sm">保存</button>
+		</div>
+	</div>
+</form>
+</div>
+<script type="text/javascript">
+$(function(){
+	$("#validateForm").attr("action","${modulePath}/save.html").validate();
+});
+</script>
+</@layout.override>
+<@layout.extends name="../../_layouts/bootstrap.html"/>

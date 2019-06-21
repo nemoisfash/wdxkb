@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.hxz.webapp.content.mapper.ChannelMapper">
+
+	<!-- 单表查询映射结果 -->
+	<resultMap id="BaseResultMap" type="cn.hxz.webapp.content.entity.Channel">
+		<id column="id" property="id" />
+		<result column="site_id" property="siteId" />
+		<result column="model_id" property="modelId" />
+		<result column="parent_id" property="parentId" />
+		<result column="name" property="name" />
+		<result column="node" property="node" />
+		<result column="href" property="href" />
+		<result column="logo" property="logo" />
+		<result column="intro" property="intro" />
+		<result column="editable" property="editable" />
+		<result column="enabled" property="enabled" />
+		<result column="trashed" property="trashed" />
+		<result column="priority" property="priority" />
+		<result column="tpl_channel" property="tplChannel" />
+		<result column="tpl_content" property="tplContent" />
+	</resultMap>
+
+    <!-- 单表查询结果列 -->
+    <sql id="Base_Column_List">
+        id, site_id AS siteId, model_id AS modelId, parent_id AS parentId, name, node, href, logo, intro, editable, enabled, trashed, priority, tpl_channel AS tplChannel, tpl_content AS tplContent
+    </sql>
+</mapper>

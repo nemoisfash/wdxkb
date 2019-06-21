@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.hxz.webapp.content.mapper.ModelFieldMapper">
+
+	<!-- 单表查询映射结果 -->
+	<resultMap id="BaseResultMap" type="cn.hxz.webapp.content.entity.ModelField">
+		<id column="id" property="id" />
+		<result column="model_id" property="modelId" />
+		<result column="field" property="field" />
+		<result column="label" property="label" />
+		<result column="data_type" property="dataType" />
+		<result column="text_size" property="textSize" />
+		<result column="area_rows" property="areaRows" />
+		<result column="area_cols" property="areaCols" />
+		<result column="def_value" property="defValue" />
+		<result column="opt_value" property="optValue" />
+		<result column="singles" property="singles" />
+		<result column="enabled" property="enabled" />
+		<result column="priority" property="priority" />
+	</resultMap>
+
+    <!-- 单表查询结果列 -->
+    <sql id="Base_Column_List">
+        id, model_id AS modelId, field, label, data_type AS dataType, text_size AS textSize, area_rows AS areaRows, area_cols AS areaCols, def_value AS defValue, opt_value AS optValue, singles, enabled, priority
+    </sql>
+</mapper>

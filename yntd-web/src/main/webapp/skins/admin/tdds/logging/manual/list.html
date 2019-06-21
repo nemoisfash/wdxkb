@@ -1,0 +1,165 @@
+<#assign modulePath="${adminPath}/logging"/>
+<@layout.override name="body">
+<input type="hidden" id="uuid" ng-model="uuid" value="${(filters.uuid)!}">
+<div ng-app="myApp" ng-controller="myCtrl">
+<div class="row">
+<div class="col-xs-12">
+  <div class="box box-info">
+    <div class="box-header with-border">
+      <h3 class="box-title">所有设备每日手动状态折线图（单位：分钟）</h3>
+	      <div class="box-tools pull-right">
+	        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+	        </button>
+	        <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+	      </div>
+    </div>
+	<div class="box-body">
+		<div echarts-type="line" style="height:100%;">
+		</div>
+	</div>
+  </div>
+  </div>
+</div>
+<div class="row">
+	<div class="col-xs-12">
+		<div class="box box-success">
+			<div class="box-header">
+			  <h3 class="box-title">设备手动状态日志</h3>
+			</div>
+			<div class="box-body">
+				<div id="example2_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
+				<div class="row">
+					<div class="col-sm-6" style="margin-bottom:3px">
+						<div class="box-tools">
+							<div class="input-group input-group-sm" style="width:359px;">
+							  <input type="text" name="table_search" 
+							  class="form-control pull-right" ng-model="value" placeholder="输入内容">
+							  <div class="input-group-btn">
+							    <select class="btn btn-default" ng-model="selected">
+							    	 <option ng-repeat="item in keys" value="{{item.key}}">{{item.value}}</option>
+							    </select>
+							    <button type="button" class="btn btn-default" ng-click="search()"> 
+							    	<i class="fa fa-search"></i>
+							    </button>
+							    <button type="button" class="btn btn-warning btn-sm search_adv_btn">
+						       	 高级搜索
+						       </button>
+							  </div>
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-6" style="text-align:right;margin-bottom:3px">
+						 <a class="btn btn-success btn-sm" ng-click="exportData()">
+							日志导出
+						</a>
+					</div>
+					<div class="row search_adv_box" style="left:25px;top:80px">
+						<div class="search_adv_row">
+							<div class="search_adv_label">时间</div>
+							<div class="search_adv_items">
+								<a href="javascript:;" ng-click="removeFilter('recordTime')" class="${fn.search_adv_item_cur(filters, 'recordTime')}">不限</a>
+								<@sys.optionList groupId='43'; items>
+									<a href="javascript:;" ng-click="updateFilter('recordTime', ${(items.value)!})" class="${fn.search_adv_item_cur(filters, 'recordTime', '${(items.value)!}')}">${(items.name)!}</a>
+								</@sys.optionList>
+									<a href="javascript:;" ng-click="chosenTime()">自定义时间</a>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-12">
+						<table id="example2" class="table table-bordered table-hover">
+				           <thead>
+				            <tr role="row">
+				            	<th class="sorting" rowspan="1" colspan="1">设备名称</th>
+				            	<th class="sorting" rowspan="1" colspan="1">维护信号</th>
+				            	<!-- <th class="sorting" rowspan="1" colspan="1">报警代码</th>
+				            	<th class="sorting" rowspan="1" colspan="1">报警信息</th>
+				            	<th class="sorting" rowspan="1" colspan="1">主程序号</th>
+				            	<th class="sorting" rowspan="1" colspan="1">主程序备注</th>
+				            	<th class="sorting" rowspan="1" colspan="1">子程序号</th>
+				            	<th class="sorting" rowspan="1" colspan="1">子程序备注</th>
+				            	<th class="sorting" rowspan="1" colspan="1">主軸刀具号</th>
+				            	<th class="sorting" rowspan="1" colspan="1">主軸刀具类型</th> -->
+				            	<th class="sorting" rowspan="1" colspan="1">加工计数目标値</th>
+				            	<th class="sorting" rowspan="1" colspan="1">加工计数实际値</th>
+				            	<th class="sorting" rowspan="1" colspan="1">快进倍率</th>
+				            	<th class="sorting" rowspan="1" colspan="1">主轴倍率</th>
+				            	<th class="sorting" rowspan="1" colspan="1">切削倍率</th>
+				            	<th class="sorting" rowspan="1" colspan="1">主轴模式</th>
+				            	<th class="sorting" rowspan="1" colspan="1">记录时间</th>
+				            	<!-- <th class="sorting" rowspan="1" colspan="1">操作</th> -->
+				           	</tr>
+				           </thead>
+							<tbody>
+								<tr ng-repeat="item in items">
+								  <td>{{item.machineName}}</td>
+								  <td>{{item.machineMode}}</td>
+								 <!--  <td>{{item.alarmNo}}</td>
+								  <td>{{item.alarmMessage}}</td>
+								  <td>{{item.mainProgramNo}}</td>
+								  <td>{{item.mainProgramComment}}</td>
+								  <td>{{item.subProgramNo}}</td>
+								  <td>{{item.subProgramComment}}</td>
+								  <td>{{item.toolNo}}</td>
+								  <td>{{item.toolName}}</td> -->
+								  <td>{{item.partsCountTarget}}</td>
+								  <td>{{item.partsCountResult}}</td>
+								  <td>{{item.overrideRapid}}</td>
+								  <td>{{item.overrideSpindle}}</td>
+								  <td>{{item.overrideFeed}}</td>
+								  <td>{{item.spindleMode}}</td>
+								  <td>{{item.recordTime|date:'yyyy-MM-dd HH:mm:ss'}}</td>
+								 <!--  <td>
+								  	<a class="btn btn-danger btn-xs" title="删除">
+								  		<i class="fa fa-trash" aria-hidden="true"></i>
+								  	</a>
+								  </td> -->
+								</tr>
+							</tbody>
+						</table>
+			        </div>
+			    </div>
+				 <div class="row"> 
+				 	<div class="col-sm-7" style="float:right;text-align: right;">
+		 				<div class="pull-right tcdPageCode"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	</div>
+</div>
+<!--------时间选择--------->
+<div id="chosenTime" style="display:none">
+<div class="box box-primary" style="height:0px">
+		<div class="box-body">
+			<div class="form-group">
+			    <div class="input-group">
+						<div class="input-group-addon">
+							<label>开始时间:</label>
+						</div>
+			     		<input type="text" id="startTime" name="startTime" class="Wdate form-control" 
+			     		style="height:33px;border-color:#d2d6de;" 
+			onclick="WdatePicker({maxDate:'#F{$dp.$D(\'endTime\')}'})">
+			 <div class="input-group-addon">
+			  	 <label>结束时间:</label>
+			 </div>
+			<input type="text" id="endTime" name="endTime" class="Wdate form-control" 
+			style="height:33px;border-color:#d2d6de;" 
+			onclick="WdatePicker({minDate:'#F{$dp.$D(\'startTime\')}'})">
+			   </div>
+			</div>
+		</div>
+         <div class="box-footer clearfix" style="line-height:40px;text-align:right;">
+    	<a class="btn btn-success btn-xs" ng-click="createRecordTime()">确定</a>
+    </div>
+  </div>
+</div>
+</div>
+</@layout.override>
+<@layout.override name="js">
+<@layout.super/>
+<script src="/themes/admin/logging/manuallist.js"></script>
+</@layout.override>
+<@layout.extends name="../../../_layouts/bootstrap1.html"/>

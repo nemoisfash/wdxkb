@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>net.chenke</groupId>
+	<artifactId>playweb</artifactId>
+	<version>1.0.0</version>
+	<packaging>pom</packaging>
+
+	<name>playweb</name>
+	<url>http://maven.apache.org</url>
+
+	<properties>
+		<slf4j-ver>1.7.25</slf4j-ver>
+		<shiro-ver>1.3.2</shiro-ver>
+		<spring-ver>4.3.13.RELEASE</spring-ver>
+		<ehcache-ver>2.10.4</ehcache-ver>
+		<jackson2-ver>2.8.10</jackson2-ver>
+		<freemarker-ver>2.3.23</freemarker-ver>
+		<mysql-connector-ver>5.1.39</mysql-connector-ver>
+		<druid-datasource-ver>1.0.25</druid-datasource-ver>
+		<mybatis-ver>3.3.1</mybatis-ver>
+		<mybatis-spring-ver>1.2.5</mybatis-spring-ver>
+		<commons-io-ver>2.2</commons-io-ver>
+		<commons-codec-ver>1.10</commons-codec-ver>
+		<commons-lang3-ver>3.3.2</commons-lang3-ver>
+		<commons-fileupload-ver>1.3.3</commons-fileupload-ver>
+		<hibernate-validator-ver>4.3.2.Final</hibernate-validator-ver>
+		<mybatis-mapper-auto-ver>3.4.5</mybatis-mapper-auto-ver>
+		<mybatis-plugin-page-ver>5.1.2</mybatis-plugin-page-ver>
+		<junit-ver>4.8.2</junit-ver>
+		<servlet-api-ver>3.0.1</servlet-api-ver>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<repositories>
+		<repository>
+			<id>aliyun-repos</id>
+			<name>ALiYun Repository</name>
+			<url>http://maven.aliyun.com/nexus/content/groups/public</url>
+		</repository>
+	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>aliyun-repos</id>
+			<name>ALiYun Repository</name>
+			<url>http://maven.aliyun.com/nexus/content/groups/public</url>
+		</pluginRepository>
+	</pluginRepositories>
+
+	<dependencyManagement>
+		<dependencies>
+			<!-- cache -->
+			<dependency>
+				<groupId>net.sf.ehcache</groupId>
+				<artifactId>ehcache</artifactId>
+				<version>${ehcache-ver}</version>
+			</dependency>
+			<!-- spring -->
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-webmvc</artifactId>
+				<version>${spring-ver}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context-support</artifactId>
+				<version>${spring-ver}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-jdbc</artifactId>
+				<version>${spring-ver}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-tx</artifactId>
+				<version>${spring-ver}</version>
+			</dependency>
+			<!-- shiro -->
+			<dependency>
+				<groupId>org.apache.shiro</groupId>
+				<artifactId>shiro-core</artifactId>
+				<version>${shiro-ver}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.slf4j</groupId>
+						<artifactId>slf4j-api</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.shiro</groupId>
+				<artifactId>shiro-web</artifactId>
+				<version>${shiro-ver}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.shiro</groupId>
+				<artifactId>shiro-spring</artifactId>
+				<version>${shiro-ver}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.shiro</groupId>
+				<artifactId>shiro-ehcache</artifactId>
+				<version>${shiro-ver}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>net.sf.ehcache</groupId>
+						<artifactId>ehcache-core</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<!-- views -->
+			<dependency>
+				<groupId>org.freemarker</groupId>
+				<artifactId>freemarker</artifactId>
+				<version>${freemarker-ver}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-databind</artifactId>
+				<version>${jackson2-ver}</version>
+			</dependency>
+			<!-- datasource -->
+			<dependency>
+				<groupId>mysql</groupId>
+				<artifactId>mysql-connector-java</artifactId>
+				<version>${mysql-connector-ver}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.alibaba</groupId>
+				<artifactId>druid</artifactId>
+				<version>${druid-datasource-ver}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.mybatis</groupId>
+				<artifactId>mybatis</artifactId>
+				<version>${mybatis-ver}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.mybatis</groupId>
+				<artifactId>mybatis-spring</artifactId>
+				<version>${mybatis-spring-ver}</version>
+			</dependency>
+			<dependency>
+				<groupId>tk.mybatis</groupId>
+				<artifactId>mapper</artifactId>
+				<version>${mybatis-mapper-auto-ver}</version>
+			</dependency>
+			<dependency>
+			    <groupId>com.github.pagehelper</groupId>
+			    <artifactId>pagehelper</artifactId>
+				<version>${mybatis-plugin-page-ver}</version>
+			</dependency>
+			<!-- logger -->
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-log4j12</artifactId>
+				<version>${slf4j-ver}</version>
+			</dependency>
+			<!-- commons -->
+			<dependency>
+				<groupId>commons-io</groupId>
+				<artifactId>commons-io</artifactId>
+				<version>${commons-io-ver}</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-codec</groupId>
+				<artifactId>commons-codec</artifactId>
+				<version>${commons-codec-ver}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-lang3</artifactId>
+				<version>${commons-lang3-ver}</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-fileupload</groupId>
+				<artifactId>commons-fileupload</artifactId>
+				<version>${commons-fileupload-ver}</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>javax.servlet-api</artifactId>
+				<version>${servlet-api-ver}</version>
+				<scope>provided</scope>
+			</dependency>
+			<!-- junit -->
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>${junit-ver}</version>
+				<scope>test</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<skipTests>true</skipTests>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<modules>
+		<module>playweb-sys</module>
+		<module>playweb-afx</module>
+	</modules>
+</project>

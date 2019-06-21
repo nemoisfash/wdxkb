@@ -1,0 +1,24 @@
+<#assign title="${(channel.name)!}"/>
+<@layout.override name="body">
+	<@cms.articleList filters={'channelId':'${(channel.id)!}',"enabled":"true"} orderBy='create_time Desc' isIterate=false  size=16;items>
+			<div class="text_p" style="padding: 0 10px; margin-top:3.5rem;">
+				<div class="aui-content aui-margin-b-15">
+					<ul class="aui-list aui-media-list">
+					<#list items.content as item>
+						<a id="article" href="/article/${(item.id)!}.html">
+							<li class="aui-list-item aui-list-item-middle">
+								<div class="aui-media-list-item-inner">
+									<div class="aui-list-item-media" style="width: 3rem;">
+										<img src="${(item.imageUri)!}" class="aui-img-round aui-list-img-sm">
+									</div>
+									<div class="aui-list-item-inner aui-list-item-arrow">${(item.title)!}</div>
+								</div>
+							</li>
+						</a>
+					</#list>
+					</ul>
+				</div>
+			</div>
+	</@cms.articleList>
+</@layout.override>
+<@layout.extends name="layout/normal.html"/>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.tdds.mapper.MonitoringMapper">
+	<!-- 单表查询映射结果 -->
+	<resultMap id="BaseResultMap" type="org.tdds.entity.MonitoringList">
+	</resultMap>
+    <!-- 单表查询结果列 -->
+    <sql id="Base_Column_List">
+    </sql>
+		<select id="selectOneByName" resultType="org.tdds.entity.MonitoringList">
+		<![CDATA[
+			SELECT
+				Machine_Name as machineName,
+				Machine_Signal as machineSignal,
+				Machine_Mode as machineMode,
+				Machine_Status as machineStatus,
+				Maintenance_Signal as maintenanceSignal,
+				PartsCount_Target as partscountTarget,
+				PartsCount_Result as partscountResult,
+				Override_Rapid as overrideRapid,
+				Override_Spindle as overrideSpindle,
+				Override_Feed as overrideFeed,
+				Spindle_Mode as spindleMode
+			FROM
+				Monitoring_List
+			WHERE 
+				Machine_Name=#{name}
+			]]>
+		</select>
+		   
+</mapper>

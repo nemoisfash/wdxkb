@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE configuration PUBLIC "-//mybatis.org./DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<!--
+	配置文件中的位置必须符合要求，否则会报错，顺序如下: 
+	properties?, settings?, typeAliases?, typeHandlers?, 
+	objectFactory?, objectWrapperFactory?, plugins?, 
+	environments?, databaseIdProvider?, mappers?
+-->
+<configuration>
+	<properties resource="conf.properties">
+		<property name="hello" value="world" />
+	</properties>
+	<typeAliases>
+		<typeAlias alias="DRUID" type="net.chenke.support.DruidDataSourceFactory" />
+	</typeAliases>
+	<plugins>
+		<plugin interceptor="com.github.pagehelper.PageInterceptor">
+			<property name="helperDialect" value="mysql" />
+			<property name="offsetAsPageNum" value="true" />
+			<property name="rowBoundsWithCount" value="true" />
+		</plugin>
+	</plugins>
+	<environments default="development">
+		<environment id="development">
+			<transactionManager type="JDBC" />
+			<dataSource type="UNPOOLED">
+				<property name="driver" value="${jdbc.driver}" />
+				<property name="url" value="${jdbc.url}" />
+				<property name="username" value="${jdbc.username}" />
+				<property name="password" value="${jdbc.password}" />
+			</dataSource>
+		</environment>
+		<environment id="production">
+			<transactionManager type="MANAGED" />
+			<dataSource type="DRUID">
+				<property name="driver" value="${jdbc.driver}" />
+				<property name="url" value="${jdbc.url}" />
+				<property name="username" value="${jdbc.username}" />
+				<property name="password" value="${jdbc.password}" />
+				<property name="maxActive" value="20" />
+				<property name="initialSize" value="1" />
+				<property name="maxWait" value="60000" />
+				<property name="minIdle" value="1" />
+				<property name="timeBetweenEvictionRunsMillis" value="3000" />
+				<property name="minEvictableIdleTimeMillis" value="300000" />
+				<property name="testWhileIdle" value="true" />
+				<property name="testOnBorrow" value="false" />
+				<property name="testOnReturn" value="false" />
+				<property name="filters" value="stat" />
+			</dataSource>
+		</environment>
+	</environments>
+	<mappers>
+		<!-- syscore -->
+		<mapper class="org.casttc.syscore.mapper.DomainMapper" />
+		<mapper class="org.casttc.syscore.mapper.SiteMapper" />
+		<mapper class="org.casttc.syscore.mapper.SiteAttrMapper" />
+		<mapper class="org.casttc.syscore.mapper.SiteNavMapper" />
+		<mapper class="org.casttc.syscore.mapper.SiteNavGroupMapper" />
+		<mapper class="org.casttc.syscore.mapper.SyscoreModuleMapper" />
+		<!-- content -->
+		<mapper class="org.casttc.content.mapper.AdvertMapper" />
+		<mapper class="org.casttc.content.mapper.AdvertGroupMapper" />
+		<mapper class="org.casttc.content.mapper.ArticleMapper" />
+		<mapper class="org.casttc.content.mapper.ArticleAttrMapper" />
+		<mapper class="org.casttc.content.mapper.ChannelMapper" />
+		<mapper class="org.casttc.content.mapper.ChannelFieldMapper" />
+		<mapper class="org.casttc.content.mapper.ModelMapper" />
+		<mapper class="org.casttc.content.mapper.ModelFieldMapper" />
+		<mapper class="org.casttc.content.mapper.RelatedFileMapper" />
+		<mapper class="org.casttc.content.mapper.RelatedFileAttrMapper" />
+		<mapper class="org.casttc.content.mapper.RelatedLinkMapper" />
+		<mapper class="org.casttc.content.mapper.RelatedLinkAttrMapper" />
+		<mapper class="org.casttc.content.mapper.SinglesPageMapper" />
+		<mapper class="org.casttc.content.mapper.SinglesPageAttrMapper" />
+		<mapper class="org.casttc.content.mapper.ContentModuleMapper" />
+	</mappers>
+</configuration>

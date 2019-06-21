@@ -1,0 +1,89 @@
+<#import "/WEB-INF/ftl/module_sys.ftl" as sys>
+<#import "/WEB-INF/ftl/module_szst.ftl" as szst>
+<#import "/WEB-INF/ftl/module_cms.ftl" as cms>
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+	<title><@layout.block name="title"></@layout.block></title>
+	<@layout.block name="css">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<meta name="viewport" content="initial-scale=1,maximum-scale=1, minimum-scale=1">
+	<link rel="stylesheet" href="/themes/weixin/css/dingcan-index.css">
+	<link rel="stylesheet" href="/themes/weixin/font-awesome-4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="/themes/weixin/css/aui.css" />
+	</@layout.block>
+	<@layout.block name="js">
+	<script src="/themes/weixin/js/jquery-3.3.1.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="/assets/layui/layer.min.js" type="text/javascript"></script>
+	</@layout.block>
+</head>
+<body>
+<@layout.block name="head">
+<div class="wrap">
+<header>
+	<div class="aui-bar aui-bar-nav tob_bg">
+				<a class="aui-btn aui-pull-left" href="javascript:history.back(-1);">
+					<span class="fa fa-fw fa-chevron-left"></span>
+				</a>
+				<div class="aui-title">${title!}</div>
+				<div class="aui-pull-right">
+					<a href="#" id="sideBar">
+						<span class="fa fa-navicon aui-pull-right" style="margin-top:15px;"></span>
+		</a>
+	</div>
+	<div class="submenu" style="display: none;">
+			<ul>
+				<li>
+					<a href="/wap/index.html">系统首页</a>
+				</li>
+				<li>
+					<a href="/wap/node/aboutus.html?skin=wap">关于我们</a>
+				</li>
+			</ul>
+	</div>
+	</div>
+</header>
+</@layout.block>
+<@sys.currentUser; user>
+	<@layout.block name="body"></@layout.block>
+</@sys.currentUser>
+<@layout.block name="foot">
+<!-- <footer class="aui-bar aui-bar-tab" id="footer">
+	<div class="aui-bar-tab-item aui-active" tapmode>
+		<a href="/wap/index.html"><i class="aui-iconfont aui-icon-home"></i>
+		<div class="aui-bar-tab-label">订餐首页</div></a>
+	</div>
+	<div class="aui-bar-tab-item" tapmode>
+		<a href="/wap/indent.html"><i class="aui-iconfont aui-icon-edit"></i>
+		<div class="aui-bar-tab-label">订单记录</div></a>
+	</div>
+	<@sys.currentUser; user>
+	<div class="aui-bar-tab-item" tapmode>
+		<@szst.orderCount userId='${(user.id)!}'; item>
+		<a href="/wap/shoppingCar.html">
+		<#if item?? && item gt 0><div class="aui-badge">${item!}</div></#if>
+		</@szst.orderCount>
+		<i class="aui-iconfont aui-icon-cart"></i>
+		<div class="aui-bar-tab-label">购物车</div></a>
+	</div>
+	</@sys.currentUser>
+	<div class="aui-bar-tab-item" tapmode>
+		<a href="/wap/my.html">
+		<i class="aui-iconfont aui-icon-my"></i>
+		<div class="aui-bar-tab-label">我的</div></a>
+	</div>
+</footer> -->
+</div>
+<script type="text/javascript">
+$("#sideBar").click(function() {
+	$(".submenu").slideToggle();
+})
+</script>
+<#if message?? && message?length gt 0>
+<script type="text/javascript">
+layer.msg("${message!}");
+</script>
+</#if>
+</@layout.block>
+</body>
+</html>

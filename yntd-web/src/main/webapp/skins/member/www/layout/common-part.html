@@ -1,0 +1,126 @@
+<#import "/WEB-INF/ftl/module_sys.ftl" as sys>
+<#import "/WEB-INF/ftl/module_szst.ftl" as szst>
+<#import "/WEB-INF/ftl/module_cms.ftl" as cms>
+<!DOCTYPE html>
+<html>
+<head>
+<title>数字化食堂</title>
+<@layout.block name="css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="keywords" content="" />
+<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false);
+        function hideURLbar(){ window.scrollTo(0,1); } </script>
+<link rel="icon" href="/themes/web/icon/1_3.ico" type="img/x-ico" />
+<link href="/assets/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" media="all" />
+<link href="/themes/web/css/style.css" rel="stylesheet" type="text/css" media="all" />
+<link href="/assets/fonts/css/font-awesome.css" rel="stylesheet" type="text/css" media="all" />
+<link rel="stylesheet" href="/themes/web/css/flexslider.css" type="text/css" media="screen" property="" />
+<link rel="stylesheet" type="text/css" href="/themes/ui/css/jquery.page.css">
+</@layout.block>
+<!-- js -->
+<@layout.block name="js">
+<script src="/assets/js/jquery.min.js"></script>
+<script type="text/javascript" src="/themes/web/js/jquery.flexslider.js"></script>
+<script type="text/javascript" src="/themes/web/js/move-top.js"></script>
+<script type="text/javascript" src="/themes/web/js/easing.js"></script>
+<script type="text/javascript" src="/themes/web/js/jquery.orbit-1.2.3.js"></script>
+<script type="text/javascript" src="/assets/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/themes/ui/js/jquery.page.js"></script>
+<script type="text/javascript" src="/themes/admin/js/afx.js"></script>
+
+</@layout.block>
+</head>
+<body>
+<@layout.block name="head">
+<style>
+.fixed-bottom {position: fixed;bottom: 0;width:100%;}
+</style>
+<!-- header -->
+  <div class="agileits_header fixed">
+		<div class="w3l_offers">
+			<a href="/index.html">采油三厂数字化健康食堂管理平台</a>
+		</div>
+		<div class="w3l_header_right1">
+		<h2><a href="/admin/login.html" target="_blank">
+			<i class="fa fa-user fa-fw"></i>&nbsp用户登录</a></h2>
+		</div>
+		<div class="clearfix"> </div>
+	</div>
+	
+<!--logo部分-->
+<div class="logo_products">
+		<div class="container">
+			<div class="w3ls_logo_products_left">
+				<@cms.advertList code='pc_logo' site="1" loop=true orderBy="priority desc" ;items>
+					<#if items.filename ?? && items.filename!="">
+						<img src="${(items.filename)!}" alt="" width="70px;">
+					<#else>
+						<img src="/themes/web/images/zsyLOGO.png" alt="" width="70px;">
+					</#if>
+				</@cms.advertList>
+			</div>
+			<div class="w3ls_logo_products_left1">
+				<ul class="special_items">
+						<li>
+							<a href="/index.html">首页</a><i>/</i>
+						</li>
+						<li>
+							<a href="/member/recommend/list.html">每日精品</a>
+							<i>/</i>
+						</li>
+					<@cms.navlinkList site="1" code="pcIndexNav"; navLink>
+						<li>
+							<a href="${(navLink.link)!}?skin=www">${(navLink.name)!}</a>
+							<i>/</i>
+						</li>
+					</@cms.navlinkList>	
+				</ul>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+	</div>
+	</@layout.block>
+    <@layout.block name="body"></@layout.block>
+    <!-- content -->
+	<@layout.block name="foot">
+		<div class="footer">
+				<div class="container">
+					<div class="wthree_footer_copy">
+						 <@sys.siteAttr id='1' field='site_name' ;name>
+	                          <p>${(name.value)!}</p>
+	                        </@sys.siteAttr>
+	                        <@sys.siteAttr id='1' field='site_copyright' ;item>
+                                <span>版权所有：${(item.value)!}</span>&nbsp;&nbsp;
+                            </@sys.siteAttr>
+                             <@sys.siteAttr id='1' field='site_record' ;item>
+                              <span>${(item.value)!}</span>&nbsp;&nbsp;
+                            </@sys.siteAttr>
+                            <@sys.siteAttr id='1' field='site_visit_base' ;item>
+                             <@sys.siteAttr id='1' field='site_visit_num' ;item>
+                                 <span>站长统计：${(item.value?number+items.value?number)!}</span>
+                              </@sys.siteAttr> 
+                            </@sys.siteAttr>
+					</div>
+				</div>
+			</div>
+	</@layout.block>
+<script type="text/javascript">
+$(function(){
+    function footerPosition(){
+        $(".footer").removeClass("fixed-bottom");
+        var contentHeight = document.body.scrollHeight,//网页正文全文高度
+            winHeight = window.innerHeight;//可视窗口高度，不包括浏览器顶部工具栏
+        if(!(contentHeight > winHeight)){
+            //当网页正文高度小于可视窗口高度时，为footer添加类fixed-bottom
+            $(".footer").addClass("fixed-bottom");
+        } else {
+            $(".footer").removeClass("fixed-bottom");
+        }
+    }
+    footerPosition();
+    $(window).resize(footerPosition);
+});
+</script>
+</body>
+</html>

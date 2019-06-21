@@ -1,0 +1,302 @@
+<@layout.override name="body">
+<#assign  path="/member/recommend"/>
+ <style>
+.m-nav{
+	border: 1px solid #e8e8e8;
+	margin-top:20px;
+	/*height:42px;*/
+}
+.m-nav .head {
+	position: relative;
+	left: 33px;
+	top:12px;
+	color: #999;
+}
+.m-nav .head .title {
+	float: left;
+	max-width:100px;
+	line-height: 21px;
+}
+.m-nav .body{
+	padding: 0 100px 0 112px;
+	border-bottom:1px solid #ddd;
+}
+/*.m-nav .body:last-child{*/
+	 /*border-bottom:0;*/
+ /*}*/
+.m-nav .body .J_Items{
+	min-height:42px;
+	overflow: hidden;
+	/* margin-left: 0px; */
+}
+.m-nav .J_Items{
+	/*margin: 5px 0;*/
+}
+.items-inner{
+	line-height:42px;
+}
+.items-inner .item{
+	/* margin: 9px 40px 9px 0; */
+	color: #000;
+	margin-left:10px;
+}
+.items-inner .item:hover{
+	color:#84C639;
+}
+/*排序*/
+.nav-pills > li > a{
+	border-radius: 0;
+}
+.nav-pills > li.active > a{
+	background-color:#84C639;
+}
+.nav-pills > li.active > a, .nav-pills > li.active > a:hover{
+	background-color:#84C639;
+}
+.item span{
+font-family:'Open Sans', sans-serif;
+font-size:13px;
+}
+
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li > a:focus {
+   color: #fff;
+   text-decoration: none;
+   background-color:#84C639;
+}
+</style>
+<!--logo部分-->
+<!-- 信息条 -->
+	<div class="products-breadcrumb">
+		<div class="container">
+			<ul>
+				<li>
+					<i class="fa fa-home" aria-hidden="true"></i>
+					<a href="/index.html">首页</a><span>|</span>
+				</li>
+				<li><a href="/member/recommend/list.html" style="color:#ffff">每日精品</a></li>
+			</ul>
+		</div>
+	</div>
+<!--  信息条 -->
+<!--筛选-->
+	<div class="container">
+	<div class="m-nav">
+		<div class="J_Row">
+			<div class="head">
+				<h5>
+					<span class="title">选择类型：</span>
+				</h5>
+			</div>
+			<div class="body">
+				<div class="J_Items">
+					<div class="items-inner">
+						<a class="item" onclick="removeCriteria('timeQuantum')">
+							<#if filters.timeQuantum?? && filters.timeQuantum!="">
+								<span class="text">不限</span>
+							<#else>
+								<span class="text" style="color: red;">不限</span>
+							</#if>
+						</a>
+						<a class="item" onclick="updateCriteria('timeQuantum','0')">
+							<#if filters.timeQuantum?? && filters.timeQuantum=='0'>
+								<span class="text" style="color: red;">早餐</span>
+							<#else>
+								<span class="text">早餐</span>
+							</#if>
+						</a>
+						
+						<a class="item" onclick="updateCriteria('timeQuantum','1')">
+							<#if filters.timeQuantum?? && filters.timeQuantum=='1'>
+								<span class="text" style="color: red;">午餐</span>
+							<#else>
+								<span class="text">午餐</span>
+							</#if>
+						</a>
+						
+						<a class="item" onclick="updateCriteria('timeQuantum','2')">
+							<#if filters.timeQuantum?? && filters.timeQuantum=='2'>
+								<span class="text" style="color: red;">晚餐</span>
+							<#else>
+								<span class="text">晚餐</span>
+							</#if>
+						</a>
+					</div>
+				</div>
+
+			</div>
+		</div>
+		<div class="J_Row">
+			<div class="head">
+				<h5>
+					<span class="title">菜品类型：</span>
+				</h5>
+			</div>
+			<div class="body">
+				<div class="J_Items">
+					<div class="items-inner">
+					<a class="item" onclick="removeCriteria('type')">
+							<#if filters.type??>
+								<span class="text">不限</span>
+							<#else>
+								<span class="text" style="color: red;">不限</span>
+							</#if>
+						</a>
+						<@sys.optionList groupId="41" ;options>
+							<a class="item" onclick="updateCriteria('type','${(options.id)!}')">
+								<#if filters.type?? && filters.type=="${(options.id)!}">
+									<span class="text" style="color: red;">${(options.name)!}</span>
+								<#else>
+									<span class="text">${(options.name)!}</span>
+								</#if>
+							</a>
+						</@sys.optionList>
+					</div>
+				</div>
+
+			</div>
+		</div>
+		
+		<div class="J_Row">
+			<div class="head">
+				<h5>
+					<span class="title">选择食堂：</span>
+				</h5>
+			</div>
+			
+			<div class="body">
+		 <div class="J_Items">
+					<div class="items-inner">
+							<a class="item" onclick="removeCriteria('canteenId')">
+								<#if filters.canteenId?? && filters.canteenId!="">
+									<span class="text">不限</span>
+								<#else>
+									<span class="text" style="color: red;">不限</span>
+								</#if>
+							</a>
+						<@szst.canteens loop=false ;items>
+							<#list items as item>
+									<a class="item" onclick="updateCriteria('canteenId','${(item.id)!}')">
+										<#if filters.canteenId?? && filters.canteenId!='' && filters.canteenId=='${(item.id)!}'>
+											<span class="text" style="color:red;">${(item.name)!}</span>
+										<#else>
+											<span class="text">${(item.name)!}</span>
+										</#if>
+									</a>
+							</#list>
+						</@szst.canteens>
+					</div>
+				</div>
+			</div> 
+		</div>
+	</div>
+</div>
+<!--筛选-->
+
+<!--排序-->
+<div class="container">
+	<div class="m-nav">
+		<ul class="nav nav-pills">
+		<!-- 	<li role="presentation">
+				<a href="#">销量</a>
+			</li> -->
+			<li role="presentation" class="dropdown">
+				<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+					价格排序<span class="caret"></span>
+				</a>
+				<ul class="dropdown-menu">
+					<li role="presentation">
+						<#if filters.orderBy??>
+							<a onclick="removeCriteria('orderBy')">不限</a>
+						<#else>
+							<a onclick="removeCriteria('orderBy')" style="background-color:#84C639">不限</a>
+						</#if>
+					</li>
+					<li role="presentation">
+						<#if filters.orderBy ?? && filters.orderBy=="price ASC">
+							<a onclick="removeCriteria('orderBy')" style="background-color:#84C639">价格从低到高</a>
+						<#else>
+							<a onclick="updateCriteria('orderBy','price ASC')">价格从低到高</a>
+						</#if>
+					</li>
+					<li role="presentation">
+						<#if filters.orderBy ?? && filters.orderBy=="price desc">	
+							<a onclick="removeCriteria('orderBy')" style="background-color:#84C639">价格高到低</a>
+						<#else>
+							<a onclick="updateCriteria('orderBy','price DESC')">价格高到低</a>
+						</#if>
+					</li>
+				</ul>
+			</li>
+		</ul>
+	</div>
+</div>
+<!--排序-->
+<!--今日菜谱-->
+	<div class="container">
+		<div class="agile_top_brands_grids">
+			<div class="row">
+				<@szst.menuList canteenId="${(filters.canteenId)!}" type="${(filters.type)!}"  orderBy="${(filters.orderBy)!}" filter={"week":"${(filters.week)!}","timeQuantum":"${(filters.timeQuantum)!}"} page='${page}' size=16 loop=false;  items>
+					<#if items?? && items.content?? && items.content?size gt 0>
+						<#list items.content as menu>
+							<div class="col-md-3 top_brand_left" style="margin-bottom: 20px;">
+								<div class="hover14 column">
+									<div class="agile_top_brand_left_grid">
+										<div class="agile_top_brand_left_grid1">
+											<figure>
+												<div class="snipcart-item block">
+													<div class="snipcart-thumb">
+														<a href="single.html">
+															<img src="${(menu.imageUri)!}" alt=" " class="img-responsive" />
+														</a>
+														<p>${(menu.name)!}</p>
+													</div>
+													<div class="snipcart-details top_brand_home_details">
+														<a class="btn btn-danger my-cart-btn hvr-sweep-to-right" data-id="4" data-name="Dogs food" 
+															data-summary="summary 4" data-price="9.00" data-quantity="1" data-image="images/4.png">
+															${(menu.price)!}
+														</a>
+													</div>
+												</div>
+											</figure>
+										</div>
+									</div>
+								</div>
+							</div>
+						</#list>
+							<script type="text/javascript">
+							$(function(){
+								$(".tcdPageCode").createPage({
+									elementCount : ${(items.totalElements)!},
+									pageCount : ${(items.totalPages)!},
+									current : ${(items.number)!},
+									backFn : function(to){
+										Fw.updateFilter('${filters.uuid!}', 'page', to);
+									}
+								})
+							});
+							</script>
+						<#else>
+						<div class="container">
+							<div>
+								<img src="/themes/web/images/nodata.jpg" alt="" style="; width: 100%;">
+							</div>
+						</div>
+					</#if>
+				</@szst.menuList>
+			</div>
+		</div>
+		<div class="pull-right tcdPageCode" style="position: relative;left: -30%;margin-bottom: 3%;">
+		</div>
+	</div>
+<script type="text/javascript">
+	function updateCriteria(key, value){
+		Fw.updateFilter('${filters.uuid!}', key, value);
+	}
+	
+	function removeCriteria(key){
+		Fw.removeFilter('${filters.uuid!}', key);
+	}
+</script>
+</@layout.override>
+<@layout.extends name="layout/common-part.html"/>

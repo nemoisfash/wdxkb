@@ -1,0 +1,109 @@
+@CHARSET "UTF-8";
+body{
+	background:url(/themes/website/images/wdx/wdsbg.jpg);
+	height:100%;
+	width:100%;
+	background-size:cover;
+	overflow: hidden;
+}
+.label {
+				display: inline-block;
+				padding: .5em .6em .3em;
+				font-size: 75%;
+				font-weight: 700;
+				line-height: 19px;
+				color: #36b0f3;
+				text-align: center;
+				white-space: nowrap;
+				vertical-align: baseline;
+				width: 379px;
+				height: 25px;
+				border-radius: 0;
+				transform: perspective(20px) scaleY(1.3) rotateX(-5deg);
+				letter-spacing: 5px
+}
+
+.label-default {
+	background-color: #0916389e;
+	position: relative;
+	left: 29%;
+	top: 5px;
+}
+.btn {
+	display: inline-block;
+	margin-bottom: 0;
+	font-weight: 400;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: middle;
+	height: 39%;
+	cursor: pointer;
+	background-image: none;
+	font-size: 14px;
+	line-height: 1.42857143;
+	border-radius: 10px;
+}
+.circle{
+	display:inline-block;
+	border-radius:50%;
+	height:60px;
+	width:60px;
+	text-align:center;
+	line-height:53px;
+	position:absolute;
+	color:#FFF0FF;
+	background:#07070a69;
+}
+
+.circle-running{
+	border:5px solid #12b07b;
+}
+.circle-poweroff{
+	border:5px solid #878787;
+}
+.circle-alarm{
+	border:5px solid #12b07b;
+}
+.circle-waiting{
+	border:5px solid #feb501;
+}
+@keyframes fade {
+	from {
+	    opacity: 1.0;
+	}
+	50% {
+	    opacity: 0.4;
+	}
+	to {
+	    opacity: 1.0;
+	}
+}
+
+@-webkit-keyframes fade {
+	from {
+	    opacity: 1.0;
+	}
+	50% {
+	    opacity: 0.6;
+	}
+	to {
+	    opacity: 1.0;
+	}
+}
+
+.headerBox {
+    animation: fade 2000ms infinite;
+    -webkit-animation: fade 2000ms infinite;
+}
+.clock{
+	width: 300px;
+    height: 50px;
+    float: right;
+    background-color: #ff000000;
+    position: absolute;
+    left: 85%;
+    top: 39px;
+    color: #3992d4;
+    font-size: 30px;
+    font-weight:bold;
+}

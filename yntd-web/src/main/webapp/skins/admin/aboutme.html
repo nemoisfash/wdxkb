@@ -1,0 +1,45 @@
+<@layout.override name="css">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="js">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="body">
+<ol class="breadcrumb">
+	<li><a href="javascript:;">我的账号</a></li>
+	<li><a href="javascript:;">账号信息</a></li>
+</ol>
+
+<div class="container">
+
+<ul class="nav nav-tabs">
+	<li role="presentation" class="active"><a href="javascript:;">账号信息</a></li>
+</ul>
+<br/>
+
+<form class="form-horizontal">
+<@sys.currentUser; user>
+<div class="row form-group">
+	<label class="control-label col-sm-2">姓名</label>
+	<div class="col-sm-3">
+		<p class="form-control-static">${(user.name)!}</p>
+	</div>
+</div>
+<div class="row form-group">
+	<label class="control-label col-sm-2">最后登录时间</label>
+	<div class="col-sm-3">
+		<p class="form-control-static">${(user.loginTime?datetime)!}</p>
+	</div>
+</div>
+<div class="row form-group">
+	<label class="control-label col-sm-2">最后登录IP</label>
+	<div class="col-sm-3">
+		<p class="form-control-static">${(user.loginIp)!}</p>
+	</div>
+</div>
+</@sys.currentUser>
+</form>
+
+</div>
+</@layout.override>
+<@layout.extends name="./_layouts/bootstrap.html"/>

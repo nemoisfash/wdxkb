@@ -1,0 +1,61 @@
+<#assign title="订单详情"/>
+<@layout.override name="body">
+<!-- 主体 -->
+<div style="margin-top: 45px;">
+	<div class="middle">
+		<form action="" method="get">
+			<ul class="ul_2">
+			<#list entities as item>
+			<@szst.menu id="${(item.menuId)!}"; menu>
+				<li>
+					<div class="li_ft">
+							<div class="aui-col-xs-7 li_zj" style="margin-left: 15px;">
+								<div class="img_box">
+									<img src="${(menu.imageUri)!}" alt="">
+								</div>
+								<p><span>${(menu.name)!}</span></p>
+								<p>x${(item.count)!}</p>
+							</div>
+						<div class="li_rt aui-col-xs-3">
+							<p>￥<span id="sum${(menu.id)!}"></span>元</p>
+						</div>
+						<input type="hidden" id="menu${(menu.id)!}" value="${(menu.price)!}"/>
+						<input type="hidden" id="count${(menu.id)!}" value="${(item.count)!}"/>
+						<script type="text/javascript">
+						$(function() {
+							var sum=0;
+							var menu${(menu.id)!} = $("#menu${(menu.id)!}").val();
+							var count${(menu.id)!} = $("#count${(menu.id)!}").val();
+							sum = menu${(menu.id)!}*count${(menu.id)!}
+							document.getElementById("sum${(menu.id)!}").innerText = sum;
+						});
+						</script>
+					</div>
+				</li>
+			</@szst.menu>
+			</#list>
+			</ul>
+			<div class="aui-bar aui-bar-tab" style="bottom:50px;border-bottom: 1px solid #eee;">
+					<div class="aui-col-xs-4 aui-pull-left " style="height: 45px;line-height: 45px;padding-left: 20px;">
+						<p>合计:￥<span>${(orderIndent.totPrice)!}</span>元</p>
+					</div>
+				</div>
+		</form>
+	</div>
+</div>
+
+<script type="text/javascript">
+
+</script>
+
+</@layout.override>
+<@layout.override name="title">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="css">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="js">
+<@layout.super/>
+</@layout.override>
+<@layout.extends name="layout/normal.html"/>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.tdds.mapper.ManualRecordMapper">
+	<!-- 单表查询映射结果 -->
+	<resultMap id="BaseResultMap" type="org.tdds.entity.ManualRecord">
+	</resultMap>
+    <!-- 单表查询结果列 -->
+    <sql id="Base_Column_List">
+    </sql>
+	<select id="exportData" resultType="map">
+		 SELECT 
+			machine_name as sbmc,
+			maintenance_signal as whxh,
+			partsCount_target as jgmbz,
+			partsCount_result as jgssz,
+			override_rapid as kjbl,
+			override_spindle as zzbl,
+			override_feed as qxbl,
+			spindle_mode as zzms,
+			record_time as jlss
+		FROM znzz_manual_record
+		where  id &gt; 0
+		<if test="filter.startTime!=null and filter.startTime!='' and filter.endTime!=null and filter.endTime!=''">
+		    AND DATE(record_time) BETWEEN #{filter.startTime} AND #{filter.endTime};
+		</if>
+		<if test="filter.name!=null and filter.name!=''">
+			AND machine_name=#{filter.name}
+		</if>
+	</select>
+</mapper>

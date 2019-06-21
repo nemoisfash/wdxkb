@@ -1,0 +1,194 @@
+<#assign title="公众号"/>
+<@layout.override name="body">
+<style>
+.mai_picture{
+   width:40px;
+   display: inline;
+}
+.aui-margin-t-10 {
+   margin-top:0 !important;
+}
+.aui-grid [class*=aui-col-] {
+  padding:0.5rem 0;
+}
+
+div.header_img {
+    width: 100%;
+    height: 100%;
+    margin-top: 65px;
+}
+</style>
+<div class="header_img">
+	<@cms.advertList code='indexImage' site="1" loop=true orderBy="priority desc" ;item>
+		<#if item.enabled ?? &&  item.enabled>
+			<#if item.filename ?? && item.filename!="">
+				<li><img src="${(item.filename)!}" /></a></li>
+			<#else>
+				<li><img src="/themes/weixin/images/sy.jpg" /></a></li>
+			</#if>
+		</#if>
+	</@cms.advertList>
+</div>
+<div class="middle" style="margin: 0;">
+	<section class="aui-grid">
+	   	<div class="aui-row nav_top">
+	   		
+			<@cms.navlinkList site="1" code="listPage"; navLink>
+			       <div class="aui-col-xs-3">
+			         <a href="/wap${(navLink.link)!}?skin=wap">
+			           <img src="${(navLink.logo)!}" alt="" class="mai_picture">
+			          <div class="aui-grid-label aui-margin-t-10">${(navLink.name)!}</div>
+			        </a>
+			      </div>
+			</@cms.navlinkList>
+	    
+			<div class="aui-col-xs-3">
+			  <a href="/wap/provision.html">
+			    <img src="/themes/weixin/images/meirgongying.png" alt="" class="mai_picture">
+			    <div class="aui-grid-label aui-margin-t-10">每日菜谱</div>
+			  </a>
+			</div>
+      
+	      <div class="aui-col-xs-3">
+	        <a href="/wap/comment.html">
+	          <img src="/themes/weixin/images/hudongdianp.png" alt="" class="mai_picture">
+	          <div class="aui-grid-label aui-margin-t-10">互动点评</div>
+	        </a>
+	      </div>
+	    </div>
+	  </section>
+			
+			
+	<div class="middle">
+		<div class="aui-info aui-margin-t-10" style="border-bottom: 1px dashed  #ddd;color: #555;">
+			<div class="aui-info-item">
+				<span class="aui-iconfont aui-icon-date aui-text-warning aui-margin-r-10"></span>
+				<b style="color:#ffc000">今日供应</b>
+			</div>
+			<div class="aui-info-item" style="color:#ffc000">${date!}</div>
+		</div>
+		<div class="nav_0">
+			<div class="line"></div>
+			<span>早餐</span>
+			<div class="line"></div>
+		</div>
+		<ul class="ul_2">
+			<@szst.cookbook timeQuantum='0' week='${week!}' canteenId='${canteen.id!}'; cookbook>
+				<#if cookbook?? && cookbook.menuIds != ''>
+	    	    <#list cookbook.menuIds?split(',') as id>
+	    	    <@szst.menu id='${(id)!}'; menu>
+				<li>
+					<div class="li_ft">
+						<div class="img_box">
+							<img src="${(menu.imageUri)!}" alt="">
+						</div>
+						<div class="li_middle">
+							<p><span>${(menu.name)!}</span></p>
+							<p>单价：￥${(menu.price)!}</p>
+						</div>
+						<!-- <div class="li_rt">
+							<a href="javascript:;" onclick="onOrder(${menu.id!})"><i class="fa fa-fw fa-plus-square-o aui-pull-left"></i></a>
+						</div> -->
+					</div>
+				</li>
+				</@szst.menu>
+		        </#list>
+		        <#else>
+		        <div style="width:auto;height:auto;text-align:center;margin-top:10px;">
+			    	<img alt="" src="/themes/web/img/zwgy.jpg" style="width:150px;margin:0 auto;">
+			    	<p style="text-align:center;">暂无供应</p>
+				</div>
+				</#if>
+			</@szst.cookbook>
+		</ul>
+
+		<div class="nav_0">
+			<div class="line"></div>
+			<span>午餐</span>
+			<div class="line"></div>
+		</div>
+		<ul class="ul_2">
+			<@szst.cookbook timeQuantum='1' week='${week!}' canteenId='${canteen.id!}'; cookbook>
+				<#if cookbook?? && cookbook.menuIds != ''>
+	    	    <#list cookbook.menuIds?split(',') as id>
+	    	    <@szst.menu id='${(id)!}'; menu>
+				<li>
+					<div class="li_ft">
+						<div class="img_box">
+							<img src="${(menu.imageUri)!}" alt="">
+						</div>
+						<div class="li_middle">
+							<p><span>${(menu.name)!}</span></p>
+							<p>单价：￥${(menu.price)!}</p>
+						</div>
+						<!-- <div class="li_rt">
+							<a href="javascript:;" onclick="onOrder(${menu.id!})"><i class="fa fa-fw fa-plus-square-o aui-pull-left"></i></a>
+						</div> -->
+					</div>
+				</li>
+				</@szst.menu>
+		        </#list>
+		        <#else>
+		        <div style="width:auto;height:auto;text-align:center;margin-top:10px;">
+			    	<img alt="" src="/themes/web/img/zwgy.jpg" style="width:150px;margin:0 auto;">
+			    	<p style="text-align:center;">暂无供应</p>
+				</div>
+				</#if>
+			</@szst.cookbook>
+		</ul>
+
+		<div class="nav_0">
+			<div class="line"></div>
+			<span>晚餐</span>
+			<div class="line"></div>
+		</div>
+		<ul class="ul_2">
+			<@szst.cookbook timeQuantum='2' week='${week!}' canteenId='${canteen.id!}'; cookbook>
+				<#if cookbook?? && cookbook.menuIds != ''>
+	    	    <#list cookbook.menuIds?split(',') as id>
+	    	    <@szst.menu id='${(id)!}'; menu>
+				<li>
+					<div class="li_ft">
+						<div class="img_box">
+							<img src="${(menu.imageUri)!}" alt="">
+						</div>
+						<div class="li_middle">
+							<p><span>${(menu.name)!}</span></p>
+							<p>单价：￥${(menu.price)!}</p>
+						</div>
+						<!-- <div class="li_rt">
+							<a href="javascript:;" onclick="onOrder(${menu.id!})"><i class="fa fa-fw fa-plus-square-o aui-pull-left"></i></a>
+						</div> -->
+					</div>
+				</li>
+				</@szst.menu>
+		        </#list>
+		        <#else>
+		        <div style="width:auto;height:auto;text-align:center;margin-top:10px;">
+			    	<img alt="" src="/themes/web/img/zwgy.jpg" style="width:150px;margin:0 auto;">
+			    	<p style="text-align:center;">暂无供应</p>
+				</div>
+				</#if>
+			</@szst.cookbook>
+		</ul>
+	</div>
+</div>
+<script type="text/javascript">
+function onOrder(menuId){
+	$.ajax({
+		url: "/wap/order.json",
+		type: "post",
+		data: {"menuId":menuId},
+		dataType: "json",
+		success: function(data){
+			if(data.success){
+				location.reload();
+			}else{
+				layer.msg("点餐失败");
+			}
+		}
+	});
+}
+</script>
+</@layout.override>
+<@layout.extends name="layout/normal.html"/>

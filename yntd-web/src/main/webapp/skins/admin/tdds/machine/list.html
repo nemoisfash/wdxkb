@@ -1,0 +1,357 @@
+<#assign modulePath="${adminPath}/machine"/>
+<@layout.override name="body">
+<style>
+	.thum{
+		padding: 4px;
+	    margin-bottom: 20px;
+	    line-height: 1.42857143;
+	    background-color: #fff;
+	    border: 1px solid #ddd;
+	    border-radius: 4px;
+	    -webkit-transition: border .2s ease-in-out;
+	    -o-transition: border .2s ease-in-out;
+	    transition: border .2s ease-in-out;
+	    height: 357px;
+	    margin: 10px;
+	}
+	 
+</style>
+<input type="hidden" id="uuid" ng-model="uuid" value="${(filters.uuid)!}">
+<div class="col-xs-12" ng-app="myApp" ng-controller="myCtrl">
+<div class="box">
+            <div class="box-header">
+              <h3 class="box-title">设备管理</h3>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <div id="example1_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
+              	<div class="row">
+						<div class="col-sm-6">
+						 		<div class="box-tools">
+					                <div class="input-group input-group-sm" style="width: 300px;">
+					                  <input type="text" name="table_search" 
+					                  class="form-control pull-right" ng-model="value" placeholder="输入内容">
+					                  <div class="input-group-btn">
+					                    <select class="btn btn-default" ng-model="selected">
+					                    	 <option ng-repeat="item in keys" value="{{item.key}}">{{item.value}}</option>
+					                    </select>
+					                    <button type="button" class="btn btn-default" ng-click="search()">
+					                    	<i class="fa fa-search"></i>
+					                    </button>
+					                  </div>
+					                </div>
+					                <button type="button" class="btn btn-warning btn-sm search_adv_btn">
+					                    	 高级搜索
+					                 </button>
+				              </div>
+						</div>
+						<!-- <div class="col-sm-6" style="text-align:right;">
+							<a class="btn btn-success btn-sm" ng-click="addMachine()">添加机台
+					        </a>
+					        
+					        <a class="btn btn-success btn-sm" ng-click="exportData()">导出数据
+					        </a>
+						</div> -->
+				</div>
+				<div class="row search_adv_box" style="left:25px;top:80px">
+					<div class="search_adv_row">
+						<div class="search_adv_label">机台类型</div>
+						<div class="search_adv_items">
+							<a href="javascript:;" ng-click="removeFilter('type')" class="${fn.search_adv_item_cur(filters, 'type')}">不限</a>
+							<@sys.optionList groupId='42'; items>
+							<a href="javascript:;" ng-click="updateFilter('type', ${(items.id)!})" class="${fn.search_adv_item_cur(filters, 'type', '${(items.id)!}')}">${(items.name)!}</a>
+							</@sys.optionList>
+						</div>
+					</div>
+				</div>
+				<div class="row" >
+					<div class="col-sm-12">
+						<table id="example1" class="table table-bordered table-striped dataTable" role="grid" aria-describedby="example1_info">
+          					<thead>
+               					<tr role="row">
+									<th rowspan="1" colspan="1" style="width:100px;">机台名称</th>
+									<th rowspan="1" colspan="1"  style="width:100px;">机台编号</th>
+									<!-- <th rowspan="1" colspan="1"  style="width:100px;">机台类型</th> -->
+									<th rowspan="1" colspan="1"  style="width:100px;">机台IP</th>
+									<th rowspan="1" colspan="1"  style="width:50px;text-align:center;">图片</th>
+									<th rowspan="1" colspan="1"  style="width:100px;text-align:center;">操作</th>
+								</tr>
+                			</thead>
+							<tbody>
+							 <tr role="row" class="odd" ng-repeat="item in items">
+							   <td>{{item.name}}</td>
+							   <td>{{item.code}}</td>
+							 <!--   <td>{{item.type}}</td> -->
+							   <td>{{item.mIp}}</td>
+							   <td style="text-align:center;">
+									<a id="preview_btn" class="btn btn-success btn-xs" ng-if="item.imgUrl==null" ng-click="editImg(item.id)" title="上传">
+										<i class="fa fa-cloud-upload" aria-hidden="true"></i>
+									</a>
+									<a id="preview_btn" class="btn btn-default btn-xs" ng-if="item.imgUrl!=null" ng-click="editImg(item.id,item.imgUrl)" title="预览">
+									 <i class="fa fa-eye" aria-hidden="true"></i>
+									</a>
+							   </td>
+							   
+							   <td style="text-align:center;">
+									<!-- <a class="btn btn-success btn-xs" ng-click="exportData(item.id)" title="数据导出">
+										<i class="fa fa-download" aria-hidden="true"></i>
+									</a> -->
+								   <a class="btn btn-warning btn-xs" ng-click="logingData(item.id,item.name,item.code,item.mIp,item.imgUrl)" title="状态记录">
+								   	<i class="fa fa-history" aria-hidden="true"></i>
+								   </a>
+								   <a class="btn btn-default btn-xs" ng-click="realTimeData(item.id,item.name)" title="实时数据">
+								   	<i class="fa fa-info-circle" aria-hidden="true"></i>
+									</a>
+							   </td>
+							 </tr>
+							</tbody>
+              			</table>
+             	 	</div>
+              </div>
+	            	<div class="row">
+	             		<div class="col-sm-5">
+							<div class="dataTables_info" id="example1_info" role="status" aria-live="polite">
+								<span class="label label-default">共{{count}}台</span>
+							</div>
+							</div>
+							<div class="col-sm-7">
+							</div>
+					</div>
+    			</div>
+            </div>
+          </div>
+          <!--图片预览 start-->
+			<div id="boxPreview" style="display:none; text-align:center; margin:0px auto;width:630px;height:500px">
+				<div class="thum">
+					<img id="imgPreview" height="100%" width="100%" src="" alt="图片预览">
+				</div>
+				<div class="col-sm-7" style="position:relative;left:266px;top:79px;">
+				  <label for="upload" class="btn btn-success btn-sm" style="margin-right:10px;">选择图片</label>
+				  <input type="file" id="upload" style="display:none">
+				  <label class="btn btn-warning btn-sm" ng-click="uploadImg()">确定上传</label>
+				</div>
+			</div>
+			 <!--图片预览 end-->
+			<!--设备运行状态 start-->
+		<div id="logging" style="display:none;text-align: center;">
+	 		<div class="col-md-6" style="width:350px;height:300px;padding:5px">
+	          <div class="box box-primary">
+	            <div class="box-header with-border">
+	              <h3 class="box-title">设备当日运行状态时长占比(单位:分钟)</h3>
+	              <div class="box-tools pull-right">
+	                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+	                </button>
+	                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+	              </div>
+	            </div>
+	            <div class="box-body" style="padding:0px">
+	              <div id="piechart" class="chart" style="height:250px; width:90%;">
+	                
+	              </div>
+	            </div>
+	          </div>
+	        </div>
+	         <div class="col-md-6" style="width:350px;height:300px;padding:5px">
+				<div class="box box-info" style="margin:0px">
+           		 <div class="box-header with-border">
+              	<h3 class="box-title">设备信息</h3>
+             	 <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+              </div>
+            </div>
+            <div class="box-body" style="height:100px">
+              	<img width="70%" height="100%" src="{{loggingImage}}" />
+            </div>
+            <div class="box-body" style="height:150px;">
+            	 <ul class="list-group">
+				    <li class="list-group-item" style="text-align: left;border:none">
+				    	设备名称:<span style="margin-left:20px">{{loggingName}}</span>
+			    	</li>
+				    <li class="list-group-item" style="text-align: left;border:none">
+				    	设备编号:<span style="margin-left:20px">{{loggingCode}}</span>
+				    </li>
+				    <li class="list-group-item" style="text-align: left;border:none">
+				    	设备ip:<span style="margin-left:20px">{{loggingIp}}</span>
+			    	</li>
+				</ul>
+            </div>
+          </div>
+	         </div>
+	        <div class="col-md-6" style="width:700px;height:300px;padding:3px">
+ 			<div class="box box-info">
+            <div class="box-header with-border">
+              <h3 class="box-title">设备运行状态每日趋势(单位：分钟)</h3>
+              <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+              </div>
+            </div>
+            <div class="box-body" style="pdding:0">
+              <div id="lineCharts" class="chart" style="height:250px;width:100%;">
+                	
+              </div>
+            </div>
+          </div>
+	        </div>
+        </div>
+        <!--设备运行状态 end-->
+        <!--设备实时数据start  -->
+        	<div id="realTime" style="display:none">
+	        	<div class="box box-primary" style="width:100%;height:240px">
+	        		  <div id="gauges" class="box-body" style="pdding:0;background-color:rgb(3, 31, 58);overflow:hidden;">
+		        		   <div name="gauge" style="width:33%;height:240px;float:left;">
+		        		   </div>
+		        		   <div name="gauge" style="width:33%;height:240px;float:left;">
+		        		   </div>
+		        		   <div name="gauge" style="width:33%;height:240px;float:left;">
+		        		   </div>
+		        		   <div name="gauge" style="width:33%;height:240px;float:left;">
+		        		   </div>
+        		    </div>
+	        	</div>
+				<div class="box box-primary">
+				   <div class="box-body">
+				     <div class="form-group">
+				       	<div class="input-group">
+							<div class="input-group-addon">
+								<label>设备状态:</label>
+							</div>
+			         		<input type="text" class="form-control" ng-model="monitor.machineSignal" disabled="disabled">
+					         <div class="input-group-addon">
+			            		 <label>运转模式:</label>
+					         </div>
+				         	<input type="text" class="form-control" ng-model="monitor.machineMode" disabled="disabled">
+				       </div>
+				     </div>
+				     <div class="form-group">
+				       	<div class="input-group">
+							<div class="input-group-addon">
+								<label>报警代码:</label>
+							</div>
+			         		<input type="text" class="form-control" ng-model="monitor.alarmNo" disabled="disabled">
+					         <div class="input-group-addon">
+			            		 <label>报警信息:</label>
+					         </div>
+				         	<input type="text" class="form-control" ng-model="monitor.alarmMessage" disabled="disabled">
+				       </div>
+				     </div>
+				     <div class="form-group">
+				       	<div class="input-group">
+							<div class="input-group-addon">
+								<label>主程序编号:</label>
+							</div>
+			         		<input type="text" class="form-control" ng-model="monitor.mainprogramNo" disabled="disabled">
+					         <div class="input-group-addon">
+			            		 <label>子程序编号:</label>
+					         </div>
+				         	<input type="text" class="form-control" ng-model="monitor.subprogramNo" disabled="disabled">
+				       </div>
+				     </div>
+				     <div class="form-group">
+				       	<div class="input-group">
+							<div class="input-group-addon">
+								<label>主轴刀具号:</label>
+							</div>
+			         		<input type="text" class="form-control" ng-model="monitor.toolNo" disabled="disabled">
+					         <div class="input-group-addon">
+			            		 <label>主轴刀具类型:</label>
+					         </div>
+				         	<input type="text" class="form-control" ng-model="monitor.toolName" disabled="disabled">
+				       </div>
+				     </div>
+				     <div class="form-group">
+				       	<div class="input-group">
+							<div class="input-group-addon">
+								<label>加工计数目标值:</label>
+							</div>
+			         		<input type="text" class="form-control" ng-model="monitor.partscountTarget" disabled="disabled">
+					         <div class="input-group-addon">
+			            		 <label>加工计数实际值:</label>
+					         </div>
+				         	<input type="text" class="form-control" ng-model="monitor.partscountResult" disabled="disabled">
+				       </div>
+				     </div>
+				     <div class="form-group">
+				       	<div class="input-group">
+							<div class="input-group-addon">
+								<label>快进倍率:</label>
+							</div>
+			         		<input type="text" class="form-control" ng-model="monitor.overrideRapid" disabled="disabled">
+					         <div class="input-group-addon">
+			            		 <label>主轴倍率:</label>
+					         </div>
+				         	<input type="text" class="form-control" ng-model="monitor.overrideSpindle" disabled="disabled">
+				       </div>
+				     </div>
+				          <div class="form-group">
+				       	<div class="input-group">
+							<div class="input-group-addon">
+								<label>切削倍率:</label>
+							</div>
+			         		<input type="text" class="form-control" ng-model="monitor.overrideFeed" disabled="disabled">
+					         <div class="input-group-addon">
+			            		 <label>主轴模式:</label>
+					         </div>
+				         	<input type="text" class="form-control" ng-model="monitor.spindleMode" disabled="disabled" >
+				       </div>
+				     </div>
+				</div>
+				</div>
+				
+          </div>
+        <!--设备实时数据end  -->
+        <!--设备日志数据导出start--->
+        	<div id="exportLogging" style="display:none">
+        	<div class="box box-primary" style="height:0px">
+            <div class="box-body">
+            <form id="exportForm" action="/admin/logging/exportdata" method="post">
+            	<input type="hidden" name="machineId" value="{{machineId}}">
+            	<input type="hidden" name="node" value="machine_">
+					<div class="form-group">
+					    	<div class="input-group">
+								<div class="input-group-addon">
+									<label>开始时间:</label>
+								</div>
+					     		<input type="text" id="startTime" name="startTime" class="Wdate form-control" 
+					     		style="height:33px;border-color:#d2d6de;" required onclick="WdatePicker({maxDate:'#F{$dp.$D(\'endTime\')}'})">
+						       <div class="input-group-addon">
+						        	 <label>结束时间:</label>
+						       </div>
+					      	<input type="text" id="endTime" name="endTime" required class="Wdate form-control" 
+					      	style="height:33px;border-color:#d2d6de;" onclick="WdatePicker({minDate:'#F{$dp.$D(\'startTime\')}'})">
+					    </div>
+					</div>
+					<div class="checkbox">
+					    <label>
+					      <input type="radio" id="status" name="status" value="POWEROFF" required/>POWEROFF
+					    </label>
+					    <label>
+					      <input type="radio" id="status1" name="status" value="ALARM"  required/>ALARM
+					    </label>
+					    <label>
+					      <input type="radio" id="status2" name="status" value="WAITING"  required/>WAITING
+					    </label>
+					</div>
+              </div>
+              <div class="box-footer clearfix" style="line-height:40px">
+              	<button type="submit" class="btn btn-success btn-xs">确定</button>
+              	<button type="reset" class="btn btn-warning btn-xs">重置</button>
+              </div>
+              </form>
+            </div>
+          </div>
+        <!--设备日志数据导出end--->
+	</div>
+</@layout.override>
+<@layout.override name="js">
+<@layout.super/>
+<script src="/assets/uploadfile/fileUploadByFormData.js"></script>
+<script src="/themes/admin/machine/js/gaugeOption.js"></script>
+<script src="/themes/admin/machine/js/lineOption.js"></script>
+<script src="/themes/admin/machine/js/pieOption.js"></script>
+<script src="/themes/admin/machine/js/machine.js"></script>
+</@layout.override>
+<@layout.extends name="../../_layouts/bootstrap1.html"/>

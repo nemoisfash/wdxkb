@@ -1,0 +1,84 @@
+<#assign modulePath="${adminPath}/sys/group" />
+<@layout.override name="css">
+<@layout.super/>
+<link rel="stylesheet" href="/themes/admin/afx/css/select2.min.css" />
+</@layout.override>
+<@layout.override name="js">
+<@layout.super/>
+<script type="text/javascript" src="/themes/admin/afx/js/select2.min.js"></script>
+</@layout.override>
+<@layout.override name="body">
+<ol class="breadcrumb">
+	<li><a href="${modulePath}/list.html" >用户组管理</a></li>
+<#if (parent)??>
+	<li><a href="${modulePath}/list.html?p=${(parent.id)!}">${(parent.name)!}</a></li>
+</#if>
+	<li><a href="javascript:;"><#if (entity.id)??>修改<#else>添加</#if></a></li>
+</ol>
+
+<div class="container">
+
+<ul class="nav nav-tabs">
+	<li role="presentation"><a href="${modulePath}/list.html${(parent??)?string('?p=${(parent.id)!}','')}">列表</a></li>
+	<li role="presentation" class="active"><a href="javascript:;"><#if (entity.id)??>修改<#else>添加</#if></a></li>
+</ul>
+<br/>
+
+<form id="validateForm" class="form-horizontal" role="form" method="post">
+<@spring.formHiddenInput path='entity.id'/>
+<@spring.formHiddenInput path='entity.parentId'/>
+<#if (parent)??>
+	<div class="row form-group">
+		<label class="control-label col-sm-2">上级组</label>
+		<div class="col-sm-8">
+			<p class="form-control-static">${(parent.name)!}</p>
+		</div>
+	</div>
+</#if>
+
+	<div class="row form-group">
+		<label class="control-label col-sm-2"><em class="spk-required">*</em>名称</label>
+		<div class="col-sm-3">
+			<@spring.formInput path='entity.name' attributes='class="form-control input-sm" required' />
+			<@spring.showErrors separator='&nbsp;' classOrStyle='help-block' />
+		</div>
+	</div>
+  
+	<div class="row form-group">
+		<label class="control-label col-sm-2">是否启用</label>
+		<div class="col-sm-3">
+			<@spring.formRadioButtons path='entity.enabled' options={"true":"是","false":"否"} separator='&nbsp;' attributes='class="radio-inline" required' />
+			<@spring.showErrors separator='&nbsp;' classOrStyle='help-block' />
+		</div>
+	</div>
+	
+	<div class="row form-group">
+		<label class="control-label col-sm-2">角色</label>
+		<div class="col-sm-3">
+			<select id="roleIds" name="roleIds" class="form-control input-sm combox" multiple>
+				<@sys.roleList; item>
+				<option value="${(item.id)}">${(item.name)}</option>
+				</@sys.roleList>
+			</select>
+		</div>
+	</div>
+	
+	<hr class="spk-hr" />
+	<div class="row form-group">
+		<div class="col-sm-8 col-sm-offset-2">
+			<button id="btnSubmit" type="submit" class="btn btn-primary btn-sm">保存</button>
+		</div>
+	</div>
+</form>
+</div>
+<script type="text/javascript">
+$(function(){
+	$("#validateForm").attr("action","${modulePath}/save.html").validate();
+	$('#roleIds').val([${fn.entitiesIds(roles)}]).trigger('change').select2({  
+		placeholder: "给该组授权",
+		tags:true,
+	});
+});
+</script>
+</@layout.override>
+<@layout.extends name="../../_layouts/bootstrap.html"/>

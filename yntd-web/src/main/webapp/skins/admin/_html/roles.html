@@ -1,0 +1,23 @@
+<@layout.override name="css">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="js">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="body">
+<div class="container-fluid">
+<br/>
+<table class="table table-striped table-condensed expander spk-gridview">
+	<tr class="row-head">
+		<th class="column-tiny"><input type="checkbox" onclick="Fw.checkEach('ids')" /></th>
+		<th class="column-auto">名称</th>
+	</tr>
+<@sys.roleList; item>
+	<tr class="row-data">
+		<td class="column-tiny"><input type="checkbox" name="ids" value="${(item.id)!}"/></td>
+		<td class="column-auto">${(item.name)!}</td>
+	</tr>
+</@sys.roleList>
+</table>
+</@layout.override>
+<@layout.extends name="../_layouts/dialog.html"/>

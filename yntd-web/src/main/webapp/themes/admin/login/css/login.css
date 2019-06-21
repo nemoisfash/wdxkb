@@ -1,0 +1,91 @@
+@CHARSET "UTF-8";
+*{
+			margin: 0;
+			padding: 0;
+		}
+		body{
+			background: #ffffff;
+		}
+		.top{
+			background: url(../images/xbdsadminbacgroundimage.jpg) no-repeat;
+			width: 100%;
+			padding-top: 120px;
+			text-align: center;
+			background-size:100% ;
+			height:520px;
+		}
+		.loginform{
+			margin: -320px auto;
+			width: 340px;
+    		height: 315px;
+			background: #FFFFFF;
+			border-radius: 20px;
+			box-shadow: #c5c5c5 -1px 6px 10px;
+			padding:50px 30px;
+			
+		}
+		.line,.btline{
+			width: 340px;
+			height: 50px;
+			margin: 20px 0;
+		}
+		.line input{
+			width: 320px;
+			height: 40px;
+			border-radius: 10px;
+			border:1px solid #ccc;
+			padding-left:20px ;
+		}
+		.line input[name="captcha"]{
+			width: 112px;
+			float: left;
+			margin-right: 10px;
+		}
+		.line .captcha{
+			width: 112px;
+    		height:40px;
+    		float: left;
+    		/*border:1px solid #ccc;*/
+		}
+		.line a{
+			float: left;
+			width: 80px;
+			height: 40px;
+			display: inline-block;
+			line-height: 40px;
+			font-size: 14px;
+    		text-align: center;
+		}
+		.btline input{
+			width: 160px;
+			height: 40px;
+			border-radius: 10px;
+			border:1px solid #ccc;
+			background: #CCCCCC;
+			color: #FFFFFF;
+		}
+		.btline input[type="submit"]{
+			margin-right: 20px;
+			background: #2f81b3;
+		}
+		.bottom{
+			clear: both;
+			text-align: center;
+			color: #aaa;
+			width: 100%;
+		    margin-top: 50px;
+		    font-size: 12px;
+		}
+		.box{
+			width: 560px;
+		    height: 411px;
+		    background: url(../images/ri.png) no-repeat right bottom;
+		    		    margin: 0 auto;
+		}
+		.box1{
+			width: 560px;
+		    height: 411px;
+			background: url(../images/lf.png) no-repeat left bottom;
+
+		}
+		.captcha{width:112px;height:32px}

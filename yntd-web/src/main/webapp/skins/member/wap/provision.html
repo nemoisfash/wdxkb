@@ -1,0 +1,144 @@
+<#assign title="每日菜谱"/>
+<@layout.override name="body">
+<div class="header_img">
+	<img src="../../themes/weixin/img/stln.jpg" alt="">
+</div>
+<div style="margin: 0;">
+	<div class="tot_tit">
+		<span>每日菜谱<time>【${date!}】</time></span>
+	</div>
+</div>
+<div class="middle">
+	<div class="nav_0">
+		<div class="line"></div>
+		<span>早餐</span>
+		<div class="line"></div>
+	</div>
+	<ul class="ul_2">
+	<@szst.cookbook timeQuantum='0' week='${week!}' canteenId='${canteen.id!}'; cookbook>
+		<#if cookbook?? && cookbook.menuIds != ''>
+  	    <#list cookbook.menuIds?split(',') as id>
+  	    <@szst.menu id='${(id)!}'; menu>
+		<li>
+			<div class="li_ft">
+				<div class="img_box">
+					<img src="${(menu.imageUri)!}" alt="">
+				</div>
+				<div class="li_middle">
+					<p><span>${(menu.name)!}</span></p>
+					<p>单价：￥${(menu.price)!}</p>
+				</div>
+				<!-- <div class="li_rt">
+					<a href="javascript:;" onclick="onOrder(${menu.id!})"><i class="fa fa-fw fa-plus-square-o aui-pull-left"></i></a>
+				</div> -->
+			</div>
+		</li>
+		</@szst.menu>
+        </#list>
+        <#else>
+        <div style="width:auto;height:auto;text-align:center;margin-top:10px;">
+	    	<img alt="" src="/themes/web/img/zwgy.jpg" style="width:150px;margin:0 auto;">
+	    	<p style="text-align:center;">暂无供应</p>
+		</div>
+		</#if>
+	</@szst.cookbook>
+	</ul>
+
+	<div class="nav_0">
+		<div class="line"></div>
+		<span>午餐</span>
+		<div class="line"></div>
+	</div>
+	<ul class="ul_2">
+	<@szst.cookbook timeQuantum='1' week='${week!}' canteenId='${canteen.id!}'; cookbook>
+		<#if cookbook?? && cookbook.menuIds != ''>
+  	    <#list cookbook.menuIds?split(',') as id>
+  	    <@szst.menu id='${(id)!}'; menu>
+		<li>
+			<div class="li_ft">
+				<div class="img_box">
+					<img src="${(menu.imageUri)!}" alt="">
+				</div>
+				<div class="li_middle">
+					<p><span>${(menu.name)!}</span></p>
+					<p>单价：￥${(menu.price)!}</p>
+				</div>
+				<!-- <div class="li_rt">
+					<a href="javascript:;" onclick="onOrder(${menu.id!})"><i class="fa fa-fw fa-plus-square-o aui-pull-left"></i></a>
+				</div> -->
+			</div>
+		</li>
+		</@szst.menu>
+        </#list>
+        <#else>
+        <div style="width:auto;height:auto;text-align:center;margin-top:10px;">
+	    	<img alt="" src="/themes/web/img/zwgy.jpg" style="width:150px;margin:0 auto;">
+	    	<p style="text-align:center;">暂无供应</p>
+		</div>
+		</#if>
+	</@szst.cookbook>
+	</ul>
+
+	<div class="nav_0">
+		<div class="line"></div>
+		<span>晚餐</span>
+		<div class="line"></div>
+	</div>
+	<ul class="ul_2">
+	<@szst.cookbook timeQuantum='2' week='${week!}' canteenId='${canteen.id!}'; cookbook>
+		<#if cookbook?? && cookbook.menuIds != ''>
+  	    <#list cookbook.menuIds?split(',') as id>
+  	    <@szst.menu id='${(id)!}'; menu>
+		<li>
+			<div class="li_ft">
+				<div class="img_box">
+					<img src="${(menu.imageUri)!}" alt="">
+				</div>
+				<div class="li_middle">
+					<p><span>${(menu.name)!}</span></p>
+					<p>单价：￥${(menu.price)!}</p>
+				</div>
+				<!-- <div class="li_rt">
+					<a href="javascript:;" onclick="onOrder(${menu.id!})"><i class="fa fa-fw fa-plus-square-o aui-pull-left"></i></a>
+				</div> -->
+			</div>
+		</li>
+		</@szst.menu>
+        </#list>
+        <#else>
+        <div style="width:auto;height:auto;text-align:center;margin-top:10px;">
+	    	<img alt="" src="/themes/web/img/zwgy.jpg" style="width:150px;margin:0 auto;">
+	    	<p style="text-align:center;">暂无供应</p>
+		</div>
+		</#if>
+	</@szst.cookbook>
+	</ul>
+</div>
+<script type="text/javascript">
+function onOrder(menuId){
+	$.ajax({
+		url: "/wap/order.json",
+		type: "post",
+		data: {"menuId":menuId},
+		dataType: "json",
+		success: function(data){
+			if(data.success){
+				location.reload();
+			}else{
+				layer.msg("点餐失败");
+			}
+		}
+	});
+}
+</script>
+</@layout.override>
+<@layout.override name="title">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="css">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="js">
+<@layout.super/>
+</@layout.override>
+<@layout.extends name="layout/normal.html"/>

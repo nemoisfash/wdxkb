@@ -1,0 +1,85 @@
+<#assign modulePath="${adminPath}/cms/page/${channel.code}" />
+<@layout.override name="css">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="js">
+<@layout.super/>
+<script src="/assets/ueditor/utf8-jsp/ueditor.config.js" type="text/javascript"></script>
+<script src="/assets/ueditor/utf8-jsp/ueditor.all.js" type="text/javascript"></script>
+<script src="/assets/ueditor/utf8-jsp/lang/zh-cn/zh-cn.js"></script>
+</@layout.override>
+<@layout.override name="body">
+<ol class="breadcrumb">
+	<li><a href="javascript:;">${(channel.name)!}</a></li>
+	<li><a href="javascript:;">编辑</a></li>
+</ol>
+<div class="container">
+<ul class="nav nav-tabs">
+	<li role="presentation" class="active"><a href="javascript:;"><#if (entity.id)??>修改<#else>添加</#if></a></li>
+</ul>
+<br/>
+
+<form id="validateForm" class="form-horizontal" role="form" method="post">
+<@spring.formHiddenInput path='entity.id'/>
+<@spring.formHiddenInput path='entity.channelId'/>
+<@spring.formHiddenInput path='entity.createBy'/>
+<@spring.formHiddenInput path='entity.createTime'/>
+<@spring.formHiddenInput path='entity.visits'/>
+<#if channel??>
+	<div class="row form-group">
+		<label class="control-label col-sm-2">所属栏目</label>
+		<div class="col-sm-3">
+			<p class="form-control-static">${(channel.name)!}</p>
+		</div>
+	</div>
+</#if>
+
+	<div class="row form-group">
+		<label class="control-label col-sm-2"><em class="spk-required">*</em>标题</label>
+		<div class="col-sm-8">
+			<@spring.formInput path='entity.title' attributes='class="form-control input-sm required" placeholder="" required' />
+			<@spring.showErrors separator='' classOrStyle='help-block' />
+		</div>
+	</div>
+	
+	<div class="row form-group">
+		<label class="control-label col-sm-2">文章作者</label>
+		<div class="col-sm-3">
+			<@spring.formInput path='entity.author' attributes='class="form-control input-sm" placeholder=""' />
+			<@spring.showErrors separator='' classOrStyle='help-block' />
+		</div>
+		<label class="control-label col-sm-2">文章来源</label>
+		<div class="col-sm-3">
+			<@spring.formInput path='entity.source' attributes='class="form-control input-sm" placeholder=""' />
+			<@spring.showErrors separator='' classOrStyle='help-block' />
+		</div>
+	</div>
+  
+  
+	<div class="row form-group">
+		<label class="control-label col-sm-2"><em class="spk-required">*</em>内容</label>
+		<div class="col-sm-8">
+			<@spring.formTextarea path='entity.content' attributes='class="required" rows="8"'/>
+			<@spring.showErrors separator='' classOrStyle='help-block' />
+		</div>
+	</div>
+	<hr class="spk-hr" />
+	<div class="row form-group">
+		<div class="col-sm-8 col-sm-offset-2">
+			<button type="submit" class="btn btn-primary btn-block">保存</button>
+		</div>
+	</div>
+</form>
+</div>
+<script type="text/javascript">
+var editor = new UE.ui.Editor(); 
+editor.render("content");
+
+$(function(){
+	$("#validateForm").attr("action","${modulePath!}/save.html").validate();
+});
+
+
+</script>
+</@layout.override>
+<@layout.extends name="../../_layouts/bootstrap.html"/>

@@ -1,0 +1,127 @@
+<#assign modulePath="${adminPath}/sys/user" />
+<@layout.override name="css">
+<@layout.super/>
+<link rel="stylesheet" href="/themes/admin/afx/css/select2.min.css" />
+<link rel="stylesheet" href="/themes/admin/jstree/themes/default/style.min.css" />
+</@layout.override>
+<@layout.override name="js">
+<@layout.super/>
+<script type="text/javascript" src="/themes/admin/afx/js/select2.min.js"></script>
+<script type="text/javascript" src="/themes/admin/jstree/jstree.min.js"></script>
+</@layout.override>
+<@layout.override name="body">
+<ol class="breadcrumb">
+	<li><a href="javascript:;">账号管理</a></li>
+	<li><a href="javascript:;">编辑</a></li>
+</ol>
+
+<div class="container">
+
+<ul class="nav nav-tabs">
+	<li role="presentation"><a href="${modulePath}/list.html">列表</a></li>
+	<li role="presentation" class="active"><a href="javascript:;"><#if (entity.id)??>修改<#else>添加</#if></a></li>
+</ul>
+<br/>
+
+<form id="validateForm" class="form-horizontal" role="form" method="post">
+<@spring.formHiddenInput path='entity.id'/>
+<@spring.formHiddenInput path='entity.account.id'/>
+	
+	<div class="row form-group">
+		<label class="control-label col-sm-2">登录名</label>
+		<div class="col-sm-3">
+			<@spring.formInput path='entity.account.username' attributes='class="form-control input-sm" required' />
+			<@spring.showErrors separator='&nbsp;' classOrStyle='help-block' />
+		</div>
+	</div>
+	
+	<div class="row form-group">
+		<label class="control-label col-sm-2">姓名</label>
+		<div class="col-sm-3">
+			<@spring.formInput path='entity.account.name' attributes='class="form-control input-sm" required' />
+			<@spring.showErrors separator='&nbsp;' classOrStyle='help-block' />
+		</div>
+	</div>
+
+	<div class="row form-group">
+		<label class="control-label col-sm-2">邮箱</label>
+		<div class="col-sm-3">
+			<@spring.formInput path='entity.account.email' attributes='class="form-control input-sm"' />
+			<@spring.showErrors separator='&nbsp;' classOrStyle='help-block' />
+		</div>
+	</div>
+
+	<div class="row form-group">
+		<label class="control-label col-sm-2">所在分组</label>
+		<div class="col-sm-3">
+			<input id="jstree-group" class="form-control input-sm" />
+		</div>
+	</div>
+	
+	<div class="row form-group">
+		<label class="control-label col-sm-2">角色</label>
+		<div class="col-sm-3">
+			<select id="roleIds" name="roleIds" class="form-control input-sm combox" multiple>
+				<@sys.roleList; item>
+				<option value="${(item.id)}">${(item.name)}</option>
+				</@sys.roleList>
+			</select>
+		</div>
+	</div>
+
+	<hr class="spk-hr" />
+	<div class="row form-group">
+		<div class="col-sm-8 col-sm-offset-2">
+			<button type="submit" class="btn btn-primary btn-sm">保存</button>
+		</div>
+	</div>
+</form>
+</div>
+
+<script type="text/javascript" src="/themes/admin/js/jquery.jstreebox.js"></script>
+<script type="text/javascript">
+jQuery.validator.addMethod("unique", function(value, element) {
+	var unique = (value!='');
+	$.ajax({
+		url: "${modulePath}/unique/username.json",
+		type: "post",
+		data: {"id":"${entity.id!}", "code":value},
+		async:false,
+		dataType: "json",
+		success: function(data){
+			unique = data.success;
+		}
+	});
+	return unique;
+}, '用户名已存在');
+jQuery.validator.addMethod("uniqueEmail", function(value, element) {
+	if (value=='') return true;
+	var unique = false;
+	$.ajax({
+		url: "${modulePath}/unique/email.json",
+		type: "post",
+		data: {"id":"${entity.id!}", "code":value},
+		async:false,
+		dataType: "json",
+		success: function(data){
+			unique = data.success;
+		}
+	});
+	return unique;
+}, '邮箱已在该系统中注册');
+$(function(){
+	$("#validateForm").attr("action","${modulePath}/save.html").validate({rules:{"account.username":{unique:true},"account.email":{email:true, uniqueEmail:true}}});
+	$('#roleIds').val([${fn.entitiesIds(roles)}]).trigger('change').select2({  
+		placeholder: "给该用户授权",
+		tags:true,
+	});
+	$("#jstree-group").jstreebox({
+		storeTo: 'account.groupId', 
+		url: '${modulePath}/group/tree.json', 
+		selectedIds: '${(entity.account.groupId)!}',
+	});
+});
+
+</script>
+</@layout.override>
+<@layout.extends name="../../_layouts/bootstrap.html"/>

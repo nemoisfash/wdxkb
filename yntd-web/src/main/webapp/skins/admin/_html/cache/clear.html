@@ -1,0 +1,81 @@
+<@layout.override name="css">
+<@layout.super/>
+<link rel="stylesheet" href="/assets/AdminLTE/2.3.11/css/AdminLTE.min.css">
+</@layout.override>
+<@layout.override name="js">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="body">
+
+<section class="content-header">
+	<h1><@spring.message code="ui.cache.clear"/> <small>工具</small></h1>
+	<ol class="breadcrumb">
+		<li><a href="javascript:;"><i class="fa fa-wrench"></i> 工具</a></li>
+		<li class="active"><@spring.message code="ui.cache.clear"/></li>
+	</ol>
+</section>
+
+<section class="content">
+	<div class="row">
+		<section class="col-md-8 connectedSortable">
+			<div class="box">
+				<div class="box-header with-border">
+					<h3 class="box-title">缓存信息</h3>
+				</div>
+				<div class="box-body">
+					<div class="row">
+						<div class="col-md-5">
+							<div class="info-box bg-yellow">
+								<span class="info-box-icon"><i class="fa fa-cogs"></i></span>
+								<div class="info-box-content">
+									<span class="info-box-text">系统内核</span>
+									<span class="info-box-number">&nbsp;<small></small></span>
+									<button class="btn btn-sm pull-right" onclick="clearCache('sys')">清理</button>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-5">
+							<div class="info-box bg-green">
+								<span class="info-box-icon"><i class="fa  fa-files-o"></i></span>
+								<div class="info-box-content">
+									<span class="info-box-text">内容管理</span>
+									<span class="info-box-number">&nbsp;<small></small></span>
+									<button class="btn btn-sm pull-right" onclick="clearCache('cms')">清理</button>
+								</div>
+							</div>
+						</div>
+					<#-- <div class="col-md-4">
+							<div class="info-box bg-blue">
+								<span class="info-box-icon"><i class="fa fa-desktop"></i></span>
+								<div class="info-box-content">
+									<span class="info-box-text">技术转移</span>
+									<span class="info-box-number">&nbsp;<small></small></span>
+									<button class="btn btn-sm pull-right" onclick="clearCache('app')">清理</button>
+								</div>
+							</div>
+						</div>
+						-->
+					</div>
+				</div>
+		</section>
+	</div>
+</section>
+<script type="text/javascript">
+function clearCache(name){
+	$.ajax({
+		type : 'post',
+		url : '${adminPath}/cache/clear.json',
+		data : {'name' : name},
+		async : false,
+		success : function(data) {
+			if (data.success) {
+				top.layer.msg(data.message);
+			} else {
+				top.layer.msg(data.message);
+			}
+		}
+	});
+}
+</script>
+</@layout.override>
+<@layout.extends name="../../_layouts/bootstrap.html"/>

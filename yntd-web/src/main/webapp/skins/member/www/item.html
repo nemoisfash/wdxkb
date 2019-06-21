@@ -1,0 +1,38 @@
+ <@layout.override name="body">
+ 	<div class="products-breadcrumb">
+		<div class="container">
+			<ul>
+				<li><i class="fa fa-home" aria-hidden="true"></i><a href="/member/index.html">首页</a><span>|</span></li>
+				<li style="color:#ffff">${(channel.name)!}</li>
+			</ul>
+		</div>
+	</div>
+	<div class="container">
+		<div class="w3l_banner_nav_right">
+			<div class="privacy about">
+			<h3>${(content.title)!}</h3>
+			<p class="animi">
+			 	${(content.content)!}
+			</p>
+			<div class="agile_about_grids">
+				<div class="col-md-6 agile_about_grid_right">
+				<#if content.imageUri?? && content.imageUri!="">
+					<img src="${(content.imageUri)!}" alt=" " class="img-responsive">
+				<#else>
+					<img src="/themes/web/images/youtian.jpg" alt=" " class="img-responsive">
+				</#if>	
+				</div>
+				<div class="col-md-6 agile_about_grid_left">
+					<ol>
+						<@cms.articleList filters={"enabled":"true","promote":"true"} orderBy='create_time Desc' isIterate=true size=6;items>
+							<li><a href="/article/${(items.id)!}.html?skin=1">${(items.title)!}</a></li>
+						</@cms.articleList>
+					</ol>
+				</div>
+				<div class="clearfix"></div>
+			</div>
+		</div>
+		</div>
+	</div>
+ </@layout.override>
+<@layout.extends name="layout/common-part.html"/>

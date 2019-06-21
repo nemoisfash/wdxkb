@@ -1,0 +1,95 @@
+  <@layout.override name="body">
+<style>
+	.list{
+		margin-top: 20px;
+	}
+	.list_body{
+		border:1px solid #dadada;
+		margin-bottom: 30px;
+	}
+	.list_bodytill{
+		background-color: #dadada;
+		padding: 5px;
+	}
+	.list_bodycontent{
+		overflow: hidden;
+	}
+	.dynamic li{
+		list-style: none;
+		margin: 10px;
+		height: 36px;
+		border-bottom: 1px dotted #DDD;
+		line-height: 36px;
+		font-size: 14px;
+	}
+	.dynamic li em{
+		float: right;
+	}
+	.dynamic li a{
+		color: #666;
+	}
+	.dynamic li a:hover{
+		color: #84c639;
+	}
+	.tbody{
+		padding: 50px 0 121px;
+	}
+</style>
+  <div class="products-breadcrumb">
+		<div class="container">
+			<ul>
+				<li>
+					<i class="fa fa-home" aria-hidden="true"></i>
+					<a href="/index.html">首页</a><span>|</span>
+				</li>
+				<li style="color:#ffff">${(channel.name)!}</li>
+			</ul>
+		</div>
+	</div>
+ <@cms.articleList filters={'channelId':'${(channel.id)!}',"enabled":"true"} orderBy='create_time Desc' isIterate=false page='${page}' size=16;items>
+	<#if items?? && items.content?size gt 0>
+	 	<div class="container">
+			<div class="list">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="list_body">
+							<!-- <div class="list_bodytill">&gt;&gt;</div> -->
+							<div class="list_bodycontent">
+								<ul class="dynamic">
+									<#list items.content as item>
+										<li>
+											<a href="/article/${(item.id)!}.html?skin=1">${(item.title)!}</a>
+											<em>${(item.createTime)?string("YYYY-MM-dd")}</em>
+										</li>
+									</#list>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="pull-right tcdPageCode" style="position: relative;left: -30%;margin-bottom: 3%;">
+			</div>
+			<script type="text/javascript">
+				$(function(){
+					$(".tcdPageCode").createPage({
+						elementCount : ${(items.totalElements)!},
+						pageCount : ${(items.totalPages)!},
+						current : ${(items.number)!},
+						backFn : function(to){
+							Fw.updateFilter('${filters.uuid!}', 'page', to);
+						}
+					})
+				});
+			</script>
+		</div>
+	<#else>
+		<div class="container">
+			<div>
+				<img src="/themes/web/images/nodata.jpg" alt="" style="; width: 100%;">
+			</div>
+		</div>
+	</#if>
+</@cms.articleList>
+</@layout.override>
+<@layout.extends name="layout/common-part.html"/>

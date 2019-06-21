@@ -1,0 +1,84 @@
+<#assign modulePath="${adminPath}/common/optiongroup" />
+<@layout.override name="body">
+<ol class="breadcrumb">
+  <li><a href="javascript:;"><@spring.message code='sys.option.group' /></a></li>
+  <li><a href="javascript:;">编辑</a></li>
+</ol>
+
+<div class="container-fluid">
+
+  <h4 class="spk-title"><@spring.message code='sys.option.group' /> 编辑</h4>
+
+<form id="validateForm" action="${modulePath}/save.html" class="form-horizontal" role="form" method="post">
+<@spring.formHiddenInput path='entity.id'/>
+
+  <div class="row form-group">
+    <label class="control-label col-sm-2">标识</label>
+    <div class="col-sm-3">
+      <@spring.formInput path='entity.code' attributes='class="form-control input-sm"' />
+      <@spring.showErrors separator='&nbsp;' classOrStyle='help-block' />
+    </div>
+  </div>
+
+  <div class="row form-group">
+    <label class="control-label col-sm-2">名称</label>
+    <div class="col-sm-3">
+      <@spring.formInput path='entity.name' attributes='class="form-control input-sm"' />
+      <@spring.showErrors separator='&nbsp;' classOrStyle='help-block' />
+    </div>
+  </div>
+
+  <div class="row form-group">
+    <label class="control-label col-sm-2">优先级</label>
+    <div class="col-sm-3">
+      <@spring.formInput path='entity.priority' attributes='class="form-control input-sm"' />
+      <@spring.showErrors separator='&nbsp;' classOrStyle='help-block' />
+    </div>
+  </div>
+
+  <div class="row form-group">
+    <label class="control-label col-sm-2">是否启用</label>
+    <div class="col-sm-3">
+      <@spring.formRadioButtons path='entity.enabled' options={'true':'是','false':'否'} separator='&nbsp;' attributes='class="radio-inline"' />
+      <@spring.showErrors separator='&nbsp;' classOrStyle='help-block' />
+    </div>
+  </div>
+  
+  <hr class="spk-hr" />
+  <div class="row form-group">
+    <div class="col-sm-8 col-sm-offset-2">
+      <button type="submit" class="btn btn-primary btn-sm">保存</button>
+      <button type="button" class="btn btn-primary btn-sm" onclick="on_return()">返回</button>
+    </div>
+  </div>
+</form>
+
+</div>
+<script type="text/javascript">
+function on_return(){
+    jumpTo("${modulePath}/list.html${((parent.parentId)??)?string('?p=${(parent.parentId)!}','')}");
+}
+var validateForm;
+$(document).ready(function(){
+	validateForm = $("#validateForm").validate({
+		rules:{
+			code:{ required:true },
+			name:{ required:true },
+			enabled:{ required:true },
+		},
+		messages : {
+			code:{ required:"这是必填字段！" },
+			name:{ required:"这是必填字段！" },
+			enabled:{ required:"这是必填字段!" },
+		}
+	});	
+});
+</script>
+</@layout.override>
+<@layout.override name="css">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="js">
+<@layout.super/>
+</@layout.override>
+<@layout.extends name="../../_layouts/bootstrap.html"/>

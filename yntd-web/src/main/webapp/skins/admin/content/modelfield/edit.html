@@ -1,0 +1,134 @@
+<#assign modulePath="${adminPath}/content/modelfield" />
+<@layout.override name="body">
+<ol class="breadcrumb">
+  <li><a href="javascript:;">ModelField</a></li>
+  <li><a href="javascript:;">编辑</a></li>
+</ol>
+
+<div class="container-fluid">
+
+  <h4 class="spk-header">ModelField 编辑</h4>
+
+<form action="${modulePath}/save.html" class="form-horizontal" role="form" method="post">
+<@spring.formHiddenInput path='entity.id'/>
+
+  <div class="row form-group">
+    <label class="control-label col-sm-2">modelId</label>
+    <div class="col-sm-3">
+      <@spring.formInput path='entity.modelId' attributes='class="form-control input-sm"' />
+      <@spring.showErrors separator='&nbsp;' classOrStyle='help-block' />
+    </div>
+  </div>
+
+  <div class="row form-group">
+    <label class="control-label col-sm-2">field</label>
+    <div class="col-sm-3">
+      <@spring.formInput path='entity.field' attributes='class="form-control input-sm"' />
+      <@spring.showErrors separator='&nbsp;' classOrStyle='help-block' />
+    </div>
+  </div>
+
+  <div class="row form-group">
+    <label class="control-label col-sm-2">label</label>
+    <div class="col-sm-3">
+      <@spring.formInput path='entity.label' attributes='class="form-control input-sm"' />
+      <@spring.showErrors separator='&nbsp;' classOrStyle='help-block' />
+    </div>
+  </div>
+
+  <div class="row form-group">
+    <label class="control-label col-sm-2">dataType</label>
+    <div class="col-sm-3">
+      <@spring.formInput path='entity.dataType' attributes='class="form-control input-sm"' />
+      <@spring.showErrors separator='&nbsp;' classOrStyle='help-block' />
+    </div>
+  </div>
+
+  <div class="row form-group">
+    <label class="control-label col-sm-2">textSize</label>
+    <div class="col-sm-3">
+      <@spring.formInput path='entity.textSize' attributes='class="form-control input-sm"' />
+      <@spring.showErrors separator='&nbsp;' classOrStyle='help-block' />
+    </div>
+  </div>
+
+  <div class="row form-group">
+    <label class="control-label col-sm-2">areaRows</label>
+    <div class="col-sm-3">
+      <@spring.formInput path='entity.areaRows' attributes='class="form-control input-sm"' />
+      <@spring.showErrors separator='&nbsp;' classOrStyle='help-block' />
+    </div>
+  </div>
+
+  <div class="row form-group">
+    <label class="control-label col-sm-2">areaCols</label>
+    <div class="col-sm-3">
+      <@spring.formInput path='entity.areaCols' attributes='class="form-control input-sm"' />
+      <@spring.showErrors separator='&nbsp;' classOrStyle='help-block' />
+    </div>
+  </div>
+
+  <div class="row form-group">
+    <label class="control-label col-sm-2">defValue</label>
+    <div class="col-sm-3">
+      <@spring.formTextarea path='entity.defValue' attributes='class="form-control input-sm"' />
+      <@spring.showErrors separator='&nbsp;' classOrStyle='help-block' />
+    </div>
+  </div>
+
+  <div class="row form-group">
+    <label class="control-label col-sm-2">optValue</label>
+    <div class="col-sm-3">
+      <@spring.formTextarea path='entity.optValue' attributes='class="form-control input-sm"' />
+      <@spring.showErrors separator='&nbsp;' classOrStyle='help-block' />
+    </div>
+  </div>
+
+  <div class="row form-group">
+    <label class="control-label col-sm-2">singles</label>
+    <div class="col-sm-3">
+      <@spring.formRadioButtons path='entity.singles' options={'true':'是','false':'否'} separator='&nbsp;' attributes='class="radio-inline"' />
+      <@spring.showErrors separator='&nbsp;' classOrStyle='help-block' />
+    </div>
+  </div>
+
+  <div class="row form-group">
+    <label class="control-label col-sm-2">enabled</label>
+    <div class="col-sm-3">
+      <@spring.formRadioButtons path='entity.enabled' options={'true':'是','false':'否'} separator='&nbsp;' attributes='class="radio-inline"' />
+      <@spring.showErrors separator='&nbsp;' classOrStyle='help-block' />
+    </div>
+  </div>
+
+  <div class="row form-group">
+    <label class="control-label col-sm-2">priority</label>
+    <div class="col-sm-3">
+      <@spring.formInput path='entity.priority' attributes='class="form-control input-sm"' />
+      <@spring.showErrors separator='&nbsp;' classOrStyle='help-block' />
+    </div>
+  </div>
+
+  
+  <hr class="spk-hr" />
+  <div class="row form-group">
+    <div class="col-sm-8 col-sm-offset-2">
+      <button type="submit" class="btn btn-primary btn-sm">保存</button>
+      <button type="button" class="btn btn-primary btn-sm" onclick="on_return()">返回</button>
+    </div>
+  </div>
+</form>
+
+</div>
+<script type="text/javascript">
+function on_return(){
+    jumpTo("${modulePath}/list.html");
+}
+</script>
+</@layout.override>
+<@layout.override name="css">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="js">
+<@layout.super/>
+</@layout.override>
+<@layout.extends name="../../_layouts/bootstrap.html"/>

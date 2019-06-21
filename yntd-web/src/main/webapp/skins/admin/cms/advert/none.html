@@ -1,0 +1,35 @@
+<@layout.override name="css">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="js">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="body">
+<ol class="breadcrumb">
+	<li><a href="javascript:;">条幅管理</a></li>
+	<li><a href="javascript:;">列表</a></li>
+</ol>
+
+<div class="container-fluid">
+
+<ul class="nav nav-tabs">
+	<li role="presentation" class="active"><a href="javascript:;">列表</a></li>
+</ul>
+  
+<div class="form-inline btn-toolbar spk-toolbar" role="toolbar">
+	<div class="btn-group btn-group-sm pull-left">
+		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">批量<span class="caret"></span></button>
+		<ul class="dropdown-menu" role="menu">
+			<li><a href="javascript:;" onclick="doRemoveBatch()">删除</a></li>
+		</ul>
+	</div>
+</div>
+
+<div class="jumbotron">
+  <h1>请先定义条幅类型</h1>
+</div>
+
+</div>
+
+</@layout.override>
+<@layout.extends name="../../_layouts/bootstrap.html"/>

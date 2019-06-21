@@ -1,0 +1,69 @@
+/**
+ * 注意：
+ *     别在此文件中添加和具体项目有关的代码
+ */
+/* globals */
+* {font-size:14px;}
+a {text-decoration:none;}
+/* spk-container */
+.spk-container { margin: -12px 20px 60px 2px; min-width: 750px; }
+.spk-required { font-weight: bold; color: red; }
+.spk-toolbar { margin-top: 10px; margin-bottom: 5px; }
+.spk-header { padding-bottom: 5px; border-bottom: 1px solid #bce8f1; }
+.spk-hr { border: none; border-top: 1px solid #bce8f1; height: 0; }
+/* spk-gridview */
+.spk-gridview tr th, .spk-gridview tr td { height: 40px; min-height: 40px; }
+.spk-gridview tr.row-head {/*background:url(img/row_head_bg.png) repeat-x;*/}
+.spk-gridview tr.row-head th { font-weight: bold; vertical-align: middle; text-align:center; font-size:1.1em; }
+.spk-gridview tr.row-head th.column-auto, .spk-gridview tr.row-head th.column-attr,
+.spk-gridview tr.row-data td.column-auto, .spk-gridview tr.row-data td.column-attr { text-align:left; }
+.spk-gridview tr.row-head th.column-tool, .spk-gridview tr.row-data td.column-tool { text-align:center; }
+.spk-gridview tr.row-data .odd { background:#E5F1F4; }
+.spk-gridview tr.row-data .even { background:#F8F8F8; }
+.spk-gridview tr.row-data:hover { background:#ECFBD4; }
+.spk-gridview tr.row-foot { background: #FFFFFF; }
+.spk-gridview tr.row-foot td { vertical-align: middle; text-align:center }
+
+.spk-gridview td span, .spk-gridview th span { white-space:nowrap;}
+.spk-gridview td.column-auto { width: *; min-width: 200px; text-align: left; vertical-align: middle; }
+.spk-gridview td.column-attr { width: 100px; min-width: 100px; text-align: left; vertical-align: middle; }
+.spk-gridview td.column-tool { width: 48px; min-width: 48px; text-align: right; vertical-align: middle; }
+.spk-gridview td.column-tiny { width: 24px; min-width: 24px; text-align: center; vertical-align: middle; }
+.spk-gridview td > input[name=priority] { width: 46px; }
+
+/* admin lte override */
+.content-wrapper { background-color: #fff; height: 100%; min-height: 100%; }
+.logo .logo-lg { font-size: 22px; font-weight: bold; }
+ul.treeview-menu li { overflow: hidden; }
+/*
+.content-wrapper > .breadcrumb {margin-top:-20px;}
+*/
+ul.sidebar-menu > li.header { font-size:1.2em; font-weight:bold;}
+
+/* bootstrap override */
+.container { margin-left:0; }
+
+.nav-tabs { margin: 1px; }
+.nav-tabs li a { padding: 7px 16px; }
+
+em.help-block { line-height: 13px; margin: 2px 0 0 0; }
+.help-block { font-size: 11px; padding: 0; }
+
+/* laydate兼容bootstrap
+.laydate_box, .laydate_box * { box-sizing:content-box; } */
+
+/* search_adv */
+.search_adv_btn {}
+.search_adv_box { -webkit-transform: scale(1); -ms-transform: scale(1); transform: scale(1); opacity:.92; position:absolute; width:100%; background: #fafafa; border: 1px solid #e1e1e1; border-radius: 0px 0px 5px 5px; z-index: 65432; display:none; }
+.search_adv_row { border-bottom:1px solid #e1e1e1; padding-bottom:5px; position:relative; }
+.search_adv_row:nth-child(odd) { background:#edf0f7 }
+.search_adv_label { width: 100px; position:absolute;left:0px;top:0px;height:40px; line-height:40px; padding-left:20px; font-weight:bold;}
+.search_adv_items { padding-left: 140px; padding-top: 10px; }
+.search_adv_items a{ display:inline-block; height:19px; line-height:19px; padding-left:10px; padding-right:10px; margin-right:13px; }
+.search_adv_items .search_adv_item_cur { background:#f57403; border-radius:2px; color:#fff; }
+.search_adv_items a:hover { color:#f60 }
+.search_adv_items .search_adv_item_cur:hover {color:#fff}
+.search_adv_label, .search_adv_items a { font-size: 11px; }
+
+/* @Deprecated */
+.spk-gridview tr.row-foot td span.count { display: inline-block; height: 25px; line-height: 25px; padding: 0 10px; margin: 5px 2px; color: #428bca; border: 1px solid #bfbfbf; border-radius: 4px; }

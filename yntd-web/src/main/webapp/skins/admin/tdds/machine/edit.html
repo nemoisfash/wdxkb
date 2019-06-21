@@ -1,0 +1,47 @@
+<#assign modulePath="${adminPath}/machine" />
+<@layout.override name="body">
+  <div id="formDiv" class="box box-warning" style="display:none;">
+	<div class="box-header with-border">
+	  <h3 class="box-title">设备编辑</h3>
+	</div>
+	<div class="box-body">
+		<form role="form">
+			<div class="form-group">
+			  <label>名称</label>
+			  <input type="text" class="form-control" placeholder="请输入机台名称">
+			</div>
+			<div class="form-group">
+			  <label>编号</label>
+			  <input type="text" class="form-control" placeholder="请输入机台编号">
+			</div>
+			<div class="form-group">
+			  <label>机台ip</label>
+			  <input type="text" class="form-control" placeholder="请输入机台ip">
+			</div>
+			<div class="form-group">
+			  <label>请选择设备类型</label>
+				  <select class="form-control">
+					    <option></option>
+					    <option></option>
+					    <option></option>
+					    <option></option>
+					    <option></option>
+				  </select>
+			</div>
+			<div class="form-group">
+			  <label>机台图片</label>
+			  <input type="file" class="form-control" accept="">
+			</div>
+		</form>
+	</div>
+</div>
+</@layout.override>
+<@layout.override name="css">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="js">
+<@layout.super/>
+<script type="text/javascript" src="/themes/ui/js/ajaxfileupload.js"></script>
+<script type="text/javascript" src="/themes/admin/machine/js/add.js"></script>
+</@layout.override>
+<@layout.extends name="../../_layouts/dialog.html"/>

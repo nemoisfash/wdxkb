@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.hxz.webapp.syscore.mapper.RoleMapper">
+
+	<!-- 单表查询映射结果 -->
+	<resultMap id="BaseResultMap" type="cn.hxz.webapp.syscore.entity.Role">
+		<id column="id" property="id" />
+		<result column="name" property="name" />
+		<result column="code" property="code" />
+		<result column="builtin" property="builtin" />
+	</resultMap>
+
+    <!-- 单表查询结果列 -->
+    <sql id="Base_Column_List">
+        id, name, code
+    </sql>
+    
+  	<insert id="connectPermission">
+  	<![CDATA[
+    	INSERT INTO sys_role_permission VALUE(#{roleId},#{permissionId})
+    ]]>
+	</insert>
+	
+	<delete id="disconnectGroups">
+  	<![CDATA[
+		DELETE FROM sys_group_role WHERE role_id=#{id}
+	]]>
+	</delete>
+	
+	<delete id="disconnectAccounts">
+  	<![CDATA[
+		DELETE FROM sys_user_role WHERE role_id=#{id}
+	]]>
+	</delete>
+	
+	<delete id="disconnectPermissions">
+  	<![CDATA[
+		DELETE FROM sys_role_permission WHERE role_id=#{id}
+	]]>
+	</delete>
+	
+    <select id="findPermissionIds" resultType="long">
+  	<![CDATA[
+    	SELECT permission_id FROM sys_role_permission WHERE role_id=#{id}
+    ]]>
+    </select>
+
+	<!-- 所有拥有指定角色的组 -->
+    <select id="findGroups" resultType="map">
+  	<![CDATA[
+		SELECT g.id, g.name
+		FROM sys_group g 
+		LEFT JOIN sys_group_role gr ON gr.group_id=g.id
+		WHERE gr.role_id=#{id};
+    ]]>
+    </select>
+
+	<!-- 所有拥有指定角色的用户 -->
+    <select id="findAccounts" resultType="map">
+  	<![CDATA[
+		SELECT u.id, u.name, u.username, u.group_id AS groupId, g.name AS groupName
+		FROM sys_user u LEFT JOIN sys_group g ON g.id=u.group_id
+		WHERE u.id IN (SELECT u1.id FROM sys_user u1 LEFT JOIN sys_group_role gr ON gr.group_id=u1.group_id WHERE gr.role_id=#{id})
+		OR u.id IN (SELECT u2.id FROM sys_user u2 LEFT JOIN sys_user_role ur ON ur.user_id=u2.id WHERE ur.role_id=#{id})
+    ]]>
+    </select>
+
+<!--  
+	<select id="queryUserRole" resultType="map">
+	 	 select sur.role_id as id from  sys_user_role sur where
+			sur.user_id =#{id}
+	</select>
+	<select id="selectRolePermission" resultType="map">
+		SELECT
+			sp.`name` as name
+		FROM
+			sys_role AS sr
+		LEFT JOIN sys_role_permission AS srp ON (sr.id = srp.role_id)
+		LEFT JOIN sys_permission AS sp ON (srp.permission_id = sp.id)
+		WHERE sr.id=#{id}
+	</select>
+	<select id="selectRoleCount" resultType="int">
+		SELECT
+			count(*)
+		FROM
+			sys_user_role AS sur
+		WHERE
+			sur.role_id = #{id}
+	</select>
+    <select id="selectRole" resultType="map">
+     select *, (
+		select
+			count(*)
+		from
+			sys_user_role sur
+		where
+			sr.id = sur.role_id
+	) as num
+	from
+		sys_role sr
+		where sr.id &gt; 6
+    </select>
+
+	<delete id="deleteRole">
+		delete from sys_role where id=#{id}
+	</delete>
+-->
+</mapper>

@@ -1,0 +1,205 @@
+<#assign modulePath="${adminPath}/cms/channel" />
+<@layout.override name="css">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="js">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="body">
+<ol class="breadcrumb">
+	<li><a href="${modulePath}/list.html" >栏目设置</a></li>
+<#if parent??>
+	<li><a href="${modulePath}/list.html?p=${(parent.id)!}">${(parent.name)!}</a></li>
+</#if>
+	<li><a href="javascript:;">列表</a></li>
+</ol>
+
+<div class="container-fluid">
+
+<ul class="nav nav-tabs">
+	<li role="presentation" class="active"><a href="javascript:;">列表</a></li>
+	<li role="presentation"><a href="${modulePath}/edit.html${(parent??)?string('?p=${(parent.id)!}','')}">添加</a></li>
+</ul>
+<div class="form-inline btn-toolbar spk-toolbar" role="toolbar">
+<#-- 批量操作 -->
+	<div class="btn-group btn-group-sm pull-left">
+		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">批量<span class="caret"></span></button>
+		<ul class="dropdown-menu" role="menu">
+			<li><a href="javascript:;" onclick="on_remove_batch()">删除</a></li>
+		</ul>
+	</div>
+<#-- 高级搜索 -->
+	<div class="input-group input-group-sm">
+		<div class="input-group-addon">类型</div>
+		<select id="prop-key" class="form-control input-sm pull-left">
+			<option value="name">名称</option>
+			<option value="code">标识</option>
+		</select>
+	</div>
+	<div class="input-group input-group-sm">
+		<input type="text" id="prop-val" class="form-control" placeholder="输入你要搜索的关键字" />
+		<span class="input-group-btn">
+			<button type="button" class="btn btn-info" onclick="on_search()">搜索</button>
+		</span>
+	</div>
+	<button type="button" class="btn btn-sm btn-warning search_adv_btn">高级搜索</button>
+<#-- 右边按钮 -->
+	<div class="btn-group btn-group-sm pull-right">
+<#if parent??>
+		<a href="${modulePath}/list.html${(parent.parentId??)?string('?p=${(parent.parentId)!}','')}" class="btn btn-default">返回</a>
+</#if>
+	</div>
+</div>
+<div class="search_adv_box">
+	<div class="search_adv_row">
+		<div class="search_adv_label">启用</div>
+		<div class="search_adv_items">
+			<a href="javascript:;" onclick="on_remove_filter('enabled')" class="${fn.search_adv_item_cur(filters, 'enabled')}">不限</a>
+			<a href="javascript:;" onclick="on_update_filter('enabled', '1')" class="${fn.search_adv_item_cur(filters, 'enabled', '1')}">是</a>
+			<a href="javascript:;" onclick="on_update_filter('enabled', '0')" class="${fn.search_adv_item_cur(filters, 'enabled', '0')}">否</a>
+		</div>
+	</div>
+</div>
+
+<table class="table table-striped table-condensed expander spk-gridview">
+	<tr class="row-head">
+		<th class="column-tiny"><input type="checkbox" onclick="Fw.checkEach('ids')" /></th>
+		<th class="column-auto">名称</th>
+		<th class="column-attr">标识</th>
+		<th class="column-tool">排序</th>
+		<th class="column-tool">启用</th>
+		<th class="column-tool">操作</th>
+	</tr>
+<#list entities.content as item>
+	<tr class="row-data">
+		<td class="column-tiny"><input type="checkbox" name="ids" value="${(item.id)!}"/></td>
+		<td class="column-auto">
+		<#if item.modelId ?? && item.modelId==1>
+			<a href="${modulePath}/list.html?p=${(item.id)!}">${(item.name)!}</a>
+		<#else>
+			${(item.name)!}
+		</#if>
+		</td>
+		<td class="column-attr">${(item.node)!}</td>
+		<td class="column-tool"><input type="text" name="priority" value="${(item.priority)!}" style="width:48px" readonly="readonly" /></td>
+		<td class="column-tool"><@ui.btnBool entity=item field="enabled" onclick="on_enable(${(item.id)},${(item.enabled?string)!})" /></td>
+		<td class="column-tool">
+			<span>
+			<@ui.btnInfo text="修改" href="${modulePath}/edit.html?id=${item.id!}${(parent??)?string('&p=${(parent.id)!}','')}" />
+			<@ui.btnWarn text="删除" onclick="on_remove('${(item.id)!}')" />
+			</span>
+		</td>
+	</tr>
+</#list>
+<#if entities.numberOfElements lt entities.size>
+<#list 1..(entities.size - entities.numberOfElements) as row>
+	<tr>
+		<td colspan="6">&nbsp;</td>
+	</tr>
+</#list>
+</#if>
+	<tr class="row-foot">
+		<td colspan="6">
+			<div class="pull-right tcdPageCode"></div>
+		</td>
+	</tr>
+</table>
+</form>
+<script type="text/javascript">
+function on_enable(id){
+	$.post("${modulePath}/enable.json", {
+		"id" : id
+	}, function(data, status) {
+		if (data.success)
+			self.location.reload();
+	});
+}
+function on_remove(id){
+	top.layer.confirm("<@spring.message 'msg.remove'/>", function(idx) {
+		top.layer.close(idx);
+		$.post("${modulePath}/remove.json", {
+			"id" : id
+		}, function(data, status) {
+			if (data.success)
+				self.location.reload();
+		});
+	});
+}
+function on_remove_batch(){
+	if($("input:checkbox[name='ids']:checked").length == 0) {
+		top.layer.msg("请至少选择一条记录.");
+		return;
+	}
+	top.layer.confirm("<@spring.message 'msg.remove'/>", function(idx) {
+		top.layer.close(idx);
+		var arrIds = new Array();
+		$("input:checkbox[name='ids']:checked").each(function(){  
+			arrIds.push($(this).val());
+		});
+		top.layer.msg(arrIds.toString());
+		$.post("${modulePath}/remove/batch.json", {
+			"ids" : arrIds.toString()
+		}, function(data, status) {
+			if (data.success)
+				self.location.reload();
+		});
+	})
+}
+// function on_update(id){
+//     Spark.jump("${modulePath}/edit.html?id="+id${(p??)?string('+"&p=${p!}"','')});
+// }
+// function on_enable(id){
+//     Spark.jump("${modulePath}/enable/"+id+".html?curr="+curr${(p??)?string('+"&p=${p!}"','')});
+// }
+// function on_remove(id){
+// 	dialogConfirm('<@spring.message "confirm.remove"/>', function(){
+// 		 Spark.jump("${modulePath}/remove/"+id+".html${(p??)?string('?p=${p!}','')}");
+// 	});
+// }
+// function on_remove_batch(){
+// 	if($("input[name='ids']:checked").length==0){
+// 		layer.msg("请至少选择一条记录！");
+// 		return;
+// 	}
+// 	dialogConfirm("<@spring.message 'msg.confirm.remove'/>",function(){
+// 		$("#batchForm").attr("action","${modulePath}/remove/batch.html${(p??)?string('?p=${p!}','')}").submit()
+// 	});
+// }
+// <#if parent??>
+// function on_return(){
+//     Spark.jump("${modulePath}/list.html${((parent.parentId)??)?string('?p=${(parent.parentId)!}','')}");
+// }
+// </#if>
+function on_search(){
+	var key = $("#prop-key").val();
+	var val = $("#prop-val").val();
+	if (val!=""){
+		on_update_filter(key, val);
+	}
+}
+function on_update_filter(key, val){
+	Fw.updateFilter('${filters.uuid!}', key, val);
+}
+function on_remove_filter(key){
+	Fw.removeFilter('${filters.uuid!}', key);
+}
+$(function(){
+	$(".tcdPageCode").createPage({
+		elementCount : ${(entities.totalElements)!},
+		pageCount : ${(entities.totalPages)!},
+		current : ${(entities.number)!},
+		backFn : function(to){
+			//self.location.href = "${modulePath!}/list?page="+to;
+			Fw.updateFilter('${filters.uuid!}', 'page', to);
+		}
+	});
+	var props = ${fn.search_adv_text_cur(filters, ['name','code'])};
+	$("#prop-key").change(function(){
+		$("#prop-val").val(props[$("#prop-key").val()]);
+	});
+	$("#prop-val").val(props[$("#prop-key").val()]);
+});
+</script>
+</div><#--/.container-->
+</@layout.override>
+<@layout.extends name="../../_layouts/bootstrap.html"/>

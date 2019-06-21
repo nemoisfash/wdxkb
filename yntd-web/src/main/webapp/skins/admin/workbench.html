@@ -1,0 +1,600 @@
+<@layout.override name="css"> 
+<@layout.super/> 
+</@layout.override>
+<@layout.override name="js"> 
+<@layout.super/>
+<script type="text/javascript" src="/assets/echarts/3.2.3/echarts.js"></script>
+</@layout.override>
+<@layout.override name="body">
+	<style>
+		.small-box:hover {
+			background-color: #ee6723 !important;
+		}
+
+		.small-box {
+			border-radius: 6px;
+		}
+
+		.tubiao {
+			float: left;
+		}
+
+		.tubiao i {
+			font-size: 40px;
+			padding-top: 10px;
+			color: #eeeeeeb0
+		}
+
+		.heidiv {
+			padding: 0px 6px;
+		}
+		.content{
+			background-color: #ecf0f5;
+		}
+		/*内容部分*/
+		.dashboard-wrapper {
+			position: relative;
+			background: #fff;
+			-webkit-border-radius: 0 0 4px 4px;
+			-moz-border-radius: 0 0 4px 4px;
+			border-radius: 0 0 4px 4px;
+			/*min-height: 480px;*/
+			margin-bottom: 20px;
+			padding: 20px;
+			/*margin-left: -15px;*/
+		}
+		.f_tittle{
+			color: #333333;
+			font-weight: bold;
+			font-size: 16px;
+			margin-bottom: 5px;
+		}
+		.dashboard-wrapper .right-sidebar{
+			position: relative;
+		}
+		.dashboard-wrapper .right-sidebar .wrapper {
+			margin-bottom: 10px;
+			padding: 5px;
+			background: #e6e6e6;
+			-webkit-border-radius: 2px;
+			-moz-border-radius: 2px;
+			border-radius: 2px;
+			overflow-x: hidden;
+			overflow-y:hidden;
+		}
+		/*指定高度*/
+		#scrollbar .viewport{
+			width:100%;
+			height:474px;
+			/*overflow: hidden;*/
+			position: relative;
+		}
+		#scrollbar .overview{
+			list-style: none;
+			position: absolute;
+			left: 0;
+			top: 0;
+			width: 100%;
+		}
+		.dashboard-wrapper .right-sidebar .wrapper .featured-articles-container {
+			background: #f7f7f7;
+			padding: 10px;
+		}
+		.dashboard-wrapper .right-sidebar .wrapper .featured-articles-container .heading{
+			margin-top: 0;
+			color: #ed6d49;
+			padding-bottom: 8px;
+			border-bottom: 1px dotted #d9d9d9;
+		}
+		/*蓝色*/
+		.dashboard-wrapper .right-sidebar .wrapper .featured-articles-container .heading-blue {
+			color: #0daed3!important;
+		}
+		.dashboard-wrapper .right-sidebar .wrapper .featured-articles-container .articles a .label-bullet-blue {
+			border-top: 9px solid #0ec2eb!important;
+		}
+		.articles{
+			display: block;
+		}
+		.dashboard-wrapper .right-sidebar .wrapper .featured-articles-container .articles a {
+			position: relative;
+			border-bottom: 1px dotted #d9d9d9;
+			color: #0d0d0d;
+			display: block;
+			font-size: 12px;
+			font-weight: 500;
+			line-height: 30px;
+			padding-left: 20px;
+			margin-bottom: 1px;
+		}
+		.dashboard-wrapper .right-sidebar .wrapper .featured-articles-container .articles a:hover{
+			color: #737373;
+		}
+		.dashboard-wrapper .right-sidebar .wrapper .featured-articles-container .articles a .label-bullet{
+			position: absolute;
+			left: 1px;
+			top: 10px;
+			width: 0;
+			height: 0;
+			border-top: 9px solid #ef8060;
+			border-left: 9px solid transparent;
+		}
+		.viewport_x{
+			height:142px;
+			position: relative;
+		}
+	</style>
+</head>
+<section class="content-header">
+	<h1>
+		首页<small>工作台</small>
+	</h1>
+	<ol class="breadcrumb">
+		<li><a href="javascript:;"><i class="fa fa-dashboard"></i> 首页</a></li>
+		<li class="active">工作台</li>
+	</ol>
+</section>
+
+<section class="content">
+	<div class="row">
+	<@sys.currentUser; user>
+	<section class="col-md-5">
+		<div class="box box-widget widget-user-2">
+			<div class="widget-user-header bg-teal">
+				<div class="widget-user-image">
+				<img class="img-circle" src="/themes/${skin!}/img/avatar04.png"
+					alt="User Avatar">
+				</div>
+			<h3 class="widget-user-username">您好：${(user.name)!}</h3>
+			<h5>&nbsp;</h5>
+			</div>
+			<div class="box-footer no-padding">
+			<ul class="nav nav-stacked">
+				<li><a href="javascript:;">登录帐户：${(user.username)!}</a></li>
+				<li><a href="javascript:;">登录时间：${(user.loginTime?string('yyyy-MM-dd HH:mm:ss'))!}</a></li>
+			</ul>
+			<input type="hidden" id="s1" value="${(user.id)!}">
+			</div>
+		</div>
+	</section>
+	
+	<input type="hidden" id="s2" >
+<!--首页信息模块-->
+	<@szst.affaitCount; ant><#assign affaitCount=ant/></@szst.affaitCount>
+	<@szst.canteenCount id="${(user.id)!}"; cnt><#assign canteenCount=cnt/> </@szst.canteenCount>
+	<@szst.purchaseCount id="${(user.id)!}"; pnt><#assign purchaseCount=pnt/> </@szst.purchaseCount>
+	<@szst.HumitureCount id="${(user.id)!}"; hnt><#assign HumitureCount=hnt/> </@szst.HumitureCount>
+	<@szst.GasalarmCount id="${(user.id)!}"; gnt><#assign GasalarmCount=gnt/> </@szst.GasalarmCount>
+	<@szst.EmployeeCount id="${(user.id)!}"; ent><#assign EmployeeCount=ent/> </@szst.EmployeeCount>
+	<@szst.SettlementCount id="${(user.id)!}"; snt><#assign SettlementCount=snt/> </@szst.SettlementCount>
+	<@szst.MonitorCount id="${(user.id)!}"; mnt><#assign MonitorCount=mnt/> </@szst.MonitorCount>
+	
+	<#if (user.groupId?? && user.groupId = 4) || (user.groupId?? && user.groupId==1)>
+	<div class="col-md-7">
+			<div class="col-md-3 heidiv" style="padding-top: 6px;">
+				<div class="small-box bg-aqua" style="height: 84px;">
+					<div class="inner">
+						<span style="float: left; margin-left: 16px;">
+							<h3 style="margin: 0"></h3>
+							<p></p>
+						</span>
+					</div>
+				</div>
+			</div>
+		 <a href="/admin/canteen/list.html">
+			<div class="col-md-3 heidiv" style="padding-top: 6px;">
+				<div class="small-box bg-green" style="height: 84px; background-color: #00DDC6 !important;">
+					<div class="inner">
+						<span style="float: left; margin-left: 16px;">
+							<h3 style="margin: 0"></h3>
+							<p></p>
+						</span>
+					</div>
+				</div>
+			</div>
+		 </a>
+		<a href="/admin/inventory/order/list.html">
+			<div class="col-md-3 heidiv" style="padding-top: 6px;">
+				<div class="small-box bg-orange" style="height: 84px;">
+					<div class="inner">
+						<span style="float: left; margin-left: 16px;">
+							<h3 style="margin: 0"></h3>
+							<p></p>
+						</span>
+					</div>
+				</div>
+			</div>
+		</a>
+		<a href="/admin/humiture/record.html">
+			<div class="col-md-3 heidiv" style="padding-top: 6px;">
+				<div class="small-box bg-green" style="height: 84px;">
+					<div class="inner">
+						<span style="float: left; margin-left: 16px;">
+							<h3 style="margin: 0"></h3>
+							<p></p>
+						</span>
+					</div>
+				</div>
+			</div>
+		</a>
+		<a href="/admin/gasalarm/record.html">
+			<div class="col-md-3 heidiv">
+				<div class="small-box bg-purple" style="height: 84px; background-color: #2899F6 !important;">
+					<div class="inner">
+						<span style="float: left; margin-left: 16px;">
+							<h3 style="margin: 0"></h3>
+							<p></p>
+						</span>
+					</div>
+				</div>
+			</div>
+		</a>
+		<a href="/admin/monitor/list.html">
+			<div class="col-md-3 heidiv">
+				<div class="small-box bg-green" style="height: 84px;">
+					<div class="inner">
+						<span style="float: left; margin-left: 16px;">
+							<h3 style="margin: 0"></h3>
+							<p></p>
+						</span>
+					</div>
+				</div>
+			</div>
+		</a>
+		<a href="/admin/settlement/list.html">
+			<div class="col-md-3 heidiv">
+				<div class="small-box bg-aqua" style="height: 84px;">
+					<div class="inner">
+						<span style="float: left; margin-left: 16px;">
+							<h3 style="margin: 0"></h3>
+							<p></p>
+						</span>
+					</div>
+				</div>
+			</div>
+		</a>
+		<a href="/admin/employees/list.html">
+			<div class="col-md-3 heidiv">
+				<div class="small-box bg-green" style="height: 84px; background-color: #00DDC6 !important;">
+					<div class="inner">
+						<span style="float: left; margin-left: 16px;">
+							<h3 style="margin: 0"></h3>
+							<p></p>
+						</span>
+					</div>
+				</div>
+			</div>
+		</a>
+	</div>
+	<#elseif (user.groupId?? && user.groupId==2)>
+		<div class="col-md-7">
+		<!-- <a href="/admin/inventory/order/list.html">
+			<div class="col-md-3 heidiv" style="padding-top: 6px;">
+				<div class="small-box bg-orange" style="height: 84px;">
+					<div class="inner">
+						<span style="float: left; margin-left: 16px;">
+							<h3 style="margin: 0">${purchaseCount}</h3>
+							<p>采购信息</p>
+						</span>
+					</div>
+				</div>
+			</div>
+		</a> -->
+		<a href="/admin/humiture/record.html">
+			<div class="col-md-3 heidiv" style="padding-top: 6px;">
+				<div class="small-box bg-green" style="height: 84px;">
+					<div class="inner">
+						<span style="float: left; margin-left: 16px;">
+							<h3 style="margin: 0">${HumitureCount}</h3>
+							<p></p>
+						</span>
+					</div>
+				</div>
+			</div>
+		</a>
+		<a href="/admin/gasalarm/record.html">
+			<div class="col-md-3 heidiv" style="padding-top: 6px;">
+				<div class="small-box bg-purple" style="height: 84px; background-color: #2899F6 !important;">
+					<div class="inner">
+						<span style="float: left; margin-left: 16px;">
+							<h3 style="margin: 0">${GasalarmCount}</h3>
+							<p></p>
+						</span>
+					</div>
+				</div>
+			</div>
+		</a>
+		<a href="/admin/monitor/list.html">
+			<div class="col-md-3 heidiv" style="padding-top: 6px;">
+				<div class="small-box bg-green" style="height: 84px;">
+					<div class="inner">
+						<span style="float: left; margin-left: 16px;">
+							<h3 style="margin: 0">${MonitorCount}</h3>
+							<p></p>
+						</span>
+					</div>
+				</div>
+			</div>
+		</a>
+		<a href="/admin/employees/list.html">
+			<div class="col-md-3 heidiv" style="padding-top: 6px;">
+				<div class="small-box bg-green" style="height: 84px; background-color: #00DDC6 !important;">
+					<div class="inner">
+						<span style="float: left; margin-left: 16px;">
+							<h3 style="margin: 0">${EmployeeCount}</h3>
+							<p></p>
+						</span>
+					</div>
+				</div>
+			</div>
+		</a>
+		</div>
+	<#else>
+	</#if>
+	</div>
+	</section>
+	
+	<!-- 最新文章 -->
+	<section>
+		<div class="container-fluid">
+			<div class="row">
+				<!--最新文章-->
+				<div class="col-md-6">
+					<div class="dashboard-wrapper">
+						<div class="f_tittle"></div>
+						<div class="right-sidebar">
+							<div class="wrapper">
+								<div id="scrollbar">
+									<div class="viewport">
+										<div class="overview">
+											<div class="featured-articles-container">
+											<a href="">
+												<h5 class="heading"></h5>
+											</a>
+												<@cms.articleList filters={'channelId':'325',"enabled":"true"} orderBy='create_time Desc' userId="${(user.id)!}" tag=1 isIterate=false size=2;items>
+													<div class="articles">
+														<#if items?size gt 0>
+															<#list items.content as item>
+																<a ><span class="label-bullet"></span>
+																	发布时间：${(item.createTime?date)!} 发布标题：${fn.clipHtml((item.title),8,'...')!}
+																</a>
+															</#list>
+														</#if>
+													</div>
+												</@cms.articleList>
+											</div>
+											<div class="featured-articles-container">
+											<a href="/admin/cms/news/tsjp/list.html">
+												<h5 class="heading"></h5>
+											</a>
+												<@cms.articleList filters={'channelId':'314',"enabled":"true"} orderBy='create_time Desc' userId="${(user.id)!}" isIterate=false size=2;items>
+													<div class="articles">
+													<#if items?size gt 0>
+															<#list items.content as item>
+																<a href="#"><span class="label-bullet"></span>
+																	发布时间：${(item.createTime?date)!} 发布标题：${fn.clipHtml((item.title),8,'...')!}
+																</a>
+															</#list>
+														</#if>
+													</div>
+												</@cms.articleList>
+											</div>
+											<div class="featured-articles-container">
+											<a href="/admin/cms/news/jkys/list.html">
+												<h5 class="heading"></h5>
+											</a>
+												<@cms.articleList filters={'channelId':'317',"enabled":"true"} orderBy='create_time Desc' userId="${(user.id)!}" isIterate=false size=2;items>
+													<div class="articles">
+													<#if items?size gt 0>
+															<#list items.content as item>
+																<a href="#"><span class="label-bullet"></span>
+																	发布时间：${(item.createTime?date)!} 发布标题：${fn.clipHtml((item.title),8,'...')!}
+																</a>
+															</#list>
+														</#if>
+													</div>
+												</@cms.articleList>
+											</div>
+											<div class="featured-articles-container">
+											<a href="/admin/cms/news/cwgk/list.html">
+												<h5 class="heading"></h5>
+											</a>
+												<@cms.articleList filters={'channelId':'323',"enabled":"true"} orderBy='create_time Desc' userId="${(user.id)!}" isIterate=false size=2;items>
+													<div class="articles">
+													<#if items?size gt 0>
+															<#list items.content as item>
+																<a href="#"><span class="label-bullet"></span>
+																	发布时间：${(item.createTime?date)!} 发布标题：${fn.clipHtml((item.title),8,'...')!}
+																</a>
+															</#list>
+														</#if>
+													</div>
+												</@cms.articleList>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!--最新库存动态-->
+				<div class="col-md-6">
+					<div class="dashboard-wrapper">
+						<div class="f_tittle"></div>
+						<div class="right-sidebar">
+							<div class="wrapper">
+								<div id="scrollbar">
+									<div class="viewport">
+										<div class="overview">
+										
+											<!-- 查询 -->
+											<div class="featured-articles-container">
+												<a class="heading heading-blue" href="/admin/inventory/plan/order/list.html">计划采购</a>
+												
+												<div class="articles">
+													<@szst.WorkPlan userId='${user.id!}'; plan>
+													<a href="#"><span class="label-bullet label-bullet-blue"></span>
+														采购时间：${plan.createTime}  计划单号：${plan.planNum}
+													</a>
+													</@szst.WorkPlan>
+												</div>
+											</div>
+											
+											<!-- 查询 -->
+											<#if (user.groupId?? && user.groupId = 4) || (user.groupId?? && user.groupId==1)>
+												<div class="featured-articles-container">
+													<a class="heading heading-blue" href="/admin/inventory/order/list.html">采购信息</a>
+													<div class="articles">
+													<@szst.WorkPurchase userId='${user.id!}'; pur>
+														<a href="#"><span class="label-bullet label-bullet-blue"></span>
+															采购时间：${pur.createTime}  采购订单号：${pur.orderNum}
+														</a>
+													</@szst.WorkPurchase>	
+													</div>
+												</div>
+											</#if>
+										</div>
+									</div>
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	</@sys.currentUser>
+	<!--系统信息 版本设置-->
+	<section>
+		<div class="container-fluid">
+			<div class="row">
+				<!--系统信息-->
+				<div class="col-md-6">
+					<div class="dashboard-wrapper">
+						<div class="f_tittle">系统信息</div>
+						<div class="right-sidebar">
+							<div class="wrapper">
+								<div id="scrollbar">
+									<div class="viewport_x">
+										<div class="overview">
+											<div class="featured-articles-container">
+												<!--<h5 class="heading">System information</h5>-->
+												<div class="articles">
+													<p>操作系统：Windows 76.1amd64</p>
+													<p>JAVA：jdk1.8</p>
+													<p>应用服务器：Apache</p>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!--开发团队-->
+			<!-- 	<div class="col-md-6">
+					<div class="dashboard-wrapper">
+						<div class="f_tittle">&gt&gt 开发团队</div>
+						<div class="right-sidebar">
+							<div class="wrapper">
+								<div id="scrollbar">
+									<div class="viewport_x">
+										<div class="overview">
+											<div class="featured-articles-container">
+												<h5 class="heading">Team</h5>
+												<div class="articles">
+													<p>开发团队：银川华智信息科技有限公司</p>
+													<p>联系地址：银川市金凤区IBI育成中心</p>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div> -->
+			</div>
+		</div>
+	</section>
+	<div style="clear:both;"></div>
+<script type="text/javascript">
+$(function(){
+    $("#btn-logout").on("click", function(){
+    	layer.confirm("退出登录？", {icon: 3, title:'提示'}, function(index){
+			layer.close(index);
+			top.location.href = "/admin/logout.html";
+		});
+    });
+    currNav();
+    bindClick();
+});
+
+var tKey="__tab_curr_sn";
+var mKey="__lnk_curr_sn";
+function bindClick(){
+	$("ul.afx-sidebar-tabs a").each(function(idx,obj) {
+		$(this).on("click", function(){
+			setCookie(tKey,idx);
+		});
+	});
+	$("div.afx-sidebar-pane ul.sidebar-menu a").each(function(idx,obj){
+		$(this).on("click", function(){
+			if (obj.href!='javascript:;'){
+				setCookie(mKey,idx);
+			}
+		});
+	});
+}
+
+function currNav(){
+	tVal = getCookie(tKey);
+	mVal = getCookie(mKey);
+ 
+	if(tVal!=null && tVal!=''){
+		$($("ul.afx-sidebar-tabs a")[parseInt(tVal)]).parent("li").addClass("active");
+		$($("div.afx-sidebar-pane")[parseInt(tVal)]).addClass("active");
+	}else{
+		$($("ul.afx-sidebar-tabs a")[1]).parent("li").addClass("active");
+		$($("div.afx-sidebar-pane")[1]).addClass("active");
+	}
+	if(mVal!=null && mVal!=''){
+		var lnk = $("div.afx-sidebar-pane ul.sidebar-menu a")[parseInt(mVal)];
+		$(lnk).parent("li").addClass("active");
+		$(lnk).parents("li.treeview").each(function(){
+			$(this).addClass("active");
+		});
+	}
+}
+
+function setCookie(name,value){
+	$.ajax({
+		url: "/api/cookie.json",
+		type: "post",
+		data: {"name":name,"value":value},
+		dataType: "json",
+		success: function(data){
+			if(data.success){
+				console.info(name+""+value);
+			}
+		}
+	});
+}
+
+function getCookie(name){
+	var strCookie = document.cookie;
+	var arrCookie = strCookie.split("; ");
+	for ( var i = 0; i < arrCookie.length; i++) {
+		var arr = arrCookie[i].split("=");
+		if (arr[0] == name){
+			return arr[1];
+		}
+	}
+	return "";
+}
+</script>
+</@layout.override>
+<@layout.extends name="_layouts/bootstrap.html"/>

@@ -1,0 +1,77 @@
+<@layout.override name="css">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="js">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="body">
+<ol class="breadcrumb">
+	<li><a href="javascript:;">我的账号</a></li>
+	<li><a href="javascript:;">修改密码</a></li>
+</ol>
+
+<div class="container">
+
+<ul class="nav nav-tabs">
+	<li role="presentation" class="active"><a href="javascript:;">修改密码</a></li>
+</ul>
+<br/>
+
+<form id="validateForm" class="form-horizontal" role="form" method="post">
+
+<div class="row form-group">
+	<label class="control-label col-sm-2">当前密码</label>
+	<div class="col-sm-3">
+		<input type="password" id="oldpasswd" name="oldpasswd" class="form-control input-sm" required />
+	</div>
+</div>
+
+<div class="row form-group">
+	<label class="control-label col-sm-2">新密码</label>
+	<div class="col-sm-3">
+		<input type="password" id="newpasswd" name="newpasswd" class="form-control input-sm" required />
+	</div>
+</div>
+
+<div class="row form-group">
+	<label class="control-label col-sm-2">新密码确认</label>
+	<div class="col-sm-3">
+		<input type="password" id="newpasswd2" name="newpasswd2" class="form-control input-sm" required />
+	</div>
+</div>
+  
+	<hr class="spk-hr" />
+	<div class="row form-group">
+		<div class="col-sm-8 col-sm-offset-2">
+			<button type="submit" class="btn btn-primary btn-sm">修改</button>
+		</div>
+	</div>
+</form>
+
+</div>
+<script type="text/javascript">
+$(function(){
+	$("#validateForm").validate({
+		rules:{
+			"newpasswd":{ rangelength:[6,20]},
+			"newpasswd2":{ equalTo:"#newpasswd"},
+		},
+		messages : {
+			newpasswd:{ rangelength:"密码长度在 6-20 个字符之间"},
+			newpasswd2:{ equalTo:"两次密码不一致"},
+		}
+	});	
+});
+function dosubmit() {
+	if(!$("#validateForm").form()){
+		return false;
+	 }
+    if ($("#validateForm").form()) {
+		$("#validateForm").submit();
+		 return true;
+	 }
+	return false;
+}
+</script>
+</@layout.override>
+<@layout.extends name="./_layouts/bootstrap.html"/>

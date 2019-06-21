@@ -1,0 +1,315 @@
+<@layout.override name="css"> 
+<@layout.super/> 
+</@layout.override>
+<@layout.override name="js"> 
+<@layout.super/>
+<script type="text/javascript" src="/assets/echarts/3.2.3/echarts.js"></script>
+</@layout.override>
+<@layout.override name="body">
+<section class="content-header">
+	<h1>
+		首页<small>工作台</small>
+	</h1>
+	<ol class="breadcrumb">
+		<li><a href="javascript:;"><i class="fa fa-dashboard"></i> 首页</a></li>
+		<li class="active">工作台</li>
+	</ol>
+</section>
+
+<section class="content">
+	<div class="row">
+		<@sys.currentUser; user>
+		<section class="col-md-5">
+			<div class="box box-widget widget-user-2">
+				<div class="widget-user-header bg-teal">
+					<div class="widget-user-image">
+						<img class="img-circle" src="/themes/${skin!}/img/avatar04.png"
+							alt="User Avatar">
+					</div>
+					<h3 class="widget-user-username">您好：${(user.name)!}</h3>
+					<h5>&nbsp;</h5>
+				</div>
+				<div class="box-footer no-padding">
+					<ul class="nav nav-stacked">
+						<li><a href="javascript:;">登录帐户：${(user.username)!}</a></li>
+						<li><a href="javascript:;">登录时间：${(user.loginTime?string('yyyy-MM-dd HH:mm:ss'))!}</a></li>
+					</ul>
+				</div>
+			</div>
+		</section>
+		</@sys.currentUser>
+
+		<style>
+.small-box:hover {
+	background-color: #ee6723 !important;
+}
+
+.small-box {
+	border-radius: 6px;
+}
+
+.tubiao {
+	float: left;
+}
+
+.tubiao i {
+	font-size: 40px;
+	padding-top: 10px;
+	color: #eeeeeeb0
+}
+
+.heidiv {
+	padding: 0px 6px;
+}
+</style>
+		<div class="col-md-7">
+			<a href="">
+				<div class="col-md-3 heidiv" style="padding-top: 6px;">
+					<div class="small-box bg-aqua" style="height: 84px;">
+						<div class="inner">
+							<span style="float: left; margin-left: 16px;">
+								<h3 style="margin: 0">12</h3>
+								<p>部门信息</p>
+							</span>
+						</div>
+					</div>
+				</div>
+			</a> <a href="">
+				<div class="col-md-3 heidiv" style="padding-top: 6px;">
+					<div class="small-box bg-green"
+						style="height: 84px; background-color: #00DDC6 !important;">
+						<div class="inner">
+							<span style="float: left; margin-left: 16px;">
+								<h3 style="margin: 0">12</h3>
+								<p>食堂信息</p>
+							</span>
+						</div>
+					</div>
+				</div>
+			</a> <a href="">
+				<div class="col-md-3 heidiv" style="padding-top: 6px;">
+					<div class="small-box bg-orange" style="height: 84px;">
+						<div class="inner">
+							<span style="float: left; margin-left: 16px;">
+								<h3 style="margin: 0">55</h3>
+								<p>库存信息</p>
+							</span>
+						</div>
+					</div>
+				</div>
+			</a> <a href="">
+				<div class="col-md-3 heidiv" style="padding-top: 6px;">
+					<div class="small-box bg-green" style="height: 84px;">
+						<div class="inner">
+							<span style="float: left; margin-left: 16px;">
+								<h3 style="margin: 0">22</h3>
+								<p>温湿度情况</p>
+							</span>
+						</div>
+					</div>
+				</div>
+			</a> <a href="">
+				<div class="col-md-3 heidiv">
+					<div class="small-box bg-purple"
+						style="height: 84px; background-color: #2899F6 !important;">
+						<div class="inner">
+							<span style="float: left; margin-left: 16px;">
+								<h3 style="margin: 0">2323</h3>
+								<p>燃气报警信息</p>
+							</span>
+						</div>
+					</div>
+				</div>
+			</a> <a href="">
+				<div class="col-md-3 heidiv">
+					<div class="small-box bg-green" style="height: 84px;">
+						<div class="inner">
+							<span style="float: left; margin-left: 16px;">
+								<h3 style="margin: 0">76</h3>
+								<p>食堂监控信息</p>
+							</span>
+						</div>
+					</div>
+				</div>
+			</a> <a href="">
+				<div class="col-md-3 heidiv">
+					<div class="small-box bg-aqua" style="height: 84px;">
+						<div class="inner">
+							<span style="float: left; margin-left: 16px;">
+								<h3 style="margin: 0">99</h3>
+								<p>一卡通结算信息</p>
+							</span>
+						</div>
+					</div>
+				</div>
+			</a> <a href="">
+				<div class="col-md-3 heidiv">
+					<div class="small-box bg-green"
+						style="height: 84px; background-color: #00DDC6 !important;">
+						<div class="inner">
+							<span style="float: left; margin-left: 16px;">
+								<h3 style="margin: 0">8</h3>
+								<p>所有员工信息</p>
+							</span>
+						</div>
+					</div>
+				</div>
+			</a>
+
+		</div>
+		<!-- /.row -->
+	</div>
+<style>
+.com_index_rue_list {
+	border: 1px solid #efefef;
+	padding: 5px;
+	box-sizing: border-box;
+	overflow: hidden
+}
+
+.com_index_rue_list dl {
+	width: 100%;
+	float: left;
+	border-bottom: 1px solid #f0f0f0;
+}
+
+.com_index_rue_list dt {
+	width: 30px;
+	float: left;
+	padding-left: 5px;
+	padding-top: 5px;
+}
+
+.com_index_rue_list dt img {
+	border-radius: 2px;
+}
+
+.com_index_rue_list dd {
+	width: 90%;
+	float: right;
+	line-height: 20px;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.com_index_rue_list dd strong {
+	display: block
+}
+
+.width150 {
+	width: 247px;
+	overflow: hidden;
+	height: 30px;
+	display: block
+}
+
+.com_index_rue_listspan {
+	color: #676464
+}
+</style>
+	<!-- Main row -->
+	<div class="row">
+		<!-- Left col -->
+		<section class="col-md-7 connectedSortable"
+			style="padding-right: 5px;">
+			<!-- Custom tabs (Charts with tabs)-->
+
+			<!-- /.nav-tabs-custom -->
+			<div class="box" style="height: 510px;width: 450px">
+				<div class="box-header">
+					<h3 class="box-title">营养红绿灯</h3>
+				</div>
+				<div class="box-body" style="position: relative; height: 240px; margin-top: -2%; padding-left: 0px;">
+					<@cms.articleList filters={'channelId':'322',"enabled":"true"} orderBy='create_time Desc' isIterate=false page='1' size=6;items>
+					<#list items.content as item>
+					<div class="cc" style="width: 98%; float: left">
+						<div class="com_index_rue_list cc mb10 mr10"
+							style="box-sizing: border-box; margin-top: 16px; margin-left: 16px">
+							<dl style="margin-bottom: 6px">
+								<dd style="float: left">
+									<a class="tooltips" style="color: #1874CD" href="/admin/cms/news/yyhld/list.html" title="${(item.title)!}">${(item.title)!}</a>
+								</dd>
+							</dl>
+							<div class="6">
+								<span class="com_index_rue_listspan" style="height: 6px">发布时间： ${(item.createTime?string('yyyy-MM-dd'))!}</span>
+							<#-- 	<span class="com_index_rue_listspan" style="height: 6px; margin-left: 5px">所属栏目：
+									 sss
+									</span> -->
+							</div>
+						</div>
+					</div>
+					</#list>
+					</@cms.articleList>
+				</div>
+			</div>
+
+			<div class="box">
+				<div class="box-header">
+					<h3 class="box-title">开发团队</h3>
+				</div>
+				<div class="box-body" style="position: relative; height: 220px;">
+					<!-- p>开发团队：宁夏飞通信息科技有限公司</p>
+            <p>咨询热线：5921577</p> 
+            <p>联系地址：银川市金凤区IBI育成中心</p>  -->
+				</div>
+			</div>
+		</section>
+		<!-- /.Left col -->
+
+		<!-- right col (We are only adding the ID to make the widgets sortable)-->
+		<section class="col-md-5 connectedSortable">
+			<div class="box" style="height: 510px;width:600px;margin-left: -180px;">
+				<div class="box-header">
+					<h3 class="box-title">网站发布统计</h3>
+				</div>
+				<div class="box-body" style="height: 462px; overflow: hidden;">
+					<div id="main" style="width: 600px; height: 400px;">aaa</div>
+					<script type="text/javascript">
+						// 基于准备好的dom，初始化echarts实例
+						var myChart = echarts.init(document
+								.getElementById('main'));
+
+						// 指定图表的配置项和数据
+						var option = {
+							title : {
+								text : '网站发布统计'
+							},
+							tooltip : {},
+							legend : {
+								data : [ 'li浏览量量' ]
+							},
+							xAxis : {
+								data : [ "一月", "二月", "三月", "四月", "五月", "六月" ,"七月", "八月", "九月", "十月", "十一月", "十二月" ]
+							},
+							yAxis : {},
+							series : [ {
+								name : '销量',
+								type : 'bar',
+								data : [ 5, 20, 36, 10, 10, 20,5, 20, 36, 10, 10, 20 ]
+							} ]
+						};
+
+						// 使用刚指定的配置项和数据显示图表。
+						myChart.setOption(option);
+					</script>
+				</div>
+				<!-- /.box-body -->
+			</div>
+
+			<div class="box" style="margin-top: 24px">
+				<div class="box-header">
+					<h3 class="box-title">系统信息</h3>
+				</div>
+				<div class="box-body" style="height: 220px;">
+
+					<div id="bar-chart" style="width: 600px; height: 220px;"></div>
+
+				</div>
+			</div>
+		</section>
+	</div>
+
+</section>
+</@layout.override>
+<@layout.extends name="_layouts/bootstrap.html"/>

@@ -1,0 +1,8 @@
+bootstrap/** [bootstrap v3.3.7]
+layui/layer.min.js [layer v3.1.1]
+layui/laydate.min.js [laydate v5.0.9]
+js/jquery.min.js [jquery v1.11.1]
+js/jquery.validate.min [jquery.validate v1.16.0]
+js/holder.min.js [holder.js v2.8.0]
+js/respond.min.js [respond v1.4.2]
+js/html5shiv.min.js [html5shiv v3.7.3]

@@ -1,0 +1,306 @@
+<#assign modulePath="${adminPath}/common/grouptype" />
+<@layout.override name="body">
+<ol class="breadcrumb">
+  <li><a href="javascript:;">创新师类型</a></li>
+  <li><a href="javascript:;">列表</a></li>
+</ol>
+<style>
+	.table_form{font-size:12px}
+	.table_form td{padding-left:12px}
+	.table_form th{font-weight:normal; text-align:right;padding-right:10px; color:#777;}
+	.table_form td label{ vertical-align:middle}
+	.table_form td,.table_form th{padding:10px 0 10px 6px}
+	.table_form tbody td,.table_form tbody th{border-bottom:1px solid #E6E6E6;color:#000;}
+</style>
+<div class="container-fluid">
+
+  <h4 class="spk-header">创新师类型</h4>
+
+  <div class="form-inline btn-toolbar spk-toolbar" role="toolbar">
+    <div class="btn-group btn-group-sm pull-left">
+      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">批量<span class="caret"></span></button>
+      <ul class="dropdown-menu" role="menu" style="min-width: auto">
+        <li class="divider"></li>
+        <li><a href="javascript:;" onclick="doRemoveBatch()"><i class="fa fa-trash-o fa-lg"></i>删除</a></li>
+      </ul>
+      <div class="input-group input-group-sm">
+        <span class="input-group-addon" id="change-group">分类</span>
+        <select class="form-control" onchange="on_change_group(this)" aria-describedby="change-group" id="grouptype">
+          <option value="engineer_type" selected="selected">创新工程师</option>
+          <option value="trainer_type">创新培训师</option>
+          <option value="counsellor_type">创新咨询师</option>
+        </select>
+      </div>
+    </div>
+    <div class="btn-group btn-group-sm pull-right">
+      <button type="button" class="btn btn-default" onclick="getCreate()"><img src="/themes/admin/img/plus.png" height="10px"/>&nbsp;添加类别</button>
+    </div>
+  </div>
+
+<form id="batchForm" action="" method="post">
+<table class="table table-striped table-condensed expander spk-gridview">
+  <tr class="row-head">
+    <th class="column-tiny"><input type="checkbox" onclick="checkEach('ids',this.checked)" /></th>
+    <th class="column-auto">名称(点击修改)</th>
+    <th width="18%" align="center">优先级(越大越靠前)</th>
+    <th class="column-tool">启用</th>
+    <th class="column-tool">操作</th>
+  </tr>
+  <#list entities.content as item>
+  <tr class="row-data">
+    <td class="column-tiny"><input type="checkbox" name="ids" value="${(item.id)!}"/></td>
+    <td class="column-auto" id="${(item.id)!}"><span onclick="changeName(${(item.id)!},'${(item.name)!}')">${(item.name)!}</span></td>
+    <td width="18%" align="center" class="${(item.id)!}"><p onclick="changeOrder(${(item.id)!},${(item.priority)!})">${(item.priority)!}</p></td>
+    <td class="column-tool"><@ui.btnBoolean entity=item field="enabled" onclick="doEnable(${(item.id)},${(item.enabled?string)!})" /></td>
+    <td class="column-tool">
+      <span>
+        <div class="btn-group" >
+		  <button type="button"  class="btn btn-info btn-sm dropdown-toggle"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">操作  <span class="caret"></span></button>
+		  <ul class="dropdown-menu dropdown-menu-right" style="min-width: auto;">
+		     <li role="separator" class="divider"></li>
+		     <li><a href="javascript:;" onclick="doRemove(${(item.id)!})"><i class="fa fa-trash-o fa-lg"></i>删除</a></li>
+           </ul>
+	    </div>
+      </span>
+    </td>
+  </tr>
+  </#list>
+  <tr class="row-foot">
+    <td colspan="5">
+      <span class="pull-right count">共&nbsp;${(entities.totalElements)!}&nbsp;条</span>
+      <div class="pull-right tcdPageCode"></div>
+    </td>
+  </tr>
+</table>
+</form>
+<div id="addGroupType" style=" width:298px; position:absolute; display:none;">
+    <table class="table_form "style="width:100%">
+		<tbody>
+			<tr class="ui_td_11" >
+				<td style="text-align: right;" class="ui_content_wrap">名称：</td><td><input style="width: 190px" type="text" id="addname" name="addname" class="form-control" /></td>
+			</tr>
+			<tr class="ui_td_11" >
+				<td style="text-align: right;" class="ui_content_wrap">类型：</td>
+				<td>
+				  <select class="form-control"  id="addgrouptype" name="addgrouptype" style="width: 190px">
+			          <option value="engineer_type" selected="selected">创新工程师</option>
+			          <option value="trainer_type">创新培训师</option>
+			          <option value="counsellor_type">创新咨询师</option>
+			      </select>
+				</td>
+			</tr>
+			<tr class="ui_td_11" >
+				<td style="text-align: right;" class="ui_content_wrap">排序：</td><td><input style="width: 190px" type="text" name="addpriority" id="addpriority" class="form-control" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" /></td>
+			</tr>
+			<tr class="ui_td_11" >
+				<td style="text-align: right;" class="ui_content_wrap">启用：</td>
+				<td><input name="addenabled" value="1"  type="radio" checked="checked">是</label>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <input name="addenabled" value="0"  type="radio">否</label>&nbsp;
+                </td>
+			</tr>
+			<tr class="ui_td_11">
+				<td  class="ui_content_wrap" style="border-bottom:none" colspan='2'  > 
+                   <input onclick="doCreate()" value="确认" class="btn btn-info btn-sm" style="width: 60px;height: 28px;margin-left: 80px" type="button">
+                   <input onclick="layer.closeAll();" class="btn btn-primary btn-sm" style="width: 60px;height: 28px;margin-left: 18px" value="取消" type="button">
+                </td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+<script type="text/javascript">
+function changeName(nid,name){
+	$("#"+nid).html("<input type='text' style=\"width:auto;height:24px\" value='"+name+"' id='name"+nid+"' onBlur=\"changeNameAjax('"+nid+"','"+name+"');\">");
+	//先通过.focus()获取焦点，onblur() 再离焦触发方法。
+	$("#name"+nid).focus();
+}
+
+function changeNameAjax(nid,name){
+	var inputname = $("#name"+nid).val();
+	if($.trim(inputname)== ''){
+		layer.msg('类别名称不能为空');
+	}else{
+		//减少代码与数据库交互次数，排序没变化不执行ajax;
+		 if(name!=inputname){
+			$.ajax({
+				url: "${modulePath}/changeName.json",
+				type: "post",
+				data: {"id":nid,"name":inputname},
+				dataType: "json", 
+				traditional: true,
+				success: function(data){
+					if (data.success){
+						location.reload();
+					} else {
+						layer.msg("修改失败!");
+					}
+				}
+			});
+		 }
+	}
+	$("#"+nid).html("<span onClick=\"changeName('"+nid+"','"+name+"');\">"+name+"</span>"); 
+}
+
+function changeOrder(uid, order){
+	$("."+uid).html("<input style=\"width:100px;\" type='text' id='order"+uid+"' value='"+order+"' onBlur='changeOrderAjax("+uid+","+order+")' onkeyup=\"this.value=this.value.replace(/\D/g,'')\" onafterpaste=\"this.value=this.value.replace(/\D/g,'')\"/>");
+	$("#order"+uid).focus();
+}
+
+function changeOrderAjax(uid, order){
+	var inputOrder = $("#order"+uid).val();
+	if($.trim(inputOrder) == ''){
+		layer.msg("优先级不能为空");
+	}else{
+		if(order != inputOrder){
+			$.ajax({
+				url: "${modulePath}/changeOrder.json",
+				type: "post",
+				data: {"id":uid,"priority":inputOrder},
+				dataType: "json", 
+				traditional: true,
+				success: function(data){
+					if (data.success){
+						location.reload();
+					} else {
+						layer.msg("修改失败!");
+					}
+				}
+			});
+		 }
+	}
+	$("."+uid).html("<p onClick=\"changeOrder('"+uid+"','"+order+"');\">"+order+"</p>"); 
+}
+
+function on_change_group(obj){
+	self.location.href = "${modulePath}/"+obj.value+"/list.html";
+};
+
+$(function(){
+	$("#grouptype").val("${(type)!}");
+	$(".tcdPageCode").createPage({
+		pageCount : ${(entities.totalPages)!},
+		current : ${(entities.number)!},
+		backFn : function(page){
+			self.location.href = "${modulePath}/${(type)!}/list.html?page="+page; 
+		}
+	});
+});
+
+function doRemove(id){
+	layer.confirm('确认要删除吗？',{
+	    btn: ['确认','取消'],
+	    title:"系统提示"
+		}, function(){
+			$.ajax({
+				url: "${modulePath}/remove.json",
+				type: "post",
+				data: {"id":id},
+				dataType: "json",
+				success: function(data){
+					if (data.success){
+						location.reload();
+					} else {
+						layer.msg("删除失败!");
+					}
+				}
+			}); 
+		}, function(){
+		  layer.closeAll();
+		});
+}
+
+function doRemoveBatch(){
+	if($("input[name='ids']:checked").length == 0) {
+	    layer.msg("请至少选择一条记录！");
+	    return false;
+	 }
+	var ids =[];
+	$('input[name="ids"]:checked').each(function(){
+	  ids.push($(this).val()); 
+	}); 
+	layer.confirm('确认要删除吗？',{
+	    btn: ['确认','取消'],
+	    title:"系统提示"
+		}, function(){
+			$.ajax({
+				url: "${modulePath}/remove/batch.json",
+				type: "post",
+				data: {"ids":ids},
+				dataType: "json", 
+				traditional: true,
+				success: function(data){
+					if (data.success){
+						location.reload();
+					} else {
+						layer.msg("删除失败!");
+					}
+				}
+			}); 
+		}, function(){
+		  layer.closeAll();
+		});
+}
+
+function doEnable(id){
+	$.ajax({
+		url: "${modulePath}/setEnable.json",
+		type: "post",
+		data: {"id":id},
+		dataType: "json", 
+		traditional: true,
+		success: function(data){
+			if (data.success){
+				location.reload();
+			} else {
+				layer.msg("修改失败!");
+			}
+		}
+	}); 
+}
+
+function getCreate(){
+	layer.open({
+		  type: 1,
+		  title :'添加类别	',
+		  offset : [ '240px', '' ],
+		  border : [ 10, 0.3, '#000', true ],
+		  area : [ '328px', '320px' ],
+		  skin: 'layui-layer-rim', //加上边框
+		  content: $('#addGroupType'),
+	});
+}
+
+function doCreate(){
+	var name = $("#addname").val();
+	var grouptype = $("#addgrouptype").val();
+	var priority = $("#addpriority").val();
+	var enabled = $("input[name='addenabled']:checked").val();
+	if($.trim(name) == ''){
+		layer.msg("名称不能为空!");
+		return false;
+	}
+	$.ajax({
+		url: "${modulePath}/addType.json",
+		type: "post",
+		data: {"name":name,"grouptype":grouptype,"priority":priority,"enabled":enabled},
+		dataType: "json", 
+		traditional: true,
+		success: function(data){
+			if (data.success){
+				location.reload();
+			} else {
+				layer.msg("新增失败!");
+			}
+		}
+	}); 
+	
+}
+</script>
+</div>
+</@layout.override>
+<@layout.override name="css">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="js">
+<@layout.super/>
+</@layout.override>
+<@layout.extends name="../../_layouts/bootstrap.html"/>

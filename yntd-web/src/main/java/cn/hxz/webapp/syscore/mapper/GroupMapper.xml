@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.hxz.webapp.syscore.mapper.GroupMapper">
+
+	<!-- 单表查询映射结果 -->
+	<resultMap id="BaseResultMap" type="cn.hxz.webapp.syscore.entity.Group">
+		<id column="id" property="id" />
+		<result column="name" property="name" />
+		<result column="parent_id" property="parentId" />
+		<result column="enabled" property="enabled" />
+		<result column="trashed" property="trashed" />
+		<result column="builtin" property="builtin" />
+	</resultMap>
+
+    <!-- 单表查询结果列 -->
+    <sql id="Base_Column_List">
+        id, name, parent_id AS parentId, enabled, trashed
+    </sql>
+	
+	<insert id="connectRole">
+	<![CDATA[
+		INSERT INTO sys_group_role(group_id, role_id) VALUE(#{groupId},#{roleId})
+	]]>
+	</insert>
+
+	<delete id="disconnectRoles">
+	<![CDATA[
+		DELETE FROM sys_group_role WHERE group_id=#{groupId}
+	]]>
+	</delete>
+    
+	<select id="findConnectedRoles" resultType="cn.hxz.webapp.syscore.entity.Role">
+	<![CDATA[
+		SELECT r.* FROM sys_role r
+		RIGHT JOIN sys_group_role gr ON gr.role_id=r.id
+		WHERE gr.group_id=#{groupId}
+	]]>
+	</select>
+</mapper>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.hxz.webapp.content.mapper.ArticleMapper">
+
+	<!-- 单表查询映射结果 -->
+	<resultMap id="BaseResultMap" type="cn.hxz.webapp.content.entity.Article">
+		<id column="id" property="id" />
+		<result column="title" property="title" />
+		<result column="color" property="color" />
+		<result column="author" property="author" />
+		<result column="source" property="source" />
+		<result column="sticky" property="sticky" />
+		<result column="promote" property="promote" />
+		<result column="checked" property="checked" />
+		<result column="enabled" property="enabled" />
+		<result column="trashed" property="trashed" />
+		<result column="priority" property="priority" />
+		<result column="channel_id" property="channelId" />
+		<result column="create_by" property="createBy" />
+		<result column="create_time" property="createTime" />
+		<result column="update_by" property="updateBy" />
+		<result column="update_time" property="updateTime" />
+		<result column="image_uri" property="imageUri" />
+		<result column="thumb_uri" property="thumbUri" />
+		<result column="summary" property="summary" />
+		<result column="content" property="content" />
+		<result column="meta" property="meta" />
+		<result column="visits" property="visits" />
+	</resultMap>
+
+    <!-- 单表查询结果列 -->
+    <sql id="Base_Column_List">
+        id, title, color, author, source, sticky, promote, checked, enabled, trashed, priority, channel_id AS channelId, create_by AS createBy, create_time AS createTime, update_by AS updateBy, update_time AS updateTime, image_uri AS imageUri, thumb_uri AS thumbUri, summary, content, meta, visits
+    </sql>
+	<select id ="selectProviousOne"   resultType="cn.hxz.webapp.content.entity.Article" >
+	select * From  cms_article where id &lt;#{id} 
+	 <if test="null!=channelId and ''!=channelId">and channel_id= #{channelId} </if>
+	ORDER BY id DESC  limit 1;
+	</select>
+	
+	<select id = "selectNextOne"  resultType="cn.hxz.webapp.content.entity.Article" >
+	select * From  cms_article where id &gt;#{id}
+	 <if test="null!=channelId and ''!=channelId">and channel_id= #{channelId}</if>
+	ORDER BY id ASC  limit 1;  
+	</select>
+	<select id="findArticleBycanteenId" resultType="map">
+		SELECT
+			ca.id,
+			title,
+			keyword,
+			color,
+			author,
+			source,
+			sticky,
+			promote,
+			checked,
+			enabled,
+			ca.trashed,
+			priority,
+			channel_id AS channelId,
+			canteen_id AS canteenId,
+			create_by AS createBy,
+			image_uri AS imageUri,
+			DATE_FORMAT(ca.create_time,'%Y-%m-%d') as createTime,
+			update_by AS updateBy,
+			update_time AS updateTime 
+		FROM
+			( cms_article AS ca LEFT JOIN szst_canteen AS sa ON ca.canteen_id = sa.id )
+			RIGHT JOIN szst_affait AS saf ON saf.id = ca.create_by 
+		WHERE
+			ca.channel_id = #{channelId}
+			<if test="null!=filters.canteenId and ''!= filters.canteenId">and ca.canteen_id = #{filters.canteenId}</if>
+			<if test="null!=filters.createBy and ''!= filters.createBy">and ca.create_by = #{filters.createBy}</if>
+		ORDER BY
+			ca.id DESC
+			
+	</select>
+
+
+</mapper>

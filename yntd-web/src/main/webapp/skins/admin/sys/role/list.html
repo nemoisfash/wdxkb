@@ -1,0 +1,98 @@
+<#assign modulePath="${adminPath}/sys/role" />
+<@layout.override name="css">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="js">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="body">
+<ol class="breadcrumb">
+	<li><a href="javascript:;">角色管理</a></li>
+	<li><a href="javascript:;">列表</a></li>
+</ol>
+
+<div class="container-fluid">
+
+<ul class="nav nav-tabs">
+	<li role="presentation" class="active"><a href="javascript:;">列表</a></li>
+	<li role="presentation"><a href="${modulePath}/edit.html">添加</a></li>
+</ul>
+
+<div class="btn-toolbar spk-toolbar" role="toolbar">
+	<div class="btn-group btn-group-sm pull-left">
+		<button type="button" class="btn btn-default"><i class="fa fa-fw fa-list-ul"></i></button>
+	</div>
+</div>
+
+<table class="table table-striped table-condensed expander spk-gridview">
+	<tr class="row-head">
+		<th class="column-tiny"><input type="checkbox" onclick="Fw.checkEach('ids')" /></th>
+		<th class="column-attr">标识</th>
+		<th class="column-auto">名称</th>
+		<th class="column-tool">组</th>
+		<th class="column-tool">用户</th>
+		<th class="column-tool">操作</th>
+	</tr>
+<#list entities.content as item>
+	<tr class="row-data">
+		<td class="column-tiny"><input type="checkbox" name="ids" value="${(item.id)!}"/></td>
+		<td class="column-attr">${(item.code)!}</td>
+		<#-- <td class="column-auto"><a href="${modulePath}/index.html?id=${(item.id)!}" style="text-decoration:none">${(item.name)!}</a></td> -->
+		<td class="column-auto"><a style="text-decoration:none">${(item.name)!}</a></td>
+		<td class="column-tool"><@ui.btnLook text="查看" onclick="on_dialog('${modulePath}/groups/${(item.id)!}.html')" /></td>
+		<td class="column-tool"><@ui.btnLook text="查看" onclick="on_dialog('${modulePath}/accounts/${(item.id)!}.html')" /></td>
+		<td class="column-tool">
+			<span>
+			<@ui.btnInfo text="修改" href="${modulePath}/edit.html?id=${item.id!}" />
+			<@ui.btnWarn text="删除" onclick="on_delete('${(item.id)!}')" />
+			</span>
+		</td>
+	</tr>
+</#list>
+<#if entities.numberOfElements lt entities.size>
+<#list 1..(entities.size - entities.numberOfElements) as row>
+	<tr>
+		<td colspan="6">&nbsp;</td>
+	</tr>
+</#list>
+</#if>
+	<tr class="row-foot">
+		<td colspan="6">
+			<div class="pull-right tcdPageCode"></div>
+		</td>
+	</tr>
+</table>
+</div>
+<script type="text/javascript">
+function on_delete(id){
+	top.layer.confirm("<@spring.message 'msg.remove'/>", function(idx) {
+		top.layer.close(idx);
+		$.post("${modulePath}/delete.json", {
+			"id" : id
+		}, function(data, status) {
+			if (data.success)
+				self.location.reload();
+		});
+	});
+}
+function on_dialog(url){
+	layer.open({
+		type: 2,
+		area: ['640px', '480px'],
+		content: url
+		//content: '${adminPath}/login.html' //这里content是一个URL，如果你不想让iframe出现滚动条，你还可以content: ['http://sentsin.com', 'no']
+	});
+}
+$(function(){
+	$(".tcdPageCode").createPage({
+		elementCount : ${(entities.totalElements)!},
+		pageCount : ${(entities.totalPages)!},
+		current : ${(entities.number)!},
+		backFn : function(to){
+			Fw.updateFilter('${filters.uuid!}', 'page', to);
+		}
+	});
+});
+</script>
+</@layout.override>
+<@layout.extends name="../../_layouts/bootstrap.html"/>

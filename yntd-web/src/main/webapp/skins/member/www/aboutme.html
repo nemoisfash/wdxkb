@@ -1,0 +1,26 @@
+
+  <@layout.override name="body">
+<div class="products-breadcrumb">
+		<div class="container">
+			<ul>
+				<li>
+					<i class="fa fa-home" aria-hidden="true"></i>
+					<a href="/index.html">首页</a>
+					<span>|</span>
+				</li>
+				<li style="color:#ffff">${(channel.name)!}</li>
+			</ul>
+		</div>
+	</div>
+	<div class="container">
+		<div class="">
+		   <div class="privacy about">
+			 ${(content.name)!}
+			<p class="animi">
+				${(content.content)!}
+			</p>
+		</div>
+		</div>
+	</div>
+	</@layout.override>
+<@layout.extends name="layout/common-part.html"/>

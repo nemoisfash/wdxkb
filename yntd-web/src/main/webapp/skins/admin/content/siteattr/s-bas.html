@@ -1,0 +1,176 @@
+<#assign modulePath="${adminPath}/content/siteattr" />
+<@layout.override name="body">
+<ol class="breadcrumb">
+  <li><a href="javascript:;">基本设置</a></li>
+  <li><a href="javascript:;">编辑</a></li>
+</ol>
+
+<div class="container-fluid">
+
+<#include "_tabs_site.html" />
+
+<form action="${modulePath}/${section!}/save.html" class="form-horizontal" role="form" method="post">
+  
+  <hr class="spk-hr" />
+
+  <div class="row form-group">
+    <label class="control-label col-sm-2">网站简称</label>
+    <div class="col-sm-3">
+      <input type="text" name="attr['site_name']" class="form-control input-sm" value="${(attr['site_name'].value)!}" />
+    </div>
+    <div class="col-sm-2">
+      <p class="form-control-static">site_name</p>
+    </div>
+  </div>
+	
+  <div class="row form-group">
+    <label class="control-label col-sm-2">网站标题</label>
+    <div class="col-sm-3">
+      <input type="text" name="attr['site_title']" class="form-control input-sm" value="${(attr['site_title'].value)!}" />
+    </div>
+    <div class="col-sm-2">
+      <p class="form-control-static">site_title</p>
+    </div>
+  </div>
+	
+  <div class="row form-group">
+    <label class="control-label col-sm-2">站长EMAIL</label>
+    <div class="col-sm-3">
+      <input type="text" name="attr['site_master']" class="form-control input-sm" value="${(attr['site_master'].value)!}" />
+    </div>
+    <div class="col-sm-2">
+      <p class="form-control-static">site_master</p>
+    </div>
+  </div>
+	
+  <div class="row form-group">
+    <label class="control-label col-sm-2">备案号</label>
+    <div class="col-sm-3">
+      <input type="text" name="attr['site_record']" class="form-control input-sm" value="${(attr['site_record'].value)!}" />
+    </div>
+    <div class="col-sm-2">
+      <p class="form-control-static">site_record</p>
+    </div>
+  </div>
+	
+  <div class="row form-group">
+    <label class="control-label col-sm-2">联系电话</label>
+    <div class="col-sm-3">
+      <input type="text" name="attr['site_phone']" class="form-control input-sm" value="${(attr['site_phone'].value)!}" />
+    </div>
+    <div class="col-sm-2">
+      <p class="form-control-static">site_phone</p>
+    </div>
+  </div>
+	
+  <div class="row form-group">
+    <label class="control-label col-sm-2">客服QQ</label>
+    <div class="col-sm-3">
+      <input type="text" name="attr['site_qq']" class="form-control input-sm" value="${(attr['site_qq'].value)!}" />
+    </div>
+    <div class="col-sm-2">
+      <p class="form-control-static">site_qq</p>
+    </div>
+  </div>
+	
+  <div class="row form-group">
+    <label class="control-label col-sm-2">地址</label>
+    <div class="col-sm-3">
+      <input type="text" name="attr['site_address']" class="form-control input-sm" value="${(attr['site_address'].value)!}" />
+    </div>
+    <div class="col-sm-2">
+      <p class="form-control-static">site_address</p>
+    </div>
+  </div>
+	
+  <div class="row form-group">
+    <label class="control-label col-sm-2">网站关闭原因</label>
+    <div class="col-sm-3">
+      <textarea name="attr['site_close_msg']" class="form-control">${(attr['site_close_msg'].value)!}</textarea>
+    </div>
+    <div class="col-sm-2">
+      <p class="form-control-static">site_close_msg</p>
+    </div>
+  </div>
+	
+  <div class="row form-group">
+    <label class="control-label col-sm-2">网站关键词</label>
+    <div class="col-sm-3">
+      <textarea name="attr['site_keywords']" class="form-control">${(attr['site_keywords'].value)!}</textarea>
+    </div>
+    <div class="col-sm-2">
+      <p class="form-control-static">site_keywords</p>
+    </div>
+  </div>
+	
+  <div class="row form-group">
+    <label class="control-label col-sm-2">网站描述</label>
+    <div class="col-sm-3">
+      <textarea name="attr['site_description']" class="form-control">${(attr['site_description'].value)!}</textarea>
+    </div>
+    <div class="col-sm-2">
+      <p class="form-control-static">site_description</p>
+    </div>
+  </div>
+	
+  <div class="row form-group">
+    <label class="control-label col-sm-2">版权信息</label>
+    <div class="col-sm-3">
+      <textarea name="attr['site_copyright']" class="form-control">${(attr['site_copyright'].value)!}</textarea>
+    </div>
+    <div class="col-sm-2">
+      <p class="form-control-static">site_copyright</p>
+    </div>
+  </div>
+  
+  <div class="row form-group">
+    <label class="control-label col-sm-2">访问量基数</label>
+    <div class="col-sm-3">
+      <!-- <input type="text" name="attr['site_visit_base']" class="form-control input-sm" value="${(attr['site_visit_base'].value)!}" /> -->
+      <input type="text" name="attr['site_visit_base']" value="${(attr['site_visit_base'].value)!}" class="form-control input-sm" required="required"
+      placeholder="只能输入数字且不能为空" onkeyup="value=value.replace(/[^\d]/g,'')" />
+    </div>
+    <div class="col-sm-2">
+      <p class="form-control-static">（在原有访问量上增加）site_visit_base</p>
+    </div>
+  </div>
+  
+  <div class="row form-group">
+    <label class="control-label col-sm-2">原访问量</label>
+    <div class="col-sm-3">
+      <input type="text" disabled="disabled" name="attr['site_visit_num']" class="form-control input-sm" value="${(attr['site_visit_num'].value)!}" />
+    </div>
+    <div class="col-sm-2">
+      <p class="form-control-static">site_visit_num</p>
+    </div>
+  </div>	
+	
+  <hr class="spk-hr" />
+  <div class="row form-group">
+    <div class="col-sm-8 col-sm-offset-3">
+      <button type="submit" class="btn btn-primary btn-sm">保存</button>
+    </div>
+  </div>
+</form>
+</div>
+<script type="text/javascript">
+var validateForm;
+$(document).ready(function(){
+	validateForm = $("#validateForm").validate({
+		rules:{
+			"attr['site_name']":{ required:true },
+			"attr['site_title']":{ required:true},
+		},
+	});	
+});
+</script>
+</@layout.override>
+<@layout.override name="css">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="js">
+<@layout.super/>
+<script type="text/javascript" src="/assets/js/jquery.validate.min.js"></script>
+<script src="/themes/ui/js/validate.bootstrap.js" type="text/javascript"></script>
+</@layout.override>
+<@layout.extends name="../../_layouts/bootstrap.html"/>

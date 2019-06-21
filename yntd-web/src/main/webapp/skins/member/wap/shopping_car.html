@@ -1,0 +1,176 @@
+<#assign title="购物车"/>
+<@layout.override name="body">
+<!-- 主体 -->
+<div style="margin-top: 45px;">
+	<div class="middle">
+		<form action="" method="get">
+			<ul class="ul_2">
+				<#if entities?? && entities?size gt 0>
+				<#assign distinction=1/>
+					<#list entities as items>
+						<li>
+							<div class="li_ft">
+								<@szst.menu id='${(items.menuId)!}'; item>
+									<div class="aui-col-xs-7 li_zj" style="margin-left: 15px;">
+										<div class="img_box">
+											<img src="${(item.imageUri)!}" alt="">
+										</div>
+										<p><span>${(item.name)!}</span></p>
+										<p>单价：￥${(item.price)!}</p>
+									</div>
+								<div class="li_rt aui-col-xs-3">
+									<a href="javascript:;" onclick="minOrder(${(items.menuId)!})">
+										<i class="fa fa-fw fa-minus-square-o aui-pull-left"></i>
+									</a>
+									<div class="qty">${(items.count)!}</div>
+									<a href="javascript:;" onclick="onOrder(${(items.menuId)!})">
+										<i class="fa fa-fw fa-plus-square-o aui-pull-left"></i>
+									</a>
+								</div>
+								<input type="hidden" name="price" value="${(item.price)!}" />
+								<input type="hidden" name="count" value="${(items.count)!}" />
+								<input type="hidden" name="menuId" value="${(items.menuId)!}" />
+								<input type="hidden" name="menuNum" value="${(items.count)!}" />
+								<input type="hidden" name="orderId" value="${(items.id)!}" />
+								</@szst.menu>
+							</div>
+						</li>
+					</#list>
+				<#else>
+				<#assign distinction=2/>
+					<div style="width:auto;height:auto;text-align:center;margin-top:200px;">
+				    	<img alt="" src="/themes/web/img/zwgy.jpg" style="width:150px;margin:0 auto;">
+				    	<p style="text-align:center;">还未选择菜品</p>
+					</div>
+				</#if>
+			</ul>
+			<div class="aui-bar aui-bar-tab" style="bottom:50px;border-bottom: 1px solid #eee;">
+				<div class="aui-col-xs-4 aui-pull-left " style="height: 80px;line-height: 80px;padding-left: 20px;">
+					<p>合计:￥<span id="sum"></span>元</p>
+				</div>
+				<div class="aui-col-xs-3 aui-pull-right " style="height: 45px;text-align: right; margin-bottom: 10px; margin-right: 10px;">
+				<#if distinction=1>
+					<a href="javascript:;" onclick="onCalculate()">
+						<div class="aui-btn" style="width: 80px;height:100%;
+						line-height: 45px;background:#ec4747;color: #FFFFFF;">结算</div>
+					</a>
+				<#else>
+					<a href="javascript:;" onclick="onHint()">
+						<div class="aui-btn" style="width: 80px;height:100%;
+						line-height: 45px;background:#ec4747;color: #FFFFFF;">结算</div>
+					</a>
+				</#if>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+
+<script type="text/javascript">
+<!-- js生成合计 -->
+$(function() {
+	var sum=0
+	var m = [];
+	$('input[name="price"]').each(function(){
+		m.push($(this).val());
+	});
+	var n = [];
+	$('input[name="count"]').each(function(){
+		n.push($(this).val());
+	});
+	for(var i=0;i<m.length;i++){
+		sum += m[i]*n[i]
+	}
+	document.getElementById("sum").innerText = sum;
+});
+
+<!-- 增加点餐数量 -->
+function onOrder(menuId){
+	$.ajax({
+		url: "/wap/order.json",
+		type: "post",
+		data: {"menuId":menuId},
+		dataType: "json",
+		success: function(data){
+			if(data.success){
+				location.reload();
+			}else{
+				layer.msg("点餐失败");
+			}
+		}
+	});
+}
+
+<!-- 减少点餐数量 -->
+function minOrder(menuId){
+	$.ajax({
+		url: "/wap/abolishOrder.json",
+		type: "post",
+		data: {"menuId":menuId},
+		dataType: "json",
+		success: function(data){
+			if(data.success){
+				location.reload();
+			}else{
+				layer.msg("点餐失败");
+			}
+		}
+	});
+}
+
+<!-- 结算 -->
+function onCalculate(){
+	var menu = [];
+	var menuIds;
+	$('input[name="menuId"]').each(function(){
+		menu.push($(this).val());
+	})
+	menuIds = menu.join(",");
+	
+	var menuNum = [];
+	var menuNumIds;
+	$('input[name="menuNum"]').each(function(){
+		menuNum.push($(this).val());
+	})
+	menuNumIds = menuNum.join(",");
+	
+	var order = [];
+	var orderIds;
+	$('input[name="orderId"]').each(function(){
+		order.push($(this).val());
+	})
+	orderIds = order.join(",");
+	
+	var totPrice = $("#sum").text();
+	$.ajax({
+		url: "/wap/calculate.json",
+		type: "post",
+		data: {"menuIds":menuIds,"menuNumIds":menuNumIds,"orderIds":orderIds,"totPrice":totPrice},
+		dataType: "json",
+		traditional: true,
+		success: function(data){
+			if(data.success){
+				window.location.href="/wap/indent.html";
+			}else{
+				layer.msg("结算失败!");
+			}
+		}
+	})
+}
+
+function onHint(){
+	layer.msg("您还未选择菜品");
+}
+</script>
+
+</@layout.override>
+<@layout.override name="title">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="css">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="js">
+<@layout.super/>
+</@layout.override>
+<@layout.extends name="layout/normal.html"/>

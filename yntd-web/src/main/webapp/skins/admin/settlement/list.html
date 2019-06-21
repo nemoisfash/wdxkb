@@ -1,0 +1,89 @@
+<#assign modulePath="${adminPath}/settlement" />
+<@layout.override name="css">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="js">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="body">
+<ol class="breadcrumb">
+  <li><a href="javascript:;">一卡通结算系统</a></li>
+  <li><a href="javascript:;">食堂结算记录</a></li>
+</ol>
+<div class="container-fluid">
+    <ul class="nav nav-tabs">
+	    <li role="presentation" class="active"><a href="javascript:;">列表</a></li>	   
+    </ul>
+	<div class="form-inline btn-toolbar spk-toolbar" role="toolbar" style="margin-top: 12px">
+	    
+	    <div class="search_box" style=" margin-left: 5px">
+	      <div class="input-group input-group-sm">
+	        <div class="input-group-addon" style="border-left: 1px solid #d2d6de">部门名称</div>
+	      </div>
+	      <div class="input-group input-group-sm">
+	        <input type="text" class="form-control" aria-label="search_group" value="${(filters.name)!}" id="keyword" placeholder="输入你要搜索的部门名称">
+	        <span class="input-group-btn">
+	          <button type="button" class="btn btn-info search_btn" onclick="on_search()" aria-label="search_group">搜索</button>
+	        </span>
+	      </div>
+	    </div>
+	 </div>
+  	<form id="batchForm" action="" method="post">
+	  <table class="table table-striped table-condensed expander spk-gridview">
+		  <tr class="row-head">
+		    <th class="column-tiny"><input type="checkbox" onclick="checkEach('ids',this.checked)" /></th>
+		    <th class="column-auto" >所属部门</th>
+		    <th class="column-auto">充值金额</th>
+		    <th class="column-auto">刷卡金额</th>
+		    <th class="column-auto">采集时间</th>		   
+		  </tr>
+		<#list entities.content as item>  
+		  <tr class="row-data text=center">
+		    <td class="column-tiny"><input type="checkbox" name="ids" value="${(item.id)!}"/></td>
+		    <td >${(item.scName)!}</td>
+		    <td >${(item.topUp)!}</td>
+		    <td >${(item.consumption)!}</td>
+		    <td >${(item.collectTime)!}</td>			
+		  </tr>
+		</#list>
+		  <tr class="row-foot">
+			<td colspan="10">
+				<div class="pull-right tcdPageCode"></div>
+			</td>
+		 </tr>
+       </table>
+    </form>
+</div>
+
+
+<script type="text/javascript">
+$(function(){
+	$(".tcdPageCode").createPage({
+		elementCount : ${(entities.totalElements)!},
+		pageCount : ${(entities.totalPages)!},
+		current : ${(entities.number)!},
+		backFn : function(to){
+			Fw.updateFilter('${filters.uuid!}', 'page', to);
+		}
+	})
+});
+
+function on_search(){
+	var val = $.trim($("input[id='keyword']").val());
+	var key = "name";
+	if (val == ""){
+		removeCriteria(key);
+	}else{
+		updateCriteria(key,val);
+	}
+}
+
+function updateCriteria(key, value){
+	Fw.updateFilter('${filters.uuid!}', key, value);
+}
+function removeCriteria(key){
+	Fw.removeFilter('${filters.uuid!}', key);
+}
+</script>
+</@layout.override>
+<@layout.extends name="../_layouts/bootstrap.html"/>

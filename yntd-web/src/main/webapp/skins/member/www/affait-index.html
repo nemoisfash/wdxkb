@@ -1,0 +1,434 @@
+<!-- banner -->
+<!--数字化食堂目录-->
+<@layout.override name="body">
+<style>
+.clearfix:after{content:".";display:block;height:0;clear:both;visibility:hidden}
+.clearfix{display:inline-table}
+*html .clearfix{height:1%}
+.clearfix{display:block}
+*+html .clearfix{min-height:1%}
+/* nav_menu */
+.nav_menu{ height: 42px; background-color: #333333; margin-bottom: 10px; }
+.nav{height:41px;position:relative;margin:0 auto;}
+.nav .list li{float:left; list-style: none;}
+.nav .list a{float:left;display:block;width:125px;height:42px;text-align:center;font:bold 13px/36px "微软雅黑";color:#fff;}
+#navfouce .active{
+    background:#84C639;
+}
+.nav .list a:hover{color:#FFA304;}
+.nav .list a:hover,.nav .list .now{color:#fff;background:#84C639;}
+.nav .box{position:absolute;left:-5px;top:42px;width:1006px;background:#FFF;overflow:hidden;height:0;filter:alpha(opacity=0);opacity:0;border-bottom:2px solid #074c52;}
+.nav .cont{position:relative;padding:25px 0 0px 24px;}
+
+.content {
+   position: relative;
+   width: 325px;
+   height: 235px;
+   /*margin: 80px auto;*/
+}
+
+ul {
+   list-style-type: none;
+}
+
+ul.uIndex {
+   position: absolute;
+   bottom: 10px;
+   left: 135px;
+}
+ul.uItems{
+border:1px solid #ddd;
+width: 325px;
+height: 235px;
+}
+ul.uItems li {
+   position: absolute;
+}
+
+ul.uItems li img {
+   width: 325px;
+   height: 235px;
+}
+
+.btn-b{
+   padding:0;
+   width:30px;
+   height:40px;
+   text-align: center;
+   line-height:40px;
+   background: #4d4d4d;
+   opacity: .8;
+   color: white;
+   font-size: 20px;
+   position: absolute;
+   cursor: pointer;
+}
+
+.btnPrev{
+   top:90px;
+}
+
+.btnNext {
+   top:90px;
+   right:0px;
+ }
+</style>
+    
+<div class="banner container-fluid">
+	<div class="w3l_banner_nav_left">
+		<nav class="navbar nav_bottom">
+			<!-- Brand and toggle get grouped for better mobile display -->
+			<div class="navbar-header nav_2">
+				<button type="button" class="navbar-toggle collapsed navbar-toggle1" data-toggle="collapse" data-target="#bs-megadropdown-tabs">
+					<span class="sr-only"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+			</div>
+			<div class="collapse navbar-collapse" id="bs-megadropdown-tabs">
+				<ul class="nav navbar-nav nav_1">
+					<li>
+						<a style="color:#fff;font-size:18px;">数字化健康食堂目录</a>
+					</li>
+					<@szst.affaitList ;items>
+						<#if affait ?? && affait.id == items.id>
+								<li style="background-color:#84C639;color:#fff">
+							<#else>
+								<li>
+						</#if>
+							<a href="/member/index/affait.html?affaitId=${(items.id)!}">${(items.name)!}</a>
+						</li>
+					</@szst.affaitList>
+				</ul>
+			</div>
+		</nav>
+	</div>
+	
+		<div class="w3l_banner_nav_left nav_left1">
+		<!--首页图片-->
+		<div class="row" style="margin: 0;">
+			<div class="col-md-12">
+				<!--<img src="images/youtian.jpg" class="img-responsive" alt="">-->
+                <div class="flexslider">
+                    <ul class="slides">
+                       <@cms.advertList code='pcindexadvert' site="1" loop=true orderBy="priority desc" ;items>
+	                        <li>
+	                            <div class="w3l_banner_nav_right_banner">
+	                            	<#if items.filename ?? && items.filename!="">
+	                               		<img src="${(items.filename)!}" class="img-responsive" alt="">
+	                                <#else>
+	                                	<img src="/themes/web/images/youtian.jpg" class="img-responsive" alt="">	
+	                                </#if>
+	                            </div>
+	                        </li>
+                        </@cms.advertList>
+                    </ul>
+                </div>
+                <!--图片轮播-->
+			</div>
+		</div>
+	<!--首页图片-->
+		<!-- 公司简介 -->
+			<div class="row our-body" style="margin: 0;">
+			<div class="col-md-12">
+				<div class="over-bodyname">
+					<div class="ourhome">
+						<h4><span><i class="fa fa-home fa-fw"></i>&nbsp;</span>作业区介绍</h4>
+                        <!--导航栏-->
+                        	 <nav class="navbar navbar-expand-sm" style="background-color:#ddd">
+							   <div class="container-fluid" style="padding-left:0px;" >
+							      <div>
+							         <ul class="nav navbar-nav" data-class="canteens" style="border-top:0 solid #fff;">
+							         	<@szst.canteens affaitId="${(affait.id)!}" loop=false ;items>
+					         				<#if items ??>
+						         				<#list items as item>
+						         						<li class="divider"></li>
+														<li data-id="${(item.id)!}_li">
+															<a href="/member/index/canteen?id=${(item.id)!}" style="border-bottom: 0px dotted #CDCDCD;">${(item.name)!}</a >
+														</li>
+													<#if item_index== 5>
+														<#break>
+													</#if>
+						         				</#list>
+							         				<#if items?size gt 5>
+											         	<li class="dropdown">
+											               <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+											                  更多
+											                  <b class="caret"></b>
+											               </a >
+											               <ul class="dropdown-menu">
+											               		<#list items as item>
+								               						<#if item_index gt 5>
+								               							<li class="divider"></li>
+											                  			<li data-id="${(item.id)!}_li">
+											                  				<a href="/member/index/canteen?id=${(item.id)!}">${(item.name)!}</a >
+											                  			</li>
+											                  		</#if>
+											                	</#list>
+											               </ul>
+											            </li>
+									               </#if>
+							            	</#if>
+							            </@szst.canteens>
+							         </ul>
+							      </div>
+							   </div>
+							</nav>
+						<p style="margin-top:15px">
+							${(affait.description)!}
+						</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-12" style="margin-top: -20px;">
+				<div class="over-bodyname">
+					<div class="ourhome">
+					<div class="photo information" style="float:left;width: 325px;height: 235px;border: 1px solid #ddd;">
+							<!--<img src="images/2cun.jpg" class="img-responsive" alt="">-->
+							<div class="content">
+								   <ul class="uItems">
+								    <@szst.employees canteenId="${(canteen.id)!}" loop=true size=3; items>
+								     	 <li><img src="${(items.photo)!}" alt=""></li>
+							      	</@szst.employees>
+								   </ul>
+								   <div class="btn-b btnPrev"><</div>
+								   <div class="btn-b btnNext">></div>
+								</div>
+						</div>
+						<div class="information" style="float: left">
+							<p><i class="glyphicon glyphicon-cutlery"></i>&nbsp;【餐厅名称】${(canteen.name)!}</p>
+							<p><i class="glyphicon glyphicon-user"></i>&nbsp;【联系人】${(canteen.linkman)!}</p>
+							<p><i class="glyphicon glyphicon-earphone"></i>&nbsp;【电话】${(canteen.phone)!}</p>
+							<p><i class="glyphicon  glyphicon-send"></i>&nbsp;【所属作业区】<@szst.affait id="${(canteen.affaitId)!}";item>${(item.name)!}</@szst.affait></p>
+							<p>
+								<i class="glyphicon glyphicon-tasks"></i>&nbsp;【容纳人数】
+									<@sys.option id="${(canteen.scale)!}";item>
+										${(item.name)!}
+									 </@sys.option>
+							</p>
+						</div>
+						<div class="clearfix"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		</div>
+	<!--关于我们-->
+	
+    <!--食堂通知-->
+	<div class="w3l_banner_nav_left nav_left2">
+		<section class="slider collapse navbar-collapse">
+            <!--食堂通知-->
+            <@cms.channel id="325" ;channel>
+			<div class=" w3l_fresh_vegetables_grid w3l_fresh_vegetables_grid_left">
+				 <a href="/node/${(channel.node)!}.html?skin=1"><p>
+                	<i class="fa fa-cutlery fa-fw"></i>&nbsp;${(channel.name)!}</p>
+                </a>
+				<div class="w3l_fresh_vegetables_grid2">
+					<ul>
+						<@cms.articleList filters={'channelId':'${(channel.id)!}'} orderBy='create_time Desc' isIterate=true size=5;items>
+							<li>
+								<a href="/article/${(items.id)!}.html?skin=1">
+									<i class="fa fa-hand-o-right" aria-hidden="true"></i>
+										<#if items.title ?? && items.title?length gt 10>
+											${items.title?substring(0,10)}.....
+										<#else>
+											${(items.title)!}
+										</#if>
+								</a>
+							</li>
+						</@cms.articleList>
+					</ul>
+				</div>
+			</div>
+			</@cms.channel>
+            <!--健康饮食-->
+            <@cms.channel id="317" ;channel>
+			<div class=" w3l_fresh_vegetables_grid w3l_fresh_vegetables_grid_left">
+                <a href="/node/${(channel.node)!}.html?skin=1"><p>
+                	<i class="fa fa-cutlery fa-fw"></i>&nbsp;${(channel.name)!}</p>
+                </a>
+				<div class="w3l_fresh_vegetables_grid2">
+					<ul style="margin-top: 1em">
+						<@cms.articleList filters={'channelId':'${(channel.id)!}'} orderBy='create_time Desc' isIterate=true size=5;items>
+							<li>
+								<a href="/article/${(items.id)!}.html?skin=1">
+									<i class="fa fa-hand-o-right" aria-hidden="true"></i>
+									<#if items.title ?? && items.title?length gt 10>
+										${items.title?substring(0,10)}......
+									<#else>
+										${(items.title)!}
+									</#if>
+								</a>
+							</li>
+						</@cms.articleList>
+					</ul>
+				</div>
+			</div>
+			</@cms.channel>
+		</section>
+	</div>
+	<div class="clearfix"></div>
+	</div>
+<div class="fresh-vegetables">
+	<div class="container">
+		<h3>今日菜谱</h3>
+		<div class="col-md-12 w3l_fresh_vegetables_grid w3l_fresh_vegetables_grid_left">
+			<div id="w3l_fresh_vegetables_grid2" class="v_grid2">
+				<ul style="width: 2640px; left: -836px;">
+				<@szst.menuList size=16 loop=true;  menu>
+					<li>
+					<#if menu.imageUri ?? && menu.imageUri!="">
+						<img src="${(menu.imageUri)!}"><p>${(menu.name)!}</p>
+					<#else>
+						<img src="/themes/web/images/jiankang1.jpg"><p>${(menu.name)!}</p>
+					</#if>
+					</li>
+				</@szst.menuList>
+				</ul>
+			</div>
+		</div>
+		<div class="clearfix"> </div>
+	</div>
+</div>
+<div class="fresh-vegetables" style="margin-top:-5em; margin-bottom:-5em;">
+	<div class="container">
+		<h3>下载地址</h3>
+		<div class="Qrcode">
+			<@cms.advertList code='qr_code' site="1" loop=true orderBy="priority desc" ;items>
+				<div class="Qrcode-body">
+					<div class="Qr">
+						<div class="weixin-login-title">${(items.name)!}</div>
+						<#if items.filename ?? && items.filename!="">
+							<img class="weixin-login-qrcode" src="${(items.filename)!}" alt="">
+						<#else>
+							<img class="weixin-login-qrcode" src="/themes/web/images/qr_code.jpg" alt="">
+						</#if>
+					</div>
+				</div>
+			</@cms.advertList>
+			<div class="clearfix"></div>
+		</div>
+	</div>
+</div>
+<!-- 今日菜谱 -->
+<script type="text/javascript">
+$(function(){
+	var _this=$("ul[data-class='canteens']");
+	 var childli=_this.find("li[data-id]");
+	 var canteenId="${canteenId!}"+"_li";
+	 if(canteenId=="_li"){
+		 childli.eq(0).css("background-color","#7ec538");
+	 }else{
+		$.each($(childli),function(){
+			if($(this).attr("data-id")==canteenId){
+			 	 $(this).css("background-color","#7ec538");
+			}
+		})
+	 }
+}) 
+
+    $(window).load(function(){
+        $('.flexslider').flexslider({
+            animation: "slide",
+            start: function(slider){
+                $('body').removeClass('loading');
+            }
+        });
+    });
+    // 跑马灯
+    window.onload=function(){
+        var odiv = document.getElementById('w3l_fresh_vegetables_grid2');
+        var oul = odiv.getElementsByTagName('ul')[0];
+        var ali = oul.getElementsByTagName('li');
+        var spa = -2;
+        oul.innerHTML=oul.innerHTML+oul.innerHTML;
+        oul.style.width=ali[0].offsetWidth*ali.length+'px';
+        function move(){
+            if(oul.offsetLeft<-oul.offsetWidth/2){
+                oul.style.left='0';
+            }
+            if(oul.offsetLeft>0){
+                oul.style.left=-oul.offsetWidth/2+'px'
+            }
+            oul.style.left=oul.offsetLeft+spa+'px';
+        }
+        var timer = setInterval(move,30)
+
+        var $image=$(odiv).find("img");
+        odiv.onmouseover=function(){
+            clearInterval(timer);
+		};
+        odiv.onmouseleave=function(){
+            timer = setInterval(move,30);
+		};
+
+        $image.hover(function(){
+			$(this).next("p").slideToggle();
+        });
+    };
+
+    // 固定顶部信息栏
+    $(document).ready(function() {
+        var navoffeset=$(".agileits_header").offset().top;
+        $(window).scroll(function(){
+            var scrollpos=$(window).scrollTop();
+            if(scrollpos >=navoffeset){
+                $(".agileits_header").addClass("fixed");
+            }else{
+                $(".agileits_header").removeClass("fixed");
+            }
+        });
+
+    });
+    var showIndex = 0;
+    var timer;
+    $(function() {
+        $("ul.uItems li").not(":eq(0)").css("display", "none");
+        startTimer();
+
+        $("ul.uIndex li").hover(function() {
+            clearInterval(timer);
+
+            showIndex = $(this).index();
+            showImg();
+        }, function() {
+            startTimer();
+        });
+
+        $(".btnPrev").click(function() {
+            clearInterval(timer);
+
+            if(showIndex == 0) showIndex = 6;
+            showIndex--;
+            showImg();
+            startTimer();
+        });
+
+        $(".btnNext").click(function() {
+            clearInterval(timer);
+
+            if(showIndex ==2) showIndex = -1;
+            showIndex++;
+            showImg();
+            startTimer();
+        });
+    });
+
+    function startTimer() {
+        timer = setInterval(function() {
+            showIndex++;
+            if(showIndex >=3) showIndex = 0;
+            showImg();
+        }, 4000);
+    }
+
+    function showImg() {
+        $("ul.uItems li").stop(true, true);
+        $("ul.uItems li").fadeOut(400).eq(showIndex).fadeIn(400);
+        $("ul.uIndex li").removeClass("bg").eq(showIndex).addClass("bg");
+    }
+</script>
+</@layout.override>
+<@layout.extends name="layout/common-part.html"/>

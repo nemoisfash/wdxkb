@@ -1,0 +1,83 @@
+<#assign modulePath="${adminPath}/common/technology" />
+<#assign p="${RequestParameters['p']!}" />
+<@layout.override name="body">
+<ol class="breadcrumb">
+  <li><a href="javascript:;">项目领域</a></li>
+  <li class="active">编辑</li>
+</ol>
+
+<div class="container-fluid">
+
+  <h3 class="sub-header">项目领域 ${(parent.name)!} 编辑</h3>
+  <hr class="spk-hr" />
+
+<form id="validateForm" action="${modulePath!}/save.html" class="form-horizontal" role="form" method="POST">
+<@spring.formHiddenInput path='entity.id'/>
+<@spring.formHiddenInput path='entity.parentId'/>
+<#if (parent)??>
+  <div class="row form-group">
+    <label class="control-label col-sm-2">上级分类</label>
+    <div class="col-sm-8">
+      <p class="form-control-static">${(parent.name)!}</p>
+    </div>
+  </div>
+</#if>
+  <div class="row form-group">
+    <label class="control-label col-sm-2"><em class="spk-required">*</em>名称</label>
+    <div class="col-sm-3">
+      <@spring.formInput path='entity.name' attributes='class="form-control input-sm" placeholder="中文名称"' />
+      <@spring.showErrors separator='&nbsp;' classOrStyle='help-block' />
+    </div>
+  </div>
+  
+  <div class="row form-group">
+    <label class="control-label col-sm-2">显示顺序</label>
+    <div class="col-sm-3">
+      <@spring.formInput path='entity.priority' attributes='class="form-control input-sm" placeholder=""' />
+      <@spring.showErrors separator='&nbsp;' classOrStyle='help-block' />
+    </div>
+  </div>
+  
+  <div class="row form-group">
+    <label class="control-label col-sm-2">是否启用</label>
+    <div class="col-sm-3">
+      <@spring.formRadioButtons path='entity.enabled' options={"true":"是","false":"否"} separator='' attributes='class="radio-inline"' />
+      <@spring.showErrors separator='&nbsp;' classOrStyle='help-block' />
+    </div>
+  </div>
+  
+  <hr class="spk-hr" />
+  <div class="row form-group">
+    <div class="col-sm-8 col-sm-offset-2">
+      <button type="submit" class="btn btn-primary btn-sm">保存</button>
+      <button type="button" class="btn btn-primary btn-sm" onclick="on_return()">返回</button>
+    </div>
+  </div>
+</form>
+<script type="text/javascript">
+function on_return(){
+    Spark.jump("${modulePath}/list.html${(p??)?string('?p=${p!}','')}");
+}
+
+var validateForm;
+$(document).ready(function(){
+	validateForm = $("#validateForm").validate({
+		rules:{
+			name:{ required:true },
+			nameEn:{ required:true},
+			nameAr:{ required:true},
+			enabled:{ required:true },
+		},
+	});	
+});
+</script>
+</div>
+</@layout.override>
+<@layout.override name="css">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="js">
+<@layout.super/>
+<script src="/themes/ui/js/validate.bootstrap.js" type="text/javascript"></script>
+</@layout.override>
+<@layout.extends name="../../_layouts/bootstrap.html"/>

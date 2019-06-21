@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.tdds.mapper.MachineMapper">
+	<!-- 单表查询映射结果 -->
+	<resultMap id="BaseResultMap" type="org.tdds.entity.Machine">
+	</resultMap>
+    <!-- 单表查询结果列 -->
+    <sql id="Base_Column_List">
+    </sql>
+    <select id="selectIdByName" parameterType= "java.lang.String" resultType="java.lang.Long">
+    	SELECT id as mid FROM znzz_machine WHERE name=#{machineName};
+    </select> 
+    
+    <select id="findMachine" resultType="org.tdds.entity.Machine">
+    	SELECT id,code,name,m_ip as mIp,type,machine_no as machineNo,img_url as imgUrl FROM znzz_machine ORDER BY id DESC
+    </select>
+    
+     <select id="findMachineName" parameterType="java.lang.Long" resultType="java.lang.String">
+    	SELECT name FROM znzz_machine WHERE id=#{id}
+    </select>
+    
+    <select id="findMachineids" resultType="java.lang.Long">
+    	SELECT id FROM znzz_machine  ORDER BY id DESC 
+    </select>
+     <select id="exportInfore" resultType="map">
+		SELECT
+			t1.`name`,
+			t1.code AS machineNo,
+			t1.m_ip AS mIp,
+			t2.`name` as type
+		FROM
+			znzz_machine t1
+			LEFT JOIN sys_option t2 
+			ON t1.type = t2.id
+			<if test="id != null and id!=0">
+				WHERE
+				t1.id =#{id}
+			</if>
+			ORDER BY t1.id DESC
+    </select>
+</mapper>

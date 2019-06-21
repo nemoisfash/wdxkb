@@ -1,0 +1,266 @@
+<#assign modulePath="${adminPath}/cms/news/${channel.code}" />
+<#include "/WEB-INF/ftl/additional_field.ftl"/>
+<@layout.override name="css">
+<@layout.super/>
+</@layout.override>
+<@layout.override name="js">
+<@layout.super/>
+<script src="/assets/ueditor/utf8-jsp/ueditor.config.js" type="text/javascript"></script>
+<script src="/assets/ueditor/utf8-jsp/ueditor.all.js" type="text/javascript"></script>
+<script src="/assets/ueditor/utf8-jsp/lang/zh-cn/zh-cn.js"></script>
+<script src="/assets/j-cliper-image/js/basic.js"></script>
+<script src="/assets/j-cliper-image/js/jquery-jcrop.js"></script>
+</@layout.override>
+<@layout.override name="css">
+<@layout.super/>
+<link rel="stylesheet" type="text/css" href="/assets/j-cliper-image/css/basic.css">
+<link rel="stylesheet" type="text/css" href="/assets/j-cliper-image/css/jquery-jcrop.css">
+</@layout.override>
+<@layout.override name="body">
+<ol class="breadcrumb">
+	<li><a href="javascript:;">${(channel.name)!}</a></li>
+	<li><a href="javascript:;"><#if (entity.id)??>修改<#else>添加</#if></a></li>
+</ol>
+
+<div class="container">
+<ul class="nav nav-tabs">
+	<li role="presentation"><a href="${modulePath}/list.html">列表</a></li>
+	<li role="presentation" class="active"><a href="javascript:;"><#if (entity.id)??>修改<#else>添加</#if></a></li>
+</ul>
+<br/>
+
+<form id="validateForm" enctype="multipart/form-data" class="form-horizontal" role="form" method="post">
+<@spring.formHiddenInput path='entity.id'/>
+<@spring.formHiddenInput path='entity.channelId'/>
+<@spring.formHiddenInput path='entity.createBy'/>
+<@spring.formHiddenInput path='entity.updateBy'/>
+<@spring.formHiddenInput path='entity.updateTime'/>
+<input type="hidden" id="imageUri" name="imageUri" value="${(entity.imageUri)!}"/>
+<#if (channel)??>
+	<div class="row form-group">
+		<label class="control-label col-sm-2">所属栏目</label>
+		<div class="col-sm-3">
+			<p class="form-control-static">${(channel.name)!}</p>
+		</div>
+	</div>
+</#if>
+
+	<div class="row form-group">
+		<label class="control-label col-sm-2"><em class="spk-required">*</em>标题</label>
+		<div class="col-sm-8">
+			<@spring.formInput path='entity.title' attributes='class="form-control input-sm" placeholder="" required' />
+			<@spring.showErrors separator='' classOrStyle='help-block' />
+		</div>
+	</div>
+
+	<div class="row form-group">
+		<label class="control-label col-sm-2"><em class="spk-required">*</em>文章作者</label>
+		<div class="col-sm-3">
+			<@spring.formInput path='entity.author' attributes='class="form-control input-sm" required' />
+			<@spring.showErrors separator='' classOrStyle='help-block' />
+		</div>
+		<label class="control-label col-sm-2"><em class="spk-required">*</em>文章来源</label>
+		<div class="col-sm-3">
+			<@spring.formInput path='entity.source' attributes='class="form-control input-sm" required' />
+			<@spring.showErrors separator='' classOrStyle='help-block' />
+		</div>
+	</div>
+  
+	<div class="row form-group">
+		<label class="control-label col-sm-2">创建时间</label>
+		<div class="col-sm-3">
+			<input type="text" id="createTime" name="createTime" class="form-control input-sm" value="${(entity.createTime?string('yyyy-MM-dd hh:mm:ss'))!}" />
+		</div>
+	</div>
+
+<#if (channel)??>
+<@cms.channelFieldList id="${(channel.id)!}" isIterate="false"; fields>
+<#if fields?? && fields?size gt 0 >
+<#assign cols_idx=0 />
+<#list fields as customField >
+<#if customField.singles >
+	<div class="row form-group">
+		<label class="control-label col-sm-2">${customField.label}</label>
+		<div class="col-sm-8">
+			<@additionalFieldInput customField />
+		</div>
+	</div>
+<#else><#-- customField.singles} -->
+<#if cols_idx==0 >
+	<div class="row form-group">
+</#if><#-- //cols_idx==0 -->
+		<label class="control-label col-sm-2">${customField.label}</label>
+		<div class="col-sm-3">
+			<@additionalFieldInput customField />
+		</div>
+<#assign cols_idx=cols_idx+1 />
+<#if cols_idx gte 2 ><#assign cols_idx=0 /></#if>
+<#if cols_idx==0 || !customField_has_next >
+	</div>
+</#if><#-- cols_idx==0 || !customField_has_next} -->
+</#if><#-- customField.singles} -->
+</#list>
+</#if>
+</@cms.channelFieldList>
+</#if>
+
+	<div class="row form-group">
+		<label class="control-label col-sm-2"><em class="spk-required">*</em>内容</label>
+		<div class="col-sm-8">
+			<@spring.formTextarea path='entity.content' />
+			<@spring.showErrors separator='' classOrStyle='help-block' />
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="control-label col-sm-2">文章图片：</label>
+		<div class="col-sm-3" >
+			<input type="file" id="uploadFile" name="uploadFile" onchange="on_preview(this)" class="form-control input-sm" accept="image/png,image/gif,image/jpeg">
+			<input id="logo" type="hidden" name="logo" value="${entity.logo!}">
+		</div>
+		<div class="col-sm-2" id="preview" style="display:none">
+			<p class="form-control-static">
+				<a href="javascript:;" onclick="layerOpen()">图片编辑</a>
+			</p>
+			<input id="logoUri" type="hidden" name="logoUri">
+		</div>
+	</div>
+	<hr class="spk-hr" />
+	<div class="row form-group">
+		<div class="col-sm-8 col-sm-offset-2">
+			<button type="submit" class="btn btn-primary btn-block">保存</button>
+		</div>
+	</div>
+</form>
+</div>
+ <style>
+ .layui-layer-page .layui-layer-content {
+   overflow:none!important;
+}
+ </style>
+<div class="wrap" id="jcropdiv" style="display:none">
+	  <div class="wl">
+		<div class="jc-demo-box" data="0">
+			<div id="target" class="jcrop_w" >
+			<img id="imgPreview1" src="${(entity.imageUri)!}" alt="图片预览" 
+			class="img-responsive img-thumbnail" style="width: 395px;height: 340px;position:relative;left: 0px;top: 0px;">
+		</div>
+			<div class="jy-up-ch"> 
+				<a id="idLeft" href="" class="bch bch1"></a>
+				<a id="idSmall" href="" class="bch bch2"></a> 
+				<a id="idBig" href="" class="bch bch3"></a>
+				<a id="idRight" href="" class="bch bch4"></a>
+			 </div>
+		</div>
+		
+		<div class="preview-container" style="position: relative;bottom:341px;left:407px;">
+	    	<div class="pre-1"> 
+		     <!--<canvas id="myCanvas" class="jcrop-preview jcrop_preview_s" style="margin-left: -138px; margin-top: -66px;">
+					升级你的浏览器版本	
+				</canvas> -->
+				 <img id="imgPreview2" src="${(entity.imageUri)!}" class="jcrop-preview jcrop_preview_s" alt="" style="width: 500px; height: 282px; margin-left: -138px; margin-top: -66px;">
+			</div>
+    </div>
+	</div>
+</div>
+<script type="text/javascript">
+var editor = new UE.ui.Editor(); 
+editor.render("content");
+
+function on_preview(obj){
+	$("#preview").show();
+	var file =obj.files[0];
+	var reader = new FileReader();
+	reader.onloadend = function () {
+	   	$("#imgPreview1").attr("src",reader.result);
+	  	/* $("#imgPreview2").attr("src",reader.result); */
+	}
+	if (file){
+		  reader.readAsDataURL(file);
+	}
+	
+}
+
+function layerOpen(){
+	layer.open({
+		type: 1,
+		title:"图片编辑",
+		offset : [ '200px', '' ],
+		btn:['确定'],
+		border : [ 10, 0.3, '#000', true ],
+		area : [ '600px', '480px' ],
+	 	content: $('#jcropdiv'),
+	 	yes:function(){
+	 		careateCanves();
+	 	}
+	});
+}
+
+function upload(image) {
+    var imgFile=dataURLtoFile(image,"img.jpg");
+    var fd=new FormData();
+    fd.append("image",imgFile);
+	$.ajax({
+		  url: "${modulePath!}/uploadImage.json",
+		  type: "post",
+		  cache: false,
+		  data: fd,
+		  timeout: 5000,
+		  processData: false,
+		  contentType: false,
+		  xhrFields: {
+		    withCredentials: true
+		  },
+		  success: function(data) {
+			  if(data.success){
+				  layer.msg("上传成功");
+				  	var url=data.imageUri;
+					ifDeleteFile(url);
+				  setTimeout(function(){layer.closeAll()},2000);
+			  }
+		  }
+	})
+}
+
+function ifDeleteFile(url){
+	 if($("#imageUri").val()!=""){
+		 $.post("${modulePath!}/deleteImage.html",{"fileUri":url});
+	 }
+	 	$("#imageUri").val(url);
+}
+
+function careateCanves(){
+	var img=document.getElementById("imgPreview1");
+	var swidth=parseInt($("#imgPreview1").css("width"));
+	var sheight=parseInt($("#imgPreview1").css("height"));
+	var startX = parseInt($('#small').position().top);
+	var startY = parseInt($('#small').position().left);
+	var width =parseInt($("#small").css("width"));
+	var height = parseInt($("#small").css("height"));
+  	var canvas=document.createElement("canvas");
+  	var ctx=canvas.getContext("2d");
+  	ctx.drawImage(img,startX,startY,swidth,sheight,20,20,width,height);
+  	var base64 = canvas.toDataURL('image/jpg');
+  	$("#imgPreview2").attr("src",base64);
+ 	upload(base64)
+}
+
+function dataURLtoFile(dataurl, filename) {
+    var arr = dataurl.split(','), 
+    mime = arr[0].match(/:(.*?);/)[1],
+    bstr = atob(arr[1]), 
+    n = bstr.length, 
+    u8arr = new Uint8Array(n);
+	   while(n--){
+	       u8arr[n] = bstr.charCodeAt(n);
+	   }
+    return new File([u8arr], filename, {type:mime});
+}
+
+ 
+$(function(){
+	$("#validateForm").attr("action","${modulePath!}/save.html").validate();
+	laydate.render({elem: '#createTime', type: 'datetime' });
+});
+</script>
+</@layout.override>
+<@layout.extends name="../../_layouts/bootstrap.html"/>

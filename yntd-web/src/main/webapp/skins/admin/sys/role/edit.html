@@ -1,0 +1,153 @@
+<#assign modulePath="${adminPath}/sys/role" />
+<@layout.override name="css">
+<@layout.super/>
+<link rel="stylesheet" href="/themes/admin/jstree/themes/default/style.min.css" />
+</@layout.override>
+<@layout.override name="js">
+<@layout.super/>
+<script type="text/javascript" src="/themes/admin/jstree/jstree.min.js"></script>
+</@layout.override>
+<@layout.override name="body">
+<ol class="breadcrumb">
+	<li><a href="javascript:;">角色管理</a></li>
+	<li><a href="javascript:;">编辑</a></li>
+</ol>
+
+<div class="container">
+
+<ul class="nav nav-tabs">
+	<li role="presentation"><a href="${modulePath}/list.html">列表</a></li>
+	
+	<li role="presentation" class="active"><a href="javascript:;">
+		<#if entity.id??>
+		修改	
+		<#else>
+		添加
+		</#if>
+		
+		</a></li>
+</ul>
+<br/>
+
+<form id="validateForm" class="form-horizontal" role="form" method="post">
+<@spring.formHiddenInput path='entity.id'/>
+<input type="hidden" id="permissionIds" name="permissionIds" />
+	<div class="row form-group">
+		<label class="control-label col-sm-2"><em class="spk-required">*</em>名称</label>
+		<div class="col-sm-3">
+			<@spring.formInput path='entity.name' attributes='class="form-control input-sm" placeholder="" required' />
+			<@spring.showErrors separator='' classOrStyle='help-block' />
+		</div>
+		<label class="control-label col-sm-2"><em class="spk-required">*</em>标识</label>
+		<div class="col-sm-3">
+			<@spring.formInput path='entity.code' attributes='class="form-control input-sm" placeholder="" required' />
+			<@spring.showErrors separator='' classOrStyle='help-block' />
+		</div>
+	</div>
+
+<#macro permissionTree node>
+<@sys.permissionList parentId="${(node.code)!}" iterate="false"; children>
+	<li id="${(node.id)!}" class="jstree-open" ${(currIds?? && currIds?seq_contains(node.id))?string('data-jstree=\'{"selected": true}\'','')}>
+		<span>${(node.name)!}</span>
+<#if children?size gt 0>
+		<ul>
+	<#list children as child>
+		<@permissionTree node=child/>
+	</#list>
+		</ul>
+</#if>
+	</li>
+</@sys.permissionList>
+</#macro>
+	<div class="row form-group">
+		<label class="control-label col-sm-2">授权</label>
+		<div class="col-sm-8">
+<div>
+	<ul id="permissionTabs" class="nav nav-tabs" role="tablist" >
+		<li role="presentation" class="active"><a href="#extPanel" aria-controls="extPanel" role="tab" data-toggle="tab">门户管理</a></li>
+		<li role="presentation"><a href="#cmsPanel" aria-controls="cmsPanel" role="tab" data-toggle="tab">内容管理</a></li>
+		<li role="presentation"><a href="#sysPanel" aria-controls="sysPanel" role="tab" data-toggle="tab">系统设置</a></li>
+	</ul>
+	<div class="tab-content">
+		<div role="tabpanel" class="tab-pane active" id="extPanel">
+			<div id="extTree" class="permission-tree">
+				<ul>
+				<@sys.permission code="ext"; node>
+					<@permissionTree node />
+				</@sys.permission>
+				</ul>
+			</div>
+		</div>
+		<div role="tabpanel" class="tab-pane" id="cmsPanel">
+			<div id="cmsTree" class="permission-tree">
+				<ul>
+				<@sys.permission code="cms"; node>
+					<@permissionTree node />
+				</@sys.permission>
+				</ul>
+			</div>
+		</div>
+		<div role="tabpanel" class="tab-pane" id="sysPanel">
+			<div id="sysTree" class="permission-tree">
+				<ul>
+				<@sys.permission code="sys"; node>
+					<@permissionTree node />
+				</@sys.permission>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+		</div>
+	</div>
+
+	<hr class="spk-hr" />
+	<div class="row form-group">
+		<div class="col-sm-8 col-sm-offset-2">
+			<button type="button" class="btn btn-primary btn-sm" onclick="on_submit()">保存</button>
+		</div>
+	</div>
+</form>
+	
+</div>
+<script type="text/javascript">
+function on_submit(){
+	var ids = new Array();
+	$(".permission-tree").each(function(idx, obj){
+		var checkeds = $(obj).jstree().get_checked(true);
+		var undetermineds = $(obj).jstree().get_undetermined(true);
+		$.each(checkeds, function(idx, obj){
+			ids.push($(obj).prop("id"));
+	    });
+		$.each(undetermineds, function(idx, obj){
+			ids.push($(obj).prop("id"));
+	    });
+	});
+	console.log(ids.join(','));
+	$("#permissionIds").val(ids.join(','));
+	$("#validateForm").submit();
+}
+jQuery.validator.addMethod("unique", function(value, element) {
+	var unique = (value!='');
+	$.ajax({
+		url: "${modulePath!}/unique/code.json",
+		type: "post",
+		data: {"id": "${entity.id!}", "code": value},
+		async:false,
+		dataType: "json",
+		success: function(data){
+			unique = data.success;
+		}
+	});
+	return unique;
+}, '标识已存在');
+$(function(){
+	$(".permission-tree").jstree({
+		"checkbox": {"three_state": false, "cascade": "undetermined"}, 
+		"plugins": [ "checkbox" ]
+	});
+	$("#validateForm").attr("action","${modulePath}/save.html").validate({rules:{code:{unique:true}}});
+});
+</script>
+</@layout.override>
+<@layout.extends name="../../_layouts/bootstrap.html"/>
