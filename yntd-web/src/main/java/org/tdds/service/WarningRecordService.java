@@ -16,4 +16,6 @@ public interface WarningRecordService {
 	Page<WarningRecord> findAllRecords(QueryFilters filters, PageRequest pageable);
 
 	List<Map<String, Object>> exportData(QueryFilters filters);
+
+	List<Map<String,Object>> findAll();
 }

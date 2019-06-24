@@ -4,23 +4,23 @@ body{
 	height:100%;
 	width:100%;
 	background-size:cover;
-	overflow: hidden;
+	overflow:hidden;
 }
 .label {
-				display: inline-block;
-				padding: .5em .6em .3em;
-				font-size: 75%;
-				font-weight: 700;
-				line-height: 19px;
-				color: #36b0f3;
-				text-align: center;
-				white-space: nowrap;
-				vertical-align: baseline;
-				width: 379px;
-				height: 25px;
-				border-radius: 0;
-				transform: perspective(20px) scaleY(1.3) rotateX(-5deg);
-				letter-spacing: 5px
+	display: inline-block;
+	padding: .5em .6em .3em;
+	font-size: 75%;
+	font-weight: 700;
+	line-height: 19px;
+	color: #36b0f3;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: baseline;
+	width: 379px;
+	height: 25px;
+	border-radius: 0;
+	transform: perspective(20px) scaleY(1.3) rotateX(-5deg);
+	letter-spacing: 5px
 }
 
 .label-default {
@@ -101,9 +101,52 @@ body{
     float: right;
     background-color: #ff000000;
     position: absolute;
-    left: 85%;
-    top: 39px;
+    left: 84%;
+    top: 31px;
     color: #3992d4;
-    font-size: 30px;
-    font-weight:bold;
+    font-size: 23px;
+    font-weight: bold;
+}
+.pies{
+	width:100%;
+	height:100%;
+	list-style:none;
+	margin:0;
+	padding:0;
+}
+
+.pies li{
+	width:33%;
+	height:100%;
+	float:left;
+	color:#658ced;
+}
+.alert{
+	margin-bottom: 8px;
+	background: -moz-linear-gradient(left,#3399ff,#3339ff00);
+	/* Safari 5.1+, Chrome 10+ */
+	background: -webkit-linear-gradient(left,#3399ff,#3339ff00);
+	/* Opera 11.10+ */
+	background: -o-linear-gradient(left,#3399ff,#3339ff00);
+ 	border:none;
+}
+
+.table{
+	margin-top: 22px;
+	border:1px solid #33a8ea;
+}
+.table>thead>tr>th {
+	vertical-align: bottom;
+	
+	background:#062566;
+	
+}
+.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+    color: #36b0f3;
+    border:1px solid #33a8ea;
+}
+.spk-hr{
+	margin-top:1px;
+	margin-bottom:3px;
+	width:100%
 }

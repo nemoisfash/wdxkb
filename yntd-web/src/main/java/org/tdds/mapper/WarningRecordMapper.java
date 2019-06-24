@@ -22,4 +22,6 @@ public interface WarningRecordMapper extends DynaMapper<WarningRecord>{
 	Double findMemberLineData(@Param(value="date")String date);
 
 	List<Map<String, Object>> exportData(@Param(value="filter")Map<String, Object> filter);
+
+	List<Map<String,Object>> selectWarningRecords();
 }

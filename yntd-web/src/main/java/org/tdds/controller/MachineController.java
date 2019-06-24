@@ -23,9 +23,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.tdds.entity.Machine;
 import org.tdds.entity.MonitoringList;
+import org.tdds.entity.WarningRecord;
 import org.tdds.service.LogRecordService;
 import org.tdds.service.MachineService;
 import org.tdds.service.MonitoringService;
+import org.tdds.service.WarningRecordService;
 
 import com.alibaba.fastjson.JSONObject;
 
@@ -41,13 +43,14 @@ public class MachineController extends BasePortalController {
 
 	@Autowired
 	private MonitoringService bizMonitoring;
+	
+	@Autowired
+	private WarningRecordService bizWarningRecord;
 
 	@Autowired
 	private LogRecordService bizLogRecord;
 
 	private List<Map<String, Object>> timeLineOption = new ArrayList<>();
-
-	private List<String> NAMES = new ArrayList<>();
 	
 	//西部大森manual=running
 	private static final String[] STATUS = {"RUNNING", "POWEROFF", "ALARM", "WAITING"/*,"MANUAL"*/};
@@ -83,6 +86,16 @@ public class MachineController extends BasePortalController {
 			bizLogRecord.insert(monitoringList);
 		}
 	}
+	
+	@RequestMapping(value = "alermMessage", method = RequestMethod.GET)
+	@ResponseBody
+	private Object alermMessage(){
+		Map<String, Object> map = new HashMap<>();
+ 		List<Map<String,Object>> entities = bizWarningRecord.findAll();
+ 		map.put("resault", entities);
+ 		return map;
+	}
+	
 	/**
 	 * 每天每小时设备运行状况 一天24*60分钟
 	 * 

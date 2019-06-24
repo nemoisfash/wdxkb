@@ -65,4 +65,28 @@
 		AND machine_name=#{filter.name}
 	</if>
     </select>
+    
+    <select id="selectWarningRecords" resultType="map">
+		SELECT
+			T1.machine_name AS machineName,
+			T2.mcode AS machineCode,
+			T2.type AS mtype,
+			T1.record_time AS recordTime,
+			T1.alarm_no AS alarmNo,
+			T1.alarm_message AS alarmMessage
+		FROM
+			znzz_warning_record T1
+			LEFT JOIN (
+			SELECT
+				m1.id AS id,
+				m1.`code` AS mcode,
+				m2.`name` AS type 
+			FROM
+				znzz_machine m1
+				LEFT JOIN sys_option m2 ON m1.type = m2.id 
+			) T2 ON T1.machine_id = T2.id 
+		WHERE DATE(record_time) =CURRENT_DATE
+		ORDER BY
+			record_time DESC
+	</select>
 </mapper>

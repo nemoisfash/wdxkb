@@ -3,7 +3,7 @@
  */
 ;(function($, e){
 var optionPie = {
-		color: ['#00FF00','#696969', '#DC143C','#FFFF00'],
+		color: ['#12b07b','#feb501', '#e65a65','#a6a5a5'],
 		title:{
 			text:"",
 			textStyle:{
@@ -12,7 +12,7 @@ var optionPie = {
 				fontSize:14,
 			},
 			left:'38%',
-			top:'40%'
+			top:'42%'
 		},
 		tooltip: {
 		        trigger: 'item',
@@ -29,7 +29,7 @@ var optionPie = {
 		         {
 		            name:'',
 		            type:'pie',
-		            radius: ['45%', '70%'],
+		            radius: ['65%', '80%'],
 		            avoidLabelOverlap: false,
 		            clockwise: true, //饼图的扇区是否是顺时针排布
 		            minAngle:14,

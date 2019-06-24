@@ -115,4 +115,9 @@ public class WarningRecordServiceImpl implements WarningRecordService{
 		 }
 		return daoWarningRecord.exportData(filter);
 	}
+
+	@Override
+	public List<Map<String,Object>> findAll() {
+		return daoWarningRecord.selectWarningRecords();
+	}
 }

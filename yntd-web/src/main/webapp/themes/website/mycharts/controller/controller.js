@@ -10,12 +10,11 @@ $interval(function(){
 		url:"/member/datalist.json",
 		cache:false,
 		async:false}).then(function(res){
-		/*$scope.items=res.data.resault;*/
+		$scope.items=res.data.resault;
 		$scope.switchStatus(res.data.resault);
 	})
 },1000)
-
-
+ 
 $interval(function(){
 	$http({
 		method: 'GET',
@@ -23,6 +22,16 @@ $interval(function(){
 		cache:false,
 		async:false})
 },3000*10)
+
+$interval(function(){
+	$http({
+		method: 'GET',
+		url:"/member/alermMessage.json",
+		cache:false,
+		async:false}).then(function(res){
+			$scope.alarms=res.data.resault;
+		})
+},3000)
 
 $scope.switchStatus=function(obj){
 	$.each(obj,function(){
@@ -33,22 +42,19 @@ $scope.switchStatus=function(obj){
 		 $("#"+machineName+"_m").addClass("circle"+" "+"circle-"+status.toLowerCase()+" "+"headerBox");
 	})
 }
-
 })
 
-
-/*var myPies = new MyPies();*/
-
+var myPies = new MyPies();
 setInterval(function(){
 	var now = new Date();
 	var weekArray = new Array("日", "一", "二", "三", "四", "五", "六");
-	var date = now.getFullYear()+"-"+(now.getMonth()+1)+"-"+now.getDate()+"星期"+weekArray[now.getDay()];
 	var time = now.getHours()+":"+now.getMinutes()+":"+now.getSeconds();
+	var date = now.getFullYear()+"-"+(now.getMonth()+1)+"-"+now.getDate()+" "+time+" "+"星期"+weekArray[now.getDay()];
 	$("#clock").text(date);
 	 
 },1000)
 
-/*setInterval(function(){
+setInterval(function(){
 listRoll();
 },6000)
 
@@ -60,9 +66,9 @@ function listRoll(){
 
 $(function(){
     new ZouMa().Start();
-});*/
+});
 
-/*function ZouMa() {
+function ZouMa() {
 	this.maxLength = 3;  
 	this.Timer = 6000; 
 	this.Ul = $("ul#pies");
@@ -81,4 +87,4 @@ $(function(){
 			$(this).css("margin-left", "auto").appendTo(self.Ul);
         });
     }
-}*/
+}
