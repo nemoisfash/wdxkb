@@ -16,7 +16,7 @@ var optionPie = {
 		},
 		tooltip: {
 		        trigger: 'item',
-		        formatter: "{a} <br/>{b}: {c} ({d}%)"
+		        formatter: "{a} <br/>{b}: {c}分钟 (占比{d}%)"
 		    },
 		    legend: {
 		    	show:false,
@@ -29,7 +29,7 @@ var optionPie = {
 		         {
 		            name:'',
 		            type:'pie',
-		            radius: ['65%', '80%'],
+		            radius: ['55%', '70%'],
 		            avoidLabelOverlap: false,
 		            clockwise: true, //饼图的扇区是否是顺时针排布
 		            minAngle:14,
@@ -42,7 +42,7 @@ var optionPie = {
 		                    	show:true,
 		                    	position:"outside",
 		                    	color:"auto",
-		                    	formatter:'{d}%',
+		                    	formatter:'{c}分钟',
 		                    }
 		                },
 		            },
@@ -93,12 +93,13 @@ init:function(){
 	var _this=this;
 	 var piesArray = new Array();
 	$.each($("[echarts-type='pie']"),function(){
+		e.init(this).showLoading('default', {text:'数据统计中...',maskColor: '#07112a61',textColor: '#36b0f3',});
 		piesArray.push(e.init(this));
 	})
 	_this.pies=piesArray;
 	setInterval(function(){
 		_this.getData();
-	},3000)
+	},5000)
 },getData:function(){
 	var _this=this;
 			$.ajax({
@@ -116,9 +117,12 @@ init:function(){
 	var _this=this;
 	var pies = _this.pies;
 	$.each(pies,function(i,obj){
-		optionPie.title.text= data[i].machineName;
-		optionPie.series[0].data=data[i].data;
-		this.setOption(optionPie);
+		this.hideLoading();
+		if(data[i]!=null){
+			optionPie.title.text= data[i].machineName;
+			optionPie.series[0].data=data[i].data;
+			this.setOption(optionPie);
+		}
 	})
 }
 }

@@ -1,7 +1,6 @@
-/*var myTimeLine = new MyTimeLine();
+var myTimeLine = new MyTimeLine();
+/*var myLine = new MyLine();*/
 var ranking = new Ranking();
-var myLine = new MyLine();*/
-
 var app = angular.module('myApp', []);
 app.controller('myCtrl', function($scope,$http,$interval) {
 $interval(function(){
@@ -14,7 +13,9 @@ $interval(function(){
 		$scope.switchStatus(res.data.resault);
 	})
 },1000)
- 
+
+var pies = new MyPies();
+
 $interval(function(){
 	$http({
 		method: 'GET',
@@ -22,16 +23,6 @@ $interval(function(){
 		cache:false,
 		async:false})
 },3000*10)
-
-$interval(function(){
-	$http({
-		method: 'GET',
-		url:"/member/alermMessage.json",
-		cache:false,
-		async:false}).then(function(res){
-			$scope.alarms=res.data.resault;
-		})
-},3000)
 
 $scope.switchStatus=function(obj){
 	$.each(obj,function(){
@@ -44,7 +35,6 @@ $scope.switchStatus=function(obj){
 }
 })
 
-var myPies = new MyPies();
 setInterval(function(){
 	var now = new Date();
 	var weekArray = new Array("日", "一", "二", "三", "四", "五", "六");

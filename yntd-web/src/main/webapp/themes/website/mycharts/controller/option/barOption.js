@@ -9,7 +9,14 @@ var optionBar = {
 	        containLabel: true
 	    },
 	    xAxis: [{
-	        show: false,
+	        show: true,
+	        type: 'value',
+	        axisLabel: {
+	            textStyle: {
+	                color: '#ffffff',
+	                fontSize: '16',
+	            }
+	        },
 	    }],
 	    yAxis: [{
 	        axisTick: 'none',
@@ -28,10 +35,10 @@ var optionBar = {
 	        axisLabel: {
 	            textStyle: {
 	                color: '#ffffff',
-	                fontSize: '16',
+	                fontSize: '15',
 	            }
 	        },
-	        data: ['', '', '', '第三名', '第二名', '第一名']
+	        /*data: ['', '','', '', '', '第三名', '第二名', '第一名']*/
 	    }, {
 	        nameGap: '50',
 	        nameTextStyle: {
@@ -49,18 +56,20 @@ var optionBar = {
 	            name: '条',
 	            type: 'bar',
 	            yAxisIndex: 0,
-	            data: [4, 13, 25, 29, 38, 44, 50, 52, 60, 72],
+	            data: [],
 	            label: {
 	                normal: {
 	                    show: true,
-	                    position: 'right',
+	                    position: "top",
+	                    formatter:"{c}分钟",
+	                    barBorderRadius: 2,
 	                    textStyle: {
 	                        color: '#ffffff',
 	                        fontSize: '16',
 	                    }
-	                }
+	                },
 	            },
-	            barWidth: 12,
+	            barWidth: 25,
 	            itemStyle: {
 	                normal: {
 	                    color: function(params) {
@@ -70,17 +79,17 @@ var optionBar = {
 	                }
 	            },
 	            z: 2
-	        }, {
+	        }/*, {
 	            name: '白框',
 	            type: 'bar',
-	            yAxisIndex: 1,
+	            yAxisIndex: 2,
 	            barGap: '-100%',
-	            data: [100000, 100000, 100000, 100000, 100000, 100000],
+	            data: [],
 	            barWidth: 20,
 	            itemStyle: {
 	                normal: {
 	                    color: '#0e2147',
-	                    barBorderRadius: 5,
+	                    barBorderRadius:2,
 	                }
 	            },
 	            z: 1
@@ -89,7 +98,7 @@ var optionBar = {
 	            type: 'bar',
 	            yAxisIndex: 2,
 	            barGap: '-100%',
-	            data: [100000, 100000, 100000, 100000, 100000, 100000],
+	            data: [],
 	            barWidth: 24,
 	            itemStyle: {
 	                normal: {
@@ -97,7 +106,7 @@ var optionBar = {
 	                        var num = myColor.length;
 	                        return myColor[params.dataIndex % num]
 	                    },
-	                    barBorderRadius: 5,
+	                    barBorderRadius: 2,
 	                }
 	            },
 	            z: 0
@@ -106,9 +115,9 @@ var optionBar = {
 	            name: '外圆',
 	            type: 'scatter',
 	            hoverAnimation: false,
-	            data: [0, 0, 0, 0, 0, 0],
+	            data: [],
 	            yAxisIndex: 2,
-	            symbolSize: 35,
+	            symbolSize: 30,
 	            itemStyle: {
 	                normal: {
 	                    color: function(params) {
@@ -119,7 +128,7 @@ var optionBar = {
 	                }
 	            },
 	            z: 2
-	        }
+	        }*/
 	    ]
 	};
 
@@ -132,6 +141,7 @@ var	_this = this;
 			 this.initCharts();
 		},initCharts:function(){
 		 this.ranking=e.init($("[data-ranking='true']").get(0));
+		 this.ranking.showLoading('default', {text:'数据统计中...',maskColor: '#07112a61',textColor: '#36b0f3',});
 		 this.getData();
 		},getData:function(){
 			var _this = this;
@@ -146,9 +156,9 @@ var	_this = this;
 						_this.dataRankingInit(data);
 					}
 				})
-			},3000)
+			},5000)
+	
 		},dataRankingInit:function(data){
-			console.info("ranking/"+data)
 			var _this = this;
 			var targetData= new Array;
 			var _otherData = new Array();
@@ -161,18 +171,22 @@ var	_this = this;
 				 }
 				 names.push(name);
 				 targetData.push(val);
+				 /* optionBar.series[1].data.push[100000];
+				 optionBar.series[2].data.push[100000];
+				 optionBar.series[3].data.push[0];*/
 			 })
 			
 			optionBar.series[0].data=targetData.reverse();
 			optionBar.yAxis[0].data=names.reverse();
-			 var max = Math.max.apply(null, targetData);
+			 /*var max = Math.max.apply(null, targetData);
 			if(1500-max<100){
 				 $.each(optionBar.series[1].data,function(){
 					 _otherData.push(max+1000);
 				 })
 				 optionBar.series[1].data=_otherData;
 				 optionBar.series[2].data=_otherData;
-			}
+			}*/
+			_this.ranking.hideLoading();
 			_this.ranking.setOption(optionBar);
 		}
 	}

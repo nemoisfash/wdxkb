@@ -1,5 +1,6 @@
 package org.tdds.mapper;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -24,4 +25,6 @@ public interface WarningRecordMapper extends DynaMapper<WarningRecord>{
 	List<Map<String, Object>> exportData(@Param(value="filter")Map<String, Object> filter);
 
 	List<Map<String,Object>> selectWarningRecords();
+
+	List<String> findTimeLineTimes(@Param(value="machineId")Long machineId);
 }

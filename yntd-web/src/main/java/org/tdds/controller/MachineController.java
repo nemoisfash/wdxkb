@@ -1,5 +1,6 @@
 package org.tdds.controller;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -7,6 +8,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -23,12 +25,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.tdds.entity.Machine;
 import org.tdds.entity.MonitoringList;
-import org.tdds.entity.WarningRecord;
 import org.tdds.service.LogRecordService;
 import org.tdds.service.MachineService;
 import org.tdds.service.MonitoringService;
 import org.tdds.service.WarningRecordService;
 
+import com.alibaba.druid.sql.ast.expr.SQLSequenceExpr.Function;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.hxz.webapp.syscore.support.BasePortalController;
@@ -49,8 +51,6 @@ public class MachineController extends BasePortalController {
 
 	@Autowired
 	private LogRecordService bizLogRecord;
-
-	private List<Map<String, Object>> timeLineOption = new ArrayList<>();
 	
 	//西部大森manual=running
 	private static final String[] STATUS = {"RUNNING", "POWEROFF", "ALARM", "WAITING"/*,"MANUAL"*/};
@@ -185,7 +185,6 @@ public class MachineController extends BasePortalController {
 	@RequestMapping(value = "ranking", method = RequestMethod.GET)
 	public Object ranking(HttpServletRequest request, HttpServletResponse res) {
 		List<Machine> machines = bizMachine.findMachine();
-		Calendar calendar = Calendar.getInstance();
 		Map<String, Double> sortMap = new HashMap<>();
 		for (Machine machine : machines) {
 			Double num = bizLogRecord.findRankData(machine.getId());
@@ -210,55 +209,58 @@ public class MachineController extends BasePortalController {
 	 * @param request
 	 * @param response
 	 * @return
+	 * @throws ParseException 
 	 */
 
 	@RequestMapping(value = "timeline", method = RequestMethod.GET)
-	public Object timer(HttpServletRequest request, HttpServletResponse response,
-			@RequestParam(value = "time") String time) {
-		if (time.equalsIgnoreCase("24:00")) {
-			timeLineOption.clear();
-		}
+	public Object timer(HttpServletRequest request, HttpServletResponse response) throws ParseException {
 		List<Machine> machines = bizMachine.findMachine();
 		List<String> names = new ArrayList<>();
 		for (Machine machine : machines) {
 			names.add(machine.getName());
 		}
 		Map<String, Object> resault = new HashMap<>();
-		resault.put("names", names);
-		resault.put("options", createOptions(time));
+		resault.put("yAxis", names);
+		resault.put("series", seriesData());
+		/*resault.put("xAxis", xAxis);*/
 		return resault;
 	}
-
+	
 	@ResponseBody
-	public Object createOptions(String time) {
-		if (time.equalsIgnoreCase("24:00")) {
-			timeLineOption.clear();
-			statuslist.clear();
-		}
-		Map<String, Object> option = new HashMap<>();
-		option.put("type", "bar");
-		option.put("series", seriesData(time));
-		timeLineOption.add(option);
-		return timeLineOption;
-	}
-
-	@ResponseBody
-	private List<Map<String, Object>> seriesData(String time) {
+	private List<Map<String,Object>> seriesData() throws ParseException {
+		List<Map<String,Object>> list = new ArrayList<>();
 		List<Machine> machines = bizMachine.findMachine();
-		List<Map<String, Object>> list = new ArrayList<>();
 		for (String status : STATUS) {
-			Map<String, Object> data = new HashMap<>();
-			List<Double> machineNum = new ArrayList<>();
-			for (Machine machine : machines) {
-				Double num  = bizLogRecord.findData(null,status,machine.getId());
-				machineNum.add(num);
+			Map<String, Object> series = new HashMap<>();
+			List<String> times = new ArrayList<>();
+			for(Machine machine:machines){
+				times= bizLogRecord.findTimeLineTimes(machine.getId(),status);		 
 			}
-			data.put("data", machineNum);
-			list.add(data);
+			/*createxAxis(times);*/
+			series.put("data",stringToDate(times));
+			series.put("type","bar");
+			series.put("name",StatusEnum.getValue(status));
+			series.put("stack","总量");
+			list.add(series);
 		}
 		return list;
 	}
 
+	/**
+	 * 合并list 并去重
+	 * @param list
+	 * @return
+	 * @throws ParseException 
+	 */
+	private List<Date> stringToDate(List<String> list) throws ParseException{
+		List<Date> dates = new ArrayList<>();
+		SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+		 for(String str:list){
+			 dates.add(format.parse(str));
+		 }
+		 return dates;
+	}
+	
 	/**
 	 * @param running:运行
 	 * @param waitting:等待

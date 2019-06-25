@@ -74,9 +74,6 @@
 								<li echarts-type="pie"></li>
 								<li echarts-type="pie"></li>
 								<li echarts-type="pie"></li>
-								<li echarts-type="pie"></li>
-								<li echarts-type="pie"></li>
-								<li echarts-type="pie"></li>
 							</ul>
 						</div>
 						<div style="width:100%;height:2.25rem;text-align:center;line-height:2.25rem;">
@@ -92,9 +89,22 @@
 					</div>
 					<div class="nav-tabs-custom" style="background-color:#081639a1;height:26.625rem;margin-top:20px;">
 						<span class="label label-default">时间线</span>
+						<div style="width:100%;height:86%;margin-top:0;overflow:hidden;padding:0">
+							<div time-line='true' style="width:100%;height:100%;">
+								
+							</div>
+						</div>
 					</div>
 				</section>
 				<section class="col-lg-6 connectedSortable ui-sortable">
+					<div class="nav-tabs-custom" style="background-color:#081639a1;height:30.625rem;margin-top:20px;">
+						<span class="label label-default">设备运行排行</span>
+						<div style="width:100%;height:90%;margin-top:10px;overflow:hidden;padding:0">
+							<div data-ranking='true' style="width:100%;height:100%;">
+								
+							</div>
+						</div>
+					</div>
 					<div class="nav-tabs-custom" style="background-color:#081639a1;height:20.625rem;margin-top:20px;">
 						<span class="label label-default">设备生产计划与执行数据</span>
 					 	<div id="project-data" style="width:100%;height:86%;margin-top:0;overflow:hidden;">
@@ -175,42 +185,13 @@
      					</div>
 						</div>
 					</div>
-					<div class="nav-tabs-custom" style="background-color:#081639a1;height:30.625rem;margin-top:20px;">
-						<span class="label label-default">每日设备报警列表记录</span>
-						<div class="table-responsive" style="width:100%;height:86%;margin-top:0;overflow:hidden;padding:10px">
-							 <table class="table table-bordered">
-							 	<thead>
-								 	<tr>
-								 		<th>设备名称</th>
-								 		<th>设备类型</th>
-								 		<th>设备编号</th>
-								 		<th>报警代码</th>
-								 		<th>报警信息</th>
-								 		<th>报警时间</th>
-								 	</tr>
-							 	</thead>
-							 	<tbody>
-							 		<tr ng-repeat="item in alarms">
-							      		<td>{{item.machineName}}</td>
-							      		<td>{{item.mtype}}</td>
-							      		<td>{{item.machineCode}}</td>
-							      		<td>{{item.alarmNo}}</td>
-							      		<td>{{item.alarmMessage}}</td>
-							      		<td>{{item.recordTime|date:'HH:mm:ss'}}</td>
-			      					</tr>
-							 	</tbody>
-							 </table>
-						</div>
-					</div>
 				</section>
 			</div>
-			<footer class="main-footer" style="background-color:#06132b91;height:55px;color:#f2f2f3;margin-top:20px;padding-top:15px">
-			    <div class="pull-right hidden-xs">
-			      <b>Version</b> 2.4.0
-			    </div>
-			    <strong>技术支持：
-			    	<a target="blank" href="http://www.huaxinzhi.com">银川华信智信息技术有限公司</a>
-		    	</strong> 
+			<footer class="main-footer" style="text-align:center;background-color:#06132b91;height:55px;color:#f2f2f3;margin-top:20px;padding-top:15px">
+			    <strong>技术支持<a target="blank" href="http://www.huaxinzhi.com">银川华信智信息技术有限公司</a>
+					电话：0951-6996116 邮件：huaxinzhi@huaxinzhi.com
+		    	</strong>
+		    	<b>版本</b> 2.4.0
 			</footer>
 		</section>
 	</body>

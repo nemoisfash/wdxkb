@@ -3,6 +3,7 @@ package org.tdds.service.impl;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -115,5 +116,10 @@ public class RunningRecordServiceImpl implements RunningRecordService {
 			filter.put("name", Objects.toString(filters.get("name")));
 		 }
 		return runningRecordDao.exportData(filter);
+	}
+
+	@Override
+	public List<String> findTimeLineTimes(Long machineId) {
+		return runningRecordDao.findTimeLineTimes(machineId);
 	}
 }

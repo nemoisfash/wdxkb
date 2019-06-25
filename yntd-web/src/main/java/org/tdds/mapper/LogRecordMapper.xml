@@ -91,7 +91,7 @@
     </select>
    <select id="selectRankData" resultType="java.lang.Double">
 		SELECT
-			IFNULL(TIMESTAMPDIFF(SECOND,MIN(record_time),MAX(record_time)),0)  AS timed
+			IFNULL(TIMESTAMPDIFF(MINUTE,MIN(record_time),MAX(record_time)),0)  AS timed
 		FROM znzz_running_record
 		WHERE machine_id =#{machineId}
 		AND DATE(record_time) =CURRENT_DATE

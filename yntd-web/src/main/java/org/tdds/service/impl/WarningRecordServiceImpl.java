@@ -2,6 +2,7 @@ package org.tdds.service.impl;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -119,5 +120,11 @@ public class WarningRecordServiceImpl implements WarningRecordService{
 	@Override
 	public List<Map<String,Object>> findAll() {
 		return daoWarningRecord.selectWarningRecords();
+	}
+
+	@Override
+	public List<String> findTimeLineTimes(Long machineId) {
+		 
+		return daoWarningRecord.findTimeLineTimes(machineId);
 	}
 }

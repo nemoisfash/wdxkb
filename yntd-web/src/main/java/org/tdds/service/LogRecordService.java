@@ -1,8 +1,8 @@
 package org.tdds.service;
 
 
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.tdds.entity.MonitoringList;
 
@@ -25,4 +25,6 @@ public interface LogRecordService {
 	 * @return
 	 */
 	Double findRankData(Long id);
+
+	List<String> findTimeLineTimes(Long id, String status);
 }

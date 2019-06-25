@@ -1,5 +1,6 @@
 package org.tdds.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -18,4 +19,6 @@ public interface WarningRecordService {
 	List<Map<String, Object>> exportData(QueryFilters filters);
 
 	List<Map<String,Object>> findAll();
+
+	List<String> findTimeLineTimes(Long id);
 }

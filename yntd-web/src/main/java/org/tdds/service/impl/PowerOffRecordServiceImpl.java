@@ -2,6 +2,7 @@ package org.tdds.service.impl;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.tdds.entity.PowerOffRecord;
-import org.tdds.entity.RunningRecord;
 import org.tdds.mapper.PowerOffRecordMapper;
 import org.tdds.service.PowerOffRecordService;
 
@@ -115,5 +115,10 @@ public class PowerOffRecordServiceImpl implements PowerOffRecordService{
 			filter.put("name", Objects.toString(filters.get("name")));
 		 }
 		return daoPoweroff.exportData(filter);
+	}
+
+	@Override
+	public List<String> findTimeLineTimes(Long machineId) {
+		return daoPoweroff.findTimeLineTimes(machineId);
 	}
 }

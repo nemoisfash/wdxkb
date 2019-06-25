@@ -2,6 +2,7 @@ package org.tdds.service;
 
 
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -18,4 +19,6 @@ public interface RunningRecordService {
 	Page<RunningRecord> findAllRecords(QueryFilters filters, PageRequest pageable);
 
 	List<Map<String, Object>> exportData(QueryFilters filters);
+
+	List<String> findTimeLineTimes(Long id);
 }

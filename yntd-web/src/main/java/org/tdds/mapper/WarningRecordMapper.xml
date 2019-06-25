@@ -89,4 +89,12 @@
 		ORDER BY
 			record_time DESC
 	</select>
+	<select id="findTimeLineTimes" resultType="java.lang.String">
+			SELECT DISTINCT
+				DATE_FORMAT(record_time,'%H:%i')
+			FROM
+				znzz_warning_record 
+			WHERE
+				machine_id = #{machineId}
+      </select>
 </mapper>

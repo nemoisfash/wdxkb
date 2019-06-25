@@ -1,5 +1,6 @@
 package org.tdds.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -8,7 +9,6 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.tdds.entity.ManualRecord;
 import org.tdds.entity.MonitoringList;
 import org.tdds.entity.PowerOffRecord;
 import org.tdds.entity.RunningRecord;
@@ -189,6 +189,21 @@ public class LogRecordServiceImpl implements LogRecordService {
 			count=daoLogRecord.findRunningData(map);
 		}
 		return count;
+	}
+
+	@Override
+	public List<String> findTimeLineTimes(Long id, String status) {
+		List<String> list = new ArrayList<>();
+		if(status.equalsIgnoreCase(STATUS[0])){
+			list=bizRunning.findTimeLineTimes(id);
+		}else if(status.equalsIgnoreCase(STATUS[1])){
+			list=bizPowerOff.findTimeLineTimes(id);
+		}else if(status.equalsIgnoreCase(STATUS[2])){
+			list=bizWarning.findTimeLineTimes(id);
+		}else if(status.equalsIgnoreCase(STATUS[3])){
+			list=bizWaiting.findTimeLineTimes(id);
+		} 
+		return list;
 	}
 
 }

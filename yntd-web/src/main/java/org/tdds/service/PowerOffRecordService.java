@@ -1,5 +1,6 @@
 package org.tdds.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +18,8 @@ public interface PowerOffRecordService {
 	Page<PowerOffRecord> findAllRecords(QueryFilters filters, PageRequest pageable);
 
 	List<Map<String, Object>> exportData(QueryFilters filters);
+
+	List<String> findTimeLineTimes(Long id);
 
 
 }

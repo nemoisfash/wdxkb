@@ -1,5 +1,6 @@
 package org.tdds.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -18,4 +19,5 @@ public interface WaitingRecordService {
 
 	List<Map<String, Object>> exportData(QueryFilters filters);
 
+	List<String> findTimeLineTimes(Long id);
 }

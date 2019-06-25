@@ -1,5 +1,6 @@
 package org.tdds.mapper;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -23,4 +24,6 @@ public interface WaitingRecordMapper extends DynaMapper<WaitingRecord>{
 	Double findMemberLineData(@Param(value="date")String date);
 
 	List<Map<String, Object>> exportData(@Param(value="filter")Map<String, Object> filter);
+
+	List<String> findTimeLineTimes(@Param(value="machineId")Long machineId);
 }
