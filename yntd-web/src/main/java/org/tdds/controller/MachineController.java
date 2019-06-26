@@ -8,7 +8,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.tdds.entity.Machine;
 import org.tdds.entity.MonitoringList;
@@ -30,7 +28,6 @@ import org.tdds.service.MachineService;
 import org.tdds.service.MonitoringService;
 import org.tdds.service.WarningRecordService;
 
-import com.alibaba.druid.sql.ast.expr.SQLSequenceExpr.Function;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.hxz.webapp.syscore.support.BasePortalController;
@@ -236,29 +233,13 @@ public class MachineController extends BasePortalController {
 			for(Machine machine:machines){
 				times= bizLogRecord.findTimeLineTimes(machine.getId(),status);		 
 			}
-			/*createxAxis(times);*/
-			series.put("data",stringToDate(times));
+			series.put("data",times);
 			series.put("type","bar");
 			series.put("name",StatusEnum.getValue(status));
 			series.put("stack","总量");
 			list.add(series);
 		}
 		return list;
-	}
-
-	/**
-	 * 合并list 并去重
-	 * @param list
-	 * @return
-	 * @throws ParseException 
-	 */
-	private List<Date> stringToDate(List<String> list) throws ParseException{
-		List<Date> dates = new ArrayList<>();
-		SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
-		 for(String str:list){
-			 dates.add(format.parse(str));
-		 }
-		 return dates;
 	}
 	
 	/**

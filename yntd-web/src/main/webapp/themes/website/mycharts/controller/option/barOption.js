@@ -2,21 +2,28 @@
 var myColor = ['#eb2100', '#eb3600', '#d0570e', '#d0a00e', '#34da62', '#00e9db', '#00c0e9', '#0096f3', '#33CCFF', '#33FFCC'];
 var optionBar = {
 	    grid: {
-	        left: '11%',
+	        left: '8%',
 	        top: '12%',
-	        right: '0%',
+	        right: '2%',
 	        bottom: '8%',
 	        containLabel: true
 	    },
 	    xAxis: [{
 	        show: true,
 	        type: 'value',
+	        position: 'top',
 	        axisLabel: {
 	            textStyle: {
 	                color: '#ffffff',
 	                fontSize: '16',
 	            }
 	        },
+	        axisLine:{
+	    		show:false,
+	    		lineStyle:{
+	    			color: ['#E9EDFF']
+	    		}
+	    	},
 	    }],
 	    yAxis: [{
 	        axisTick: 'none',

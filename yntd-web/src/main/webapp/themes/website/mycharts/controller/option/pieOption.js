@@ -3,7 +3,7 @@
  */
 ;(function($, e){
 var optionPie = {
-		color: ['#12b07b','#feb501', '#e65a65','#a6a5a5'],
+		color: ['#12b07b','#a6a5a5','#e65a65','#feb501'],
 		title:{
 			text:"",
 			textStyle:{
