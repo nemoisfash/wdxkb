@@ -64,4 +64,13 @@ $scope.switchStatus=function(obj){
 			})
 		}
 	}
+}).directive('timeLine',function($interval){
+	return{
+		restrict:'A',
+		link:function(scope,elem,attrs){
+			var dom =elem.get(0);
+			var myTimeLine=echarts.init(dom);
+			
+		}
+	}
 })

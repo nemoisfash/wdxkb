@@ -236,9 +236,8 @@ public class MachineController extends BasePortalController {
 				times= bizLogRecord.findTimeLineTimes(machine.getId(),status);		 
 			}
 			series.put("data",times);
-			series.put("type","bar");
+			series.put("type","custom");
 			series.put("name",StatusEnum.getValue(status));
-			series.put("stack","总量");
 			list.add(series);
 		}
 		return list;
