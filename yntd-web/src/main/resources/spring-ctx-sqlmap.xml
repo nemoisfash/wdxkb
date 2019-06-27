@@ -10,7 +10,7 @@
                         
 	<context:property-placeholder ignore-unresolvable="true" location="classpath:conf.properties" />
 	
-	<bean id="master" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
 		<property name="driverClassName" value="${master.driver}" />
 		<property name="url" value="${master.url}" />
 		<property name="username" value="${master.username}" />
@@ -28,10 +28,10 @@
 		<property name="maxPoolPreparedStatementPerConnectionSize" value="20" />
 	</bean>
 	
-	<bean id="slave" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
+	<!--<bean id="slave" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
 		<property name="driverClassName" value="${slave.driver}" />
 		<property name="url" value="${slave.url}" />
-	<!-- <property name="username" value="root" />
+	 <property name="username" value="root" />
 		<property name="password" value="root" /> 
 		<property name="initialSize" value="1" />
 		<property name="minIdle" value="1" />
@@ -43,9 +43,8 @@
 		<property name="testOnBorrow" value="false" />
 		<property name="testOnReturn" value="false" />
 		 <property name="poolPreparedStatements" value="true" />
-		<property name="maxPoolPreparedStatementPerConnectionSize" value="20" /> -->
+		<property name="maxPoolPreparedStatementPerConnectionSize" value="20" />
 	</bean>
-	
 	<bean id="dataSource" class="net.chenke.playweb.support.dynamicDataSource.DynamicDataSource">
 		<property name="defaultTargetDataSource" ref="master"></property>
 		 <property name="targetDataSources">  
@@ -54,9 +53,8 @@
                 <entry value-ref="slave" key="slave"></entry>
             </map>  
 		</property>
-	</bean>
+	</bean> -->
 	
-
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
 		<property name="configLocation" value="classpath:sqlmap-config.xml" />
@@ -99,26 +97,20 @@
 			</value>
 		</property>
 	</bean>
+	
 	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
-	<bean id="dataSwitchAop" class="net.chenke.playweb.support.dynamicDataSource.DataSwitchAop">
-	</bean>
+<!-- 	<bean id="dataSwitchAop" class="net.chenke.playweb.support.dynamicDataSource.DataSwitchAop">
+	</bean> -->
 	<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true" />
-		<!--基于aspectj注解的配置文件在spring中的配置-->
-		<aop:aspectj-autoproxy expose-proxy="true"/>
-		<!--对这里加以改动，直接在类中进行配置-->
-		 <!--设置切面进行拦截-->
+		<!-- <aop:aspectj-autoproxy expose-proxy="true"/>
 		<aop:config>
-		    <!--设置事务的优先级-->
 		    <aop:aspect ref="dataSwitchAop" order="0">
-		        <!--拦截所有的service的方法-->
-		        <!--当然也可以拦截Controller方法，这里设置的是拦截service-->
 		        <aop:pointcut id="dataSourcePointcut" expression="execution(* org.tdds.service.*Service..*(..))"/>
 		        <aop:before method="intercept" pointcut-ref="dataSourcePointcut"/>
 		        <aop:after method="clearDataSource" pointcut-ref="dataSourcePointcut"/>
 		    </aop:aspect>
 		</aop:config>
-		<!--如果要设置拦截controller方法的话需要将参数设置为true，启动cligb代理-->
-		<aop:aspectj-autoproxy proxy-target-class="true"/>
+		<aop:aspectj-autoproxy proxy-target-class="true"/> -->
 </beans>

@@ -12,7 +12,7 @@ app.controller('myCtrl', function($scope,$http,$interval) {
 			$scope.items=res.data.resault;
 			$scope.switchStatus(res.data.resault);
 		})
-	},10000)
+	},1000)
 $interval(function(){
 	$http({
 		method: 'GET',
@@ -41,7 +41,6 @@ $scope.switchStatus=function(obj){
 				var time = now.getHours()+":"+now.getMinutes()+":"+now.getSeconds();
 				var date = now.getFullYear()+"-"+(now.getMonth()+1)+"-"+now.getDate()+" "+time+" "+"星期"+weekArray[now.getDay()];
 				elem.text(date);
-				 
 			},1000)
 		}
 	}
