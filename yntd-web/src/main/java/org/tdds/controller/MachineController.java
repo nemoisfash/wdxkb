@@ -54,6 +54,7 @@ public class MachineController extends BasePortalController {
 
 	List<Map<String, Object>> statuslist = new ArrayList<>();
 
+	@SuppressWarnings("unused")
 	@RequestMapping(value = "datalist", method = RequestMethod.GET)
 	public Object loging(HttpServletRequest request, HttpServletResponse res) {
 		Boolean success = true;
