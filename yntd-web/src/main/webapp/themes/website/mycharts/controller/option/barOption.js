@@ -67,16 +67,16 @@ var optionBar = {
 	            label: {
 	                normal: {
 	                    show: true,
-	                    position: "top",
+	                    position: "right",
 	                    formatter:"{c}分钟",
 	                    barBorderRadius: 2,
 	                    textStyle: {
 	                        color: '#ffffff',
-	                        fontSize: '16',
+	                        fontSize: '10',
 	                    }
 	                },
 	            },
-	            barWidth: 25,
+	            barWidth: 20,
 	            itemStyle: {
 	                normal: {
 	                    color: function(params) {
