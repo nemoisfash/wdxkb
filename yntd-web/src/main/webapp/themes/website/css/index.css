@@ -4,7 +4,7 @@ body{
 	height:100%;
 	width:100%;
 	background-size:cover;
-	overflow:hidden;
+	/* overflow:hidden; */
 }
 .label {
 	display: inline-block;
@@ -67,6 +67,11 @@ body{
 .circle-waiting{
 	border:5px solid #feb501;
 }
+
+.circle-manual{
+	border:5px solid #12b07b;
+}
+
 @keyframes fade {
 	from {
 	    opacity: 1.0;
@@ -101,10 +106,10 @@ body{
     float: right;
     background-color: #ff000000;
     position: relative;
-    left: -43px;
-    top: -24px;
+    left: 22px;
+    top: -36px;
     color: #3992d4;
-    font-size: 32px;
+    font-size: 25px;
     font-weight: bold;
 }
 .pies{

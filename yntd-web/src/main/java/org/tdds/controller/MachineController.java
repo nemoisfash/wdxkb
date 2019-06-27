@@ -62,6 +62,7 @@ public class MachineController extends BasePortalController {
 		List<MonitoringList> entities = new ArrayList<>();
 		for (Machine machine : machines) {
 			MonitoringList monitoringList = bizMonitoring.findByName(machine.getName());
+			monitoringList.setMachineName(machine.getCode());
 			if (monitoringList == null) {
 				MonitoringList entity = new MonitoringList();
 				entity.setMachineName(machine.getName());
