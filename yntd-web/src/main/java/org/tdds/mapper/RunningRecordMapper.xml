@@ -7,20 +7,24 @@
     <!-- 单表查询结果列 -->
     <sql id="Base_Column_List">
     </sql>
-    <select id="selectRankData" resultType="java.lang.Double">
+       <select id="findRunningData" resultType="java.lang.Double">
 		SELECT
-			IFNULL(TIMESTAMPDIFF(SECOND,MIN(record_time),MAX(record_time)),0)  AS timed
-		FROM znzz_running_record
-		WHERE machine_id =#{machineId}
-		AND DATE(record_time) =CURRENT_DATE
+			 IFNULL(ABS(r_times),0)
+		FROM znzz_machine
+		WHERE
+		 <choose>
+		 	<when test="map.date!=null and map.date!=''">
+		 		 DATE(start_time) =#{map.date} 
+		 	</when>
+		 	<otherwise>
+		 		DATE(start_time) =CURRENT_DATE
+		 	</otherwise>
+		 </choose>
+		 <if test="map.machineName!=null and map.machineName!=''">
+		  	AND name =#{map.machineName}
+		 </if>
     </select>
-    <select id="findMemberLineData" resultType="java.lang.Double">
-			SELECT
-				IFNULL(TIMESTAMPDIFF(SECOND,MIN(record_time),MAX(record_time)),0)  AS timed
-			FROM znzz_running_record
-			WHERE DATE(record_time) =#{date}
-      </select>
-       <select id="exportData" resultType="map">
+    <select id="exportData" resultType="map">
 			 SELECT 
 				machine_name as sbmc,
 				maintenance_signal as whxh,
@@ -50,4 +54,26 @@
 			AND
 			DATE(record_time) =CURRENT_DATE
       </select>
+      <select id="findRankData" resultType="java.lang.Double">
+		SELECT
+			IFNULL(ABS(r_times),0)
+		FROM znzz_machine
+		WHERE name =#{name}
+		AND
+		DATE(start_time) =CURRENT_DATE
+    </select>
+     <select id="findAllRecordsByMachineId" resultType="map">
+	 	SELECT
+	 		'运行' as 'name',
+	 		'12b07b' as color,
+			 DATE_FORMAT(start_time,'%H:%i:%s')  as startTime,
+			 DATE_FORMAT(end_time,'%H:%i:%s') as end_time,
+			 IFNULL(TIMESTAMPDIFF(MINUTE,start_time,end_time),0)  as diff
+		FROM znzz_running_record
+		WHERE machine_id=#{machineId}
+		AND
+		DATE(start_time) =CURRENT_DATE
+		AND
+		DATE(end_time)=CURRENT_DATE
+    </select>
 </mapper>

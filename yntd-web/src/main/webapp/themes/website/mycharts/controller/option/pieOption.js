@@ -99,7 +99,7 @@ init:function(){
 	_this.pies=piesArray;
 	setInterval(function(){
 		_this.getData();
-	},5000)
+	},3000)
 },getData:function(){
 	var _this=this;
 			$.ajax({

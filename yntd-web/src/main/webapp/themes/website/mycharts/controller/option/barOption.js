@@ -28,7 +28,7 @@ var optionBar = {
 	    yAxis: [{
 	        axisTick: 'none',
 	        axisLine: 'none',
-	        offset: '27',
+	        offset: '30',
 	        axisLabel: {
 	            textStyle: {
 	                color: '#ffffff',
@@ -163,7 +163,7 @@ var	_this = this;
 						_this.dataRankingInit(data);
 					}
 				})
-			},5000)
+			},3000)
 	
 		},dataRankingInit:function(data){
 			var _this = this;

@@ -1,30 +1,11 @@
 package org.tdds.service;
 
-
-import java.util.Date;
 import java.util.List;
-
-import org.tdds.entity.MonitoringList;
-
+import java.util.Map;
 
 public interface LogRecordService {
 
-	void insert(MonitoringList lr);
-	 
-	/**
-	 * 查询时间轴数据
-	 * @param id
-	 * @param status
-	 * @return
-	 */
-	Double findData(String date,String status,Long id);
-	
-	/**
-	 * 排名
-	 * @param id
-	 * @return
-	 */
-	Double findRankData(Long id);
+	Double findData(String date, String status, String name);
 
-	List<String> findTimeLineTimes(Long id, String status);
+	List<Map<String, Object>> findTimeLineData(Long id);
 }

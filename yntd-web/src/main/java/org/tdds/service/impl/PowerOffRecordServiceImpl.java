@@ -12,6 +12,8 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.tdds.entity.Machine;
+import org.tdds.entity.MonitoringList;
 import org.tdds.entity.PowerOffRecord;
 import org.tdds.mapper.PowerOffRecordMapper;
 import org.tdds.service.PowerOffRecordService;
@@ -32,10 +34,15 @@ public class PowerOffRecordServiceImpl implements PowerOffRecordService{
 	private PowerOffRecordMapper daoPoweroff;
 	
 	@Override
-	public void insert(PowerOffRecord pr) {
+	public void insert(MonitoringList monitoringList, Machine entity) {
+	PowerOffRecord pr= new PowerOffRecord();
+		pr.setMachineId(entity.getId());
+		pr.setMachineName(entity.getName());
+		pr.setStartTime(entity.getStartTime());
+		pr.setEndTime(new Date());
 		daoPoweroff.insert(pr);
 	}
-
+ 
 	@Override
 	public Page<PowerOffRecord> findAllRecords(QueryFilters filters, PageRequest pageable){
 		Example example = new Example(PowerOffRecord.class);
@@ -118,7 +125,19 @@ public class PowerOffRecordServiceImpl implements PowerOffRecordService{
 	}
 
 	@Override
-	public List<String> findTimeLineTimes(Long machineId) {
+	public List<String> findTimeLineTimes(Long machineId){
 		return daoPoweroff.findTimeLineTimes(machineId);
+	}
+
+	@Override
+	public Double findPoweroffData(Map<String, Object> map) {
+		 
+		return daoPoweroff.findPoweroffData(map);
+	}
+
+	@Override
+	public List<Map<String, Object>> findAllRecordsByMachineId(Long id) {
+		// TODO Auto-generated method stub
+		return daoPoweroff.findAllRecordsByMachineId(id);
 	}
 }

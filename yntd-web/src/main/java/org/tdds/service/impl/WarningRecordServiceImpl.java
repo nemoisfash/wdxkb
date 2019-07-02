@@ -12,6 +12,8 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.tdds.entity.Machine;
+import org.tdds.entity.MonitoringList;
 import org.tdds.entity.WarningRecord;
 import org.tdds.mapper.WarningRecordMapper;
 import org.tdds.service.WarningRecordService;
@@ -30,12 +32,27 @@ public class WarningRecordServiceImpl implements WarningRecordService{
 
 	@Autowired
 	private WarningRecordMapper daoWarningRecord;
-	
+
 	@Override
-	public void insert(WarningRecord warningRecord) {
+	public void insert(MonitoringList monitoringList, Machine entity) {
+	WarningRecord warningRecord = new WarningRecord();
+		warningRecord.setMachineId(entity.getId());
+		warningRecord.setMachineName(entity.getName());
+		warningRecord.setStartTime(entity.getStartTime());
+		warningRecord.setEndTime(new Date());
+		warningRecord.setAlarmMessage(monitoringList.getAlarmMessage());
+		warningRecord.setAlarmNo(monitoringList.getAlarmNo());
+		warningRecord.setMachineMode(monitoringList.getMachineMode());
+		warningRecord.setMaintenanceSignal(monitoringList.getMaintenanceSignal());
+		warningRecord.setOverrideFeed(monitoringList.getOverrideFeed());
+		warningRecord.setOverrideRapid(monitoringList.getOverrideRapid());
+		warningRecord.setOverrideSpindle(monitoringList.getOverrideSpindle());
+		warningRecord.setPartsCountResult(monitoringList.getPartscountResult());
+		warningRecord.setPartsCountTarget(monitoringList.getPartscountTarget());
+		warningRecord.setSpindleMode(monitoringList.getSpindleMode());
 		daoWarningRecord.insert(warningRecord);
 	}
-
+	
 	@Override
 	public Page<WarningRecord> findAllRecords(QueryFilters filters, PageRequest pageable) {
 		Example example = new Example(WarningRecord.class);
@@ -126,5 +143,16 @@ public class WarningRecordServiceImpl implements WarningRecordService{
 	public List<String> findTimeLineTimes(Long machineId) {
 		 
 		return daoWarningRecord.findTimeLineTimes(machineId);
+	}
+
+	@Override
+	public Double findAlarmData(Map<String, Object> map) {
+	 
+		return daoWarningRecord.findAlarmData(map);
+	}
+
+	@Override
+	public List<Map<String, Object>> findAllRecordsByMachineId(Long id) {
+		return daoWarningRecord.findAllRecordsByMachineId(id);
 	}
 }

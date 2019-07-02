@@ -12,6 +12,8 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.tdds.entity.Machine;
+import org.tdds.entity.MonitoringList;
 import org.tdds.entity.WaitingRecord;
 import org.tdds.mapper.WaitingRecordMapper;
 import org.tdds.service.WaitingRecordService;
@@ -32,11 +34,15 @@ public class WaitingRecordServiceImpl implements WaitingRecordService{
 	private WaitingRecordMapper daoWaitingRecord;
 	
 	@Override
-	public void insert(WaitingRecord wRecord) {
+	public void insert(MonitoringList monitoringList, Machine entity) {
+		WaitingRecord wRecord = new WaitingRecord();
+		wRecord.setMachineId(entity.getId());
+		wRecord.setMachineName(entity.getName());
+		wRecord.setStartTime(entity.getStartTime());
+		wRecord.setEndTime(new Date());
+		wRecord.setSpindleMode(monitoringList.getSpindleMode());
 		daoWaitingRecord.insert(wRecord);
-		
 	}
-
 	@Override
 	public Page<WaitingRecord> findAllRecords(QueryFilters filters, PageRequest pageable) {
 		Example example = new Example(WaitingRecord.class);
@@ -122,5 +128,15 @@ public class WaitingRecordServiceImpl implements WaitingRecordService{
 	public List<String> findTimeLineTimes(Long machineId) {
 		
 		return daoWaitingRecord.findTimeLineTimes(machineId);
+	}
+
+	@Override
+	public Double findWaittingData(Map<String, Object> map) {
+		return daoWaitingRecord.findWaittingData(map);
+	}
+	@Override
+	public List<Map<String, Object>> findAllRecordsByMachineId(Long id) {
+		// TODO Auto-generated method stub
+		return daoWaitingRecord.findAllRecordsByMachineId(id);
 	}
 }

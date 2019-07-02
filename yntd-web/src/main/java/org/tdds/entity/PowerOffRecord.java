@@ -1,9 +1,11 @@
 package org.tdds.entity;
 
-import java.sql.Timestamp;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Table(name = "znzz_poweroff_record")
@@ -13,14 +15,19 @@ public class PowerOffRecord {
 	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 1L;
 	
+	@Id
 	@Column(name = "id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
 	@Column(name = "machine_name")
 	private String machineName;
 	
-	@Column(name = "record_time")
-	private Date recordTime;
+	@Column(name = "start_time")
+	private Date startTime;
+	
+	@Column(name = "end_time")
+	private Date endTime;
 	
 	@Column(name = "machine_id")
 	private Long machineId;
@@ -269,11 +276,19 @@ public class PowerOffRecord {
 		this.machineName = machineName;
 	}
 
-	public Date getRecordTime() {
-		return recordTime;
+	public Date getStartTime() {
+		return startTime;
 	}
 
-	public void setRecordTime(Date recordTime) {
-		this.recordTime = recordTime;
+	public void setStartTime(Date startTime) {
+		this.startTime = startTime;
+	}
+
+	public Date getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(Date endTime) {
+		this.endTime = endTime;
 	}
 }

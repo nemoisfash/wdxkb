@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.tdds.entity.Machine;
+import org.tdds.entity.MonitoringList;
 
 import net.chenke.playweb.QueryFilters;
 
@@ -23,5 +24,11 @@ public interface MachineService{
 
 	List<Map<String, Object>> exportInfore(Long id);
 
-	int update(Machine machine);
+	int update(MonitoringList machine,Machine entity);
+
+	Machine findMachineByName(String machineName);
+	
+	void insert(MonitoringList monitoringList);
+
+	void updateImage(Machine machine);
 }

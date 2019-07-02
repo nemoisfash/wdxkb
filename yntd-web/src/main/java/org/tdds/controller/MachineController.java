@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,6 +27,7 @@ import org.tdds.entity.MonitoringList;
 import org.tdds.service.LogRecordService;
 import org.tdds.service.MachineService;
 import org.tdds.service.MonitoringService;
+import org.tdds.service.RunningRecordService;
 import org.tdds.service.WarningRecordService;
 
 import com.alibaba.fastjson.JSONObject;
@@ -42,15 +44,18 @@ public class MachineController extends BasePortalController {
 
 	@Autowired
 	private MonitoringService bizMonitoring;
-	
+
 	@Autowired
 	private WarningRecordService bizWarningRecord;
 
 	@Autowired
+	private RunningRecordService bizRunningRecord;
+
+	@Autowired
 	private LogRecordService bizLogRecord;
-	
-	//西部大森manual=running
-	private static final String[] STATUS = {"RUNNING", "POWEROFF", "ALARM", "WAITING"/*,"MANUAL"*/};
+
+	// 西部大森manual=running
+	private static final String[] STATUS = { "RUNNING", "POWEROFF", "ALARM", "WAITING"/* ,"MANUAL" */ };
 
 	List<Map<String, Object>> statuslist = new ArrayList<>();
 
@@ -58,43 +63,34 @@ public class MachineController extends BasePortalController {
 	@RequestMapping(value = "datalist", method = RequestMethod.GET)
 	public Object loging(HttpServletRequest request, HttpServletResponse res) {
 		Boolean success = true;
-		Map<String, Object> map = new HashMap<>();
-		List<Machine> machines = bizMachine.findMachine();
-		List<MonitoringList> entities = new ArrayList<>();
-		for (Machine machine : machines) {
-			MonitoringList monitoringList = bizMonitoring.findByName(machine.getName());
-			monitoringList.setMachineName(machine.getCode());
-			if (monitoringList == null) {
-				MonitoringList entity = new MonitoringList();
-				entity.setMachineName(machine.getName());
-				entity.setMachineSignal(getStatus(machine.getmIp()));
-				/* entity.setMachineSignal("POWEROFF"); */
-				entities.add(entity);
+		List<MonitoringList> entities = bizMonitoring.findAll();
+		for (MonitoringList monitoringList : entities) {
+			Machine entity = bizMachine.findMachineByName(monitoringList.getMachineName());
+			if (entity == null) {
+				bizMachine.insert(monitoringList);
+			} else {
+				bizMachine.update(monitoringList, entity);
+				monitoringList.setMachineName(entity.getCode());
 			}
-			entities.add(monitoringList);
 		}
-		map.put("success", success);
+		Map<String, Object> map = new HashMap<>();
 		map.put("resault", entities);
 		return map;
 	}
-	
+
 	@RequestMapping(value = "insertLogging", method = RequestMethod.GET)
-	private void insertLogging(){
- 		List<MonitoringList> entities = bizMonitoring.findAll();
-		for(MonitoringList monitoringList:entities){
-			bizLogRecord.insert(monitoringList);
-		}
+	private void insertLogging(Map<String, Object> map) {
 	}
-	
+
 	@RequestMapping(value = "alermMessage", method = RequestMethod.GET)
 	@ResponseBody
-	private Object alermMessage(){
+	private Object alermMessage() {
 		Map<String, Object> map = new HashMap<>();
- 		List<Map<String,Object>> entities = bizWarningRecord.findAll();
- 		map.put("resault", entities);
- 		return map;
+		List<Map<String, Object>> entities = bizWarningRecord.findAll();
+		map.put("resault", entities);
+		return map;
 	}
-	
+
 	/**
 	 * 每天每小时设备运行状况 一天24*60分钟
 	 * 
@@ -114,8 +110,8 @@ public class MachineController extends BasePortalController {
 			Map<String, Object> entity = new HashMap<>();
 			List<Object> value = new LinkedList<>();
 			for (String date : days) {
-				Double num = bizLogRecord.findData(date,status, null);
-				value.add(num); 
+				Double num = bizLogRecord.findData(date, status, null);
+				value.add(num);
 			}
 			entity.put("data", value);
 			entity.put("name", StatusEnum.getValue(status));
@@ -159,19 +155,19 @@ public class MachineController extends BasePortalController {
 			List<Map<String, Object>> entities = new LinkedList<>();
 			for (String status : STATUS) {
 				Map<String, Object> entity = new HashMap<>();
-				Double num = bizLogRecord.findData(null,status,machine.getId());
+				Double num = bizLogRecord.findData(null, status, machine.getName());
 				entity.put("value", num);
 				entity.put("name", StatusEnum.getValue(status));
 				entities.add(new JSONObject(entity));
 			}
 			Map<String, Object> map = new HashMap<>();
 			map.put("data", entities);
-			map.put("machineName",machine.getName());
+			map.put("machineName", machine.getName());
 			list.add(map);
 		}
 		return list;
 	}
-	 
+
 	/**
 	 * 
 	 * 设备运行排名
@@ -186,7 +182,7 @@ public class MachineController extends BasePortalController {
 		List<Machine> machines = bizMachine.findMachine();
 		Map<String, Double> sortMap = new HashMap<>();
 		for (Machine machine : machines) {
-			Double num = bizLogRecord.findRankData(machine.getId());
+			Double num = bizRunningRecord.findRankData(machine.getName());
 			sortMap.put(machine.getName(), num);
 		}
 		return sortMap(sortMap);
@@ -208,10 +204,11 @@ public class MachineController extends BasePortalController {
 	 * @param request
 	 * @param response
 	 * @return
-	 * @throws ParseException 
+	 * @throws ParseException
 	 */
 
-	@RequestMapping(value = "timeline", method = RequestMethod.GET)
+	@RequestMapping(value = "timeLine", method = RequestMethod.GET)
+	@ResponseBody
 	public Object timer(HttpServletRequest request, HttpServletResponse response) throws ParseException {
 		List<Machine> machines = bizMachine.findMachine();
 		List<String> names = new ArrayList<>();
@@ -219,30 +216,48 @@ public class MachineController extends BasePortalController {
 			names.add(machine.getName());
 		}
 		Map<String, Object> resault = new HashMap<>();
-		resault.put("yAxis", names);
-		resault.put("series", seriesData());
-		/*resault.put("xAxis", xAxis);*/
+		resault.put("categories", names);
+		resault.put("data", createData());
 		return resault;
 	}
-	
+
+	/**
+	 * 
+	 * itemStyle:{ normal:{color:'#72b362'} }
+	 * @return
+	 * @throws ParseException
+	 */
 	@ResponseBody
-	private List<Map<String,Object>> seriesData() throws ParseException {
-		List<Map<String,Object>> list = new ArrayList<>();
+	private List<Map<String, Object>> createData() throws ParseException {
 		List<Machine> machines = bizMachine.findMachine();
-		for (String status : STATUS) {
-			Map<String, Object> series = new HashMap<>();
-			List<String> times = new ArrayList<>();
-			for(Machine machine:machines){
-				times= bizLogRecord.findTimeLineTimes(machine.getId(),status);		 
+		int i = 0;
+		List<Map<String, Object>> bigList = new ArrayList<>();
+		for (Machine machine : machines) {
+			i++;
+			List<Map<String, Object>> entities = bizLogRecord.findTimeLineData(machine.getId());
+			for (Map<String, Object> map : entities) {
+				Map<String, Object> map2 = new HashMap<>();
+				List<Object> value = new ArrayList<>();
+				value.add(i);
+				String name = Objects.toString(map.get("name"), null);
+				map2.put("name", name);
+				String startTime = Objects.toString(map.get("startTime"), null);
+				value.add(startTime);
+				String endTime = Objects.toString(map.get("end_time"), null);
+				value.add(endTime);
+				String timeDiff = Objects.toString(map.get("diff"), null);
+				value.add(Integer.parseInt(timeDiff));
+				map2.put("value", value);
+				String color=Objects.toString(map.get("color"), null);
+				Map<String, Object> normalMap =new HashMap<>();
+				normalMap.put("color","#"+color);
+				map2.put("itemStyle",normalMap);
+				bigList.add(map2);
 			}
-			series.put("data",times);
-			series.put("type","custom");
-			series.put("name",StatusEnum.getValue(status));
-			list.add(series);
 		}
-		return list;
+		return bigList;
 	}
-	
+
 	/**
 	 * @param running:运行
 	 * @param waitting:等待

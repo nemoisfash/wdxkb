@@ -13,6 +13,8 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.tdds.entity.Machine;
+import org.tdds.entity.MonitoringList;
 import org.tdds.entity.RunningRecord;
 import org.tdds.mapper.RunningRecordMapper;
 import org.tdds.service.RunningRecordService;
@@ -31,10 +33,25 @@ public class RunningRecordServiceImpl implements RunningRecordService {
 
 	@Autowired
 	private RunningRecordMapper runningRecordDao;
-
+	
 	@Override
-	public int insert(RunningRecord rr) {
-		return runningRecordDao.insert(rr);
+	public void insert(MonitoringList monitoringList, Machine machine) {
+		RunningRecord entity = new RunningRecord();
+			entity.setMachineId(machine.getId());
+			entity.setMachineName(machine.getName());
+			entity.setStartTime(machine.getStartTime());
+			entity.setEndTime(new Date());
+			entity.setMachineMode(monitoringList.getMachineMode());
+			entity.setMachineStatus(monitoringList.getMachineStatus());
+			entity.setMachiningTimeProgress(monitoringList.getMachiningTimeProgress());
+			entity.setMainProgramNo(monitoringList.getMainprogramNo());
+			entity.setMaintenanceSignal(monitoringList.getMaintenanceSignal());
+			entity.setOverrideFeed(monitoringList.getOverrideFeed());
+			entity.setOverrideRapid(monitoringList.getOverrideRapid());
+			entity.setOverrideSpindle(monitoringList.getOverrideSpindle());
+			entity.setPartsCountResult(monitoringList.getPartscountResult());
+			entity.setPartsCountTarget(monitoringList.getPartscountTarget());
+			runningRecordDao.insert(entity);
 	}
 
 	@Override
@@ -119,7 +136,23 @@ public class RunningRecordServiceImpl implements RunningRecordService {
 	}
 
 	@Override
-	public List<String> findTimeLineTimes(Long machineId) {
-		return runningRecordDao.findTimeLineTimes(machineId);
+	public List<String> findTimeLineTimes(Long id) {
+		return runningRecordDao.findTimeLineTimes(id);
+	}
+
+	@Override
+	public Double findRunningData(Map<String, Object> map) {
+		return runningRecordDao.findRunningData(map);
+	}
+
+	@Override
+	public Double findRankData(String name) {
+		return runningRecordDao.findRankData(name);
+	}
+
+	@Override
+	public List<Map<String, Object>> findAllRecordsByMachineId(Long id) {
+		 
+		return runningRecordDao.findAllRecordsByMachineId(id);
 	}
 }

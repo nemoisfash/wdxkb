@@ -1,5 +1,7 @@
 package org.tdds.service.impl;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -7,8 +9,15 @@ import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.tdds.entity.Machine;
+import org.tdds.entity.MonitoringList;
 import org.tdds.mapper.MachineMapper;
 import org.tdds.service.MachineService;
+import org.tdds.service.PowerOffRecordService;
+import org.tdds.service.RunningRecordService;
+import org.tdds.service.WaitingRecordService;
+import org.tdds.service.WarningRecordService;
+
+import cn.hxz.webapp.util.DateUtils;
 import net.chenke.playweb.QueryFilters;
 import tk.mybatis.mapper.entity.Example;
 import tk.mybatis.mapper.entity.Example.Criteria;
@@ -17,10 +26,22 @@ import org.springframework.util.StringUtils;
 @Service
 public class MachineServiceImpl implements MachineService {
 
-	private static final String CONFIG_FILE = "machineName/machineInfo.properties";
-
+	private static final String[] STATUS = {"RUNNING", "POWEROFF", "ALARM", "WAITING","MANUAL"};
+	
 	@Autowired
 	private MachineMapper machineDao;
+	
+	@Autowired
+	private WarningRecordService bizWarningRecord;
+	
+	@Autowired
+	private RunningRecordService bizRunningRecord;
+
+	@Autowired
+	private PowerOffRecordService bizPowerOff;
+	
+	@Autowired
+	private WaitingRecordService bizWaitingRecord;
 
 	@Override
 	public Long selectMidByName(String machineName) {
@@ -75,10 +96,66 @@ public class MachineServiceImpl implements MachineService {
 	}
 
 	@Override
-	public int update(Machine machine) {
-		return machineDao.updateByPrimaryKeySelective(machine);
+	public int update(MonitoringList monitoringList,Machine entity) {
+		SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd");
+		Date date = new Date();
+		String today = fmt.format(date);
+		String statusTime= fmt.format(entity.getStartTime());
+		if(!today.equals(statusTime)){
+			entity.setStartTime(date);
+		}
+		String status=entity.getStatus();
+		String mstatus= monitoringList.getMachineSignal();
+		if(!status.equals(mstatus)){
+			 if(status.equals(STATUS[0])){
+				 bizRunningRecord.insert(monitoringList, entity);
+			 }else if(status.equals(STATUS[1])){
+				 bizPowerOff.insert(monitoringList, entity);
+			 }else if(status.equals(STATUS[2])){
+				 bizWarningRecord.insert(monitoringList, entity);
+			 }else if(status.equals(STATUS[3])){
+				 bizWaitingRecord.insert(monitoringList, entity);
+			 }
+				entity.setStatus(mstatus);
+				entity.setStartTime(entity.getEndTime());
+		}else{
+			Long num=DateUtils.getDatePoor(entity.getStartTime(),new Date(),"min");
+			entity.setEndTime(new Date());
+			if(status.equals(STATUS[0])){
+				entity.setrTimes(num);
+			}else if(status.equals(STATUS[1])){
+				entity.setpTimes(num);
+			}else if(status.equals(STATUS[2])){
+				entity.setaTimes(num);
+			}else if(status.equals(STATUS[3])){
+				entity.setwTimes(num);
+			}
+				
+		}
+		return machineDao.updateByPrimaryKeySelective(entity);
 	}
 
-	 
- 
+	@Override
+	public Machine findMachineByName(String machineName) {
+		Machine entity = new Machine();
+		entity.setName(machineName);
+		return machineDao.selectOne(entity);
+	}
+
+	@Override
+	public void insert(MonitoringList monitoringList) {
+		Machine machine = new Machine();
+		Date date=new Date();
+		machine.setName(monitoringList.getMachineName());
+		machine.setStatus(monitoringList.getMachineSignal());
+		machine.setStartTime(date);
+		machine.setEndTime(date);
+		machine.setCode(monitoringList.getMachineName());
+		machineDao.insertSelective(machine);
+	}
+
+	@Override
+	public void updateImage(Machine machine) {
+		machineDao.updateByPrimaryKeySelective(machine);
+	}
 }

@@ -1,10 +1,8 @@
-var myTimeLine = new MyTimeLine();
-var ranking = new Ranking();
-var pies = new MyPies();
+/var myTimeLine = new MyTimeLine();*/
 var app = angular.module('myApp', []);
 app.controller('myCtrl', function($scope,$http,$interval) {
-	$interval(function(){
-		$http({
+$interval(function(){
+	$http({
 			method: 'GET',
 			url:"/member/datalist.json",
 			cache:false,
@@ -12,15 +10,12 @@ app.controller('myCtrl', function($scope,$http,$interval) {
 			$scope.items=res.data.resault;
 			$scope.switchStatus(res.data.resault);
 		})
-	},1000)
-$interval(function(){
-	$http({
-		method: 'GET',
-		url:"/member/insertLogging.json",
-		cache:false,
-		async:false})
-},3000*10)
+	},2000)
 
+//生产计划
+	
+var ranking = new Ranking();
+var pies = new MyPies();
 $scope.switchStatus=function(obj){
 	$.each(obj,function(){
 		 var status=this.machineSignal;
@@ -49,7 +44,7 @@ $scope.switchStatus=function(obj){
 		restrict:'A',
 		link:function(scope,elem,attrs){
 			var maxLength=3;
-			var timer =3000; 
+			var timer =6000;
 			elem.ready(function(){
 			    if (elem.children().length < maxLength) {
 			    	elem.append(elem.children().clone());
@@ -62,15 +57,6 @@ $scope.switchStatus=function(obj){
 			        });
 			    },timer);
 			})
-		}
-	}
-}).directive('timeLine',function($interval){
-	return{
-		restrict:'A',
-		link:function(scope,elem,attrs){
-			var dom =elem.get(0);
-			var myTimeLine=echarts.init(dom);
-			
 		}
 	}
 })

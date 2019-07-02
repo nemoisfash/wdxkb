@@ -58,19 +58,6 @@ public class MachineAdminController extends BaseWorkbenchController {
 		map.put("count",machines.size());
 		return map;
 	}
- 
-	@RequestMapping(value = "/edit", method = RequestMethod.GET)
-	public String add(Model model, @RequestParam(value = "id", required = false) Long id) {
-		Machine entity = null;
-		if (id != null) {
-			entity = bizMachine.load(id);
-		} else {
-			entity = new Machine();
-		}
-		model.addAttribute("entity", entity);
-		return this.view("/tdds/machine/edit");
-	}
-	
 	
 	@ResponseBody
 	@RequestMapping(value = "/uploadImg", method = RequestMethod.POST)
@@ -89,7 +76,7 @@ public class MachineAdminController extends BaseWorkbenchController {
 			String imageUri=map.get("imageUri").toString();
 			machine.setId(id);
 			machine.setImgUrl(imageUri);
-			bizMachine.update(machine);
+			bizMachine.updateImage(machine);
 		}
 		return map;
 	}
@@ -101,7 +88,7 @@ public class MachineAdminController extends BaseWorkbenchController {
 			Machine machine =  new Machine();
 			machine.setId(id);
 			machine.setImgUrl("");
-			bizMachine.update(machine);
+			bizMachine.updateImage(machine);
 		}
 	}	
 	

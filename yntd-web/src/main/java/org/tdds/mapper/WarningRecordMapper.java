@@ -1,6 +1,5 @@
 package org.tdds.mapper;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -9,22 +8,16 @@ import org.tdds.entity.WarningRecord;
 
 import net.chenke.playweb.support.mybatis.DynaMapper;
 
-public interface WarningRecordMapper extends DynaMapper<WarningRecord>{
-	Double selectWarningTime(@Param(value="id")Long id);
+public interface WarningRecordMapper extends DynaMapper<WarningRecord> {
+	List<Map<String, Object>> findAllRecordById(@Param(value = "id") Long id);
 
-	List<Map<String, Object>> findAllRecordById(@Param(value="id")Long id);
+	List<Map<String, Object>> exportData(@Param(value = "filter") Map<String, Object> filter);
 
-	Double findPieData(@Param(value="id")Long id);
+	List<Map<String, Object>> selectWarningRecords();
 
-	Double findLineData(@Param(value="str")String str,@Param(value="id")Long id);
+	List<String> findTimeLineTimes(@Param(value = "machineId") Long machineId);
 
-	Double findGaugeData(@Param(value="id")Long id);
+	Double findAlarmData(@Param(value = "map") Map<String, Object> map);
 
-	Double findMemberLineData(@Param(value="date")String date);
-
-	List<Map<String, Object>> exportData(@Param(value="filter")Map<String, Object> filter);
-
-	List<Map<String,Object>> selectWarningRecords();
-
-	List<String> findTimeLineTimes(@Param(value="machineId")Long machineId);
+	List<Map<String, Object>> findAllRecordsByMachineId(@Param(value = "machineId") Long machineId);
 }

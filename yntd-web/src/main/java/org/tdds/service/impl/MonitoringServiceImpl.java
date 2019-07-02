@@ -11,9 +11,6 @@ import org.tdds.service.MonitoringService;
 
 @Service
 public class MonitoringServiceImpl implements MonitoringService {
-	private static final String CONFIG_FILE = "machineName/machineInfo.properties";
-	
-	private static final String  CODE = "_CODE";
 	
 	@Autowired
 	private MonitoringMapper daoMonitoring;

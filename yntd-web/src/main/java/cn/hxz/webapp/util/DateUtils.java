@@ -121,4 +121,26 @@ public class DateUtils {
 		
 	}
 	
+	/**
+	 * 	计算时差
+	 * @param endDate
+	 * @param nowDate
+	 * @return
+	 */
+	public static Long getDatePoor(Date startTime, Date endTime,String type) {
+	    long nd = 1000 * 24 * 60 * 60;
+	    long nh = 1000 * 60 * 60;
+	    long nm = 1000 * 60;
+	    long diff = startTime.getTime() - endTime.getTime();
+	    long num=0;
+	    if(type.equalsIgnoreCase("day")){
+	    	num = diff/ nd;
+	    }else if(type.equalsIgnoreCase("hour")){
+	    	num = diff/ nh;
+	    }else if(type.equalsIgnoreCase("min")){
+	    	num = diff/ nm;
+	    }
+	    return  num;
+	}
+	
 }

@@ -61,14 +61,9 @@ public class IndexAdminController {
 	@ResponseBody
 	public Object warningRecord(HttpServletRequest request,HttpServletResponse response){
 		Map<String, Object> map =new HashMap<>();
-		List<Machine> machines = bizMachine.findMachine();
-		List<MonitoringList> entities = new ArrayList<>();
-		for (Machine machine : machines) {
-				MonitoringList monitoringList = bizMonitoring.findByName(machine.getName());
-				entities.add(monitoringList);
-		}
-		map.put("resault", entities);
-		map.put("count", entities);
+		List<MonitoringList> monitoringList = bizMonitoring.findAll();
+		map.put("resault", monitoringList);
+		map.put("count", monitoringList.size());
 		return map;
 	}
 	
@@ -102,7 +97,7 @@ public class IndexAdminController {
 			Map<String,Object> map = new HashMap<>();
 			List<Double> data= new ArrayList<>();
 			for(Machine machine:machines){
-				Double num= bizLogRecord.findData(null,status,machine.getId());
+				Double num= bizLogRecord.findData(null,status,machine.getName());
 				data.add(num);
 			}
 			map.put("data",data);

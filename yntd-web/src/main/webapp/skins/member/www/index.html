@@ -12,7 +12,6 @@
 		<script src="/themes/website/mycharts/controller/option/lineOption.js"></script>
 		<script src="/themes/website/mycharts/controller/option/pieOption.js"></script>
 		<script src="/themes/website/mycharts/controller/option/customOption.js"></script>
-		<script src="/themes/website/mycharts/controller/option/timelineOption.js"></script>
 		<script src="/themes/website/mycharts/controller/option/mywebsocket.js"></script>
 		<link href="/assets/fonts/font-awesome4.7.0/font-awesome.css" rel="stylesheet" type="text/css" media="all" />
   		<link href="/assets/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet" type="text/css" media="all" />
@@ -90,7 +89,7 @@
 					<div class="nav-tabs-custom" style="background-color:#081639a1;height:26.625rem;margin-top:20px;">
 						<span class="label label-default">时间线</span>
 						<div style="width:100%;height:86%;margin-top:0;overflow:hidden;padding:0">
-							<div style="width:100%;height:100%;" time-line>
+							<div style="width:100%;height:100%;" id="timeLine">
 								
 							</div>
 						</div>
@@ -107,7 +106,7 @@
 					</div>
 					<div class="nav-tabs-custom" style="background-color:#081639a1;height:17.625rem;margin-top:20px;">
 						<span class="label label-default">设备生产计划与执行数据</span>
-					 	<div style="width:100%;height:100%;margin-top:0;overflow:hidden;" my-Scoller>
+					 	<div style="width:100%;height:100%;margin-top:0;overflow:hidden;">
 						 <div class="col-md-3" style="height:100%" ng-repeat="item in items">
 				          <div class="box box-default" style="overflow:hidden;margin-top:6px;">
 				            <div class="box-header with-border">
@@ -187,4 +186,5 @@
 		</section>
 	</body>
 <script src="/themes/website/mycharts/controller/controller.js"></script>
+<script src="/themes/website/mycharts/controller/option/timelineOption.js"></script>
 </html>

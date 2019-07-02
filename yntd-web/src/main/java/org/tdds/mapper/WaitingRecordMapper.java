@@ -10,19 +10,13 @@ import net.chenke.playweb.support.mybatis.DynaMapper;
 
 
 public interface WaitingRecordMapper extends DynaMapper<WaitingRecord>{
-	Double selectWaitingTime(@Param(value="id")Long id);
-
 	List<Map<String, Object>> findAllRecordById(@Param(value="id")Long id);
-
-	Double findPieData(@Param(value="id")Long id);
-
-	Double findLineData(@Param(value="str")String str,@Param(value="id")Long id);
-
-	Double findGaugeData(@Param(value="id")Long id);
-
-	Double findMemberLineData(@Param(value="date")String date);
 
 	List<Map<String, Object>> exportData(@Param(value="filter")Map<String, Object> filter);
 
 	List<String> findTimeLineTimes(@Param(value="machineId")Long machineId);
+
+	Double findWaittingData(@Param(value="map")Map<String, Object> map);
+
+	List<Map<String, Object>> findAllRecordsByMachineId(@Param(value="machineId")Long machineId);
 }

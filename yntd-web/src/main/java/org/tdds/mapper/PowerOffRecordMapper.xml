@@ -7,46 +7,27 @@
     <!-- 单表查询结果列 -->
     <sql id="Base_Column_List">
     </sql>
-    <select id="selectPowerOffTime" resultType="java.lang.Double">
+         <select id="findPoweroffData" resultType="java.lang.Double">
 		SELECT
-			IFNULL(TIMESTAMPDIFF(SECOND,MIN(record_time),MAX(record_time)),0)  AS timed
-		FROM znzz_poweroff_record
-		WHERE machine_id =#{id}
-		AND DATE(record_time) =CURRENT_DATE
+			 IFNULL(ABS(p_times),0) AS timed
+		FROM znzz_machine
+		WHERE
+		 <choose>
+		 	<when test="map.date!=null and map.date!=''">
+		 		 DATE(start_time) =#{map.date} 
+		 	</when>
+		 	<otherwise>
+		 		DATE(start_time) =CURRENT_DATE
+		 	</otherwise>
+		 </choose>
+		 <if test="map.machineName!=null and map.machineName!=''">
+		  	AND name =#{map.machineName}
+		 </if>
     </select>
      <select id="findAllRecordById" resultType="map">
      		SELECT id as id, record_time as recordTime
 			FROM znzz_poweroff_record where machine_id=#{id};
      </select>
-     
-      <select id="findPieData" resultType="java.lang.Double">	
-			SELECT
-				IFNULL(TIMESTAMPDIFF(SECOND,MIN(record_time),MAX(record_time)),0)  AS timed
-			FROM znzz_poweroff_record
-			WHERE machine_id =#{id}
-			AND DATE(record_time) =CURRENT_DATE
-      </select>
-      <select id="findLineData" resultType="java.lang.Double">	
-			SELECT
-				IFNULL(TIMESTAMPDIFF(SECOND,MIN(record_time),MAX(record_time)),0)  AS timed
-			FROM znzz_poweroff_record
-			WHERE machine_id =#{id}
-			AND DATE(record_time) =#{str}
-      </select>
-      <select id="findGaugeData" resultType="java.lang.Double">	
-			SELECT
-				IFNULL(TIMESTAMPDIFF(MINUTE,MIN(record_time),MAX(record_time)),0)
-			FROM znzz_poweroff_record
-			WHERE machine_id =#{id}
-			AND DATE(record_time) =CURRENT_DATE
-      </select>
-      <select id="findMemberLineData" resultType="java.lang.Double">	
-			SELECT
-				IFNULL(TIMESTAMPDIFF(SECOND,MIN(record_time),MAX(record_time)),0)  AS timed
-			FROM znzz_poweroff_record
-			WHERE DATE(record_time) =#{date}
-      </select>
-      
       <select id="exportData" resultType="map">
 			 SELECT 
 				machine_name as sbmc,
@@ -57,24 +38,30 @@
 				override_spindle as zzbl,
 				override_feed as qxbl,
 				spindle_mode as zzms,
-				record_time as jlss
+				start_time as kassj,
+				end_time as jssj
 			FROM znzz_poweroff_record
 			where  id &gt; 0
 			<if test="filter.startTime!=null and filter.startTime!='' and filter.endTime!=null and filter.endTime!=''">
-			    AND DATE(record_time) BETWEEN #{filter.startTime} AND #{filter.endTime};
+			    AND DATE(start_time)=DATE(#{filter.startTime})
+			    AND DATE(end_time)=DATE(#{filter.endTime})
 			</if>
 			<if test="filter.name!=null and filter.name!=''">
 				AND machine_name=#{filter.name}
 			</if>
       </select>
-       <select id="findTimeLineTimes" resultType="java.lang.String">
-		SELECT DISTINCT
-			DATE_FORMAT(record_time,'%Y-%m-%d %H:%i')
-		FROM
-			znzz_poweroff_record 
-		WHERE
-			machine_id = #{machineId}
-			AND
-			DATE(record_time) =CURRENT_DATE
-      </select>
+      <select id="findAllRecordsByMachineId" resultType="map">
+	 	SELECT
+	 		'关机' as 'name',
+	 		'a6a5a5' as color,
+			 DATE_FORMAT(start_time,'%H:%i:%s')  as startTime,
+			 DATE_FORMAT(end_time,'%H:%i:%s') as end_time,
+			 IFNULL(TIMESTAMPDIFF(MINUTE,start_time,end_time),0)  as diff
+		FROM znzz_poweroff_record
+		WHERE machine_id=#{machineId}
+		AND
+		DATE(start_time) =CURRENT_DATE
+		AND
+		DATE(end_time)=CURRENT_DATE
+    </select>
 </mapper>
