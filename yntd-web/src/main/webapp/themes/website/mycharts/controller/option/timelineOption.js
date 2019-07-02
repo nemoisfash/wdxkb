@@ -138,19 +138,20 @@ var dom = document.getElementById("timeLine");
 			};
 			
 			if (option && typeof option === "object") {
-				$.ajax({
-					type :"GET",
-					url :"/member/timeLine.json",
-					async:true,
-					cache : false,
-					ifModified:true,
-					success : function(data) {
-						option.yAxis.data=data.categories;
-						option.yAxis.max=data.categories.length;
-						option.series[0].data=data.data;
-						console.info(data.data);
-						myChart.setOption(option, true);
-					}
-				})
-			    
+				setInterval(function(){
+					$.ajax({
+						type :"GET",
+						url :"/member/timeLine.json",
+						async:true,
+						cache : false,
+						ifModified:true,
+						success : function(data) {
+							option.yAxis.data=data.categories;
+							option.yAxis.max=data.categories.length;
+							option.series[0].data=data.data;
+							console.info(data.data);
+							myChart.setOption(option, true);
+						}
+					})
+				},30000)
 			}
