@@ -79,7 +79,6 @@ public class WarningRecord {
 	@Column(name = "machiningTime_progress")
 	private String machiningTimeProgress;
 	
-	
 	@Column(name = "override_rapid")
 	private String overrideRapid;
 	
@@ -92,6 +91,17 @@ public class WarningRecord {
 	@Column(name = "spindle_mode")
 	private String spindleMode;
 	
+	@Column(name = "timediff")
+	private Long timediff;
+	
+	public Long getTimediff() {
+		return timediff;
+	}
+
+	public void setTimediff(Long timediff) {
+		this.timediff = timediff;
+	}
+
 	public Long getId() {
 		return id;
 	}

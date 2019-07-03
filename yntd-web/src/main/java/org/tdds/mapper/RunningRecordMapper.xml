@@ -9,8 +9,8 @@
     </sql>
        <select id="findRunningData" resultType="java.lang.Double">
 		SELECT
-			 IFNULL(ABS(r_times),0)
-		FROM znzz_machine
+			 IFNULL(sum(timediff),0)
+		FROM znzz_running_record
 		WHERE
 		 <choose>
 		 	<when test="map.date!=null and map.date!=''">
@@ -20,8 +20,8 @@
 		 		DATE(start_time) =CURRENT_DATE
 		 	</otherwise>
 		 </choose>
-		 <if test="map.machineName!=null and map.machineName!=''">
-		  	AND name =#{map.machineName}
+		 <if test="map.machineId!=null and map.machineId!=''">
+		  	AND machine_id =#{map.machineId}
 		 </if>
     </select>
     <select id="exportData" resultType="map">
@@ -56,11 +56,13 @@
       </select>
       <select id="findRankData" resultType="java.lang.Double">
 		SELECT
-			IFNULL(ABS(r_times),0)
-		FROM znzz_machine
-		WHERE name =#{name}
-		AND
-		DATE(start_time) =CURRENT_DATE
+			IFNULL(sum(timediff),0) 
+		FROM
+			znzz_running_record 
+		WHERE
+			machine_id = #{machineId}
+			AND date( start_time ) = CURRENT_DATE 
+			AND DATE( end_time ) = CURRENT_DATE 
     </select>
      <select id="findAllRecordsByMachineId" resultType="map">
 	 	SELECT

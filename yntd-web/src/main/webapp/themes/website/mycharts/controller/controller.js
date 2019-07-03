@@ -11,15 +11,6 @@ $interval(function(){
 		})
 	},1000)
 	
-	$interval(function(){
-		$http({
-				method: 'GET',
-				url:"/member/updateStatusTimes.json",
-				cache:false,
-				async:false
-		})
-	},1000*60)
-	
 	$scope.switchStatus=function(obj){
 		$.each(obj,function(){
 			 var status=this.machineSignal;
@@ -80,51 +71,29 @@ $interval(function(){
 		link:function(scope,elem,attrs){
 			var myChart = echarts.init(elem.get(0));
 			myChart.showLoading('default', {text:'数据统计中...',maskColor: '#07112a61',textColor: '#36b0f3',});
-			var app = {};
-			var data = [];
-			var dataCount = 10;
-			var startTime = +new Date();
-			var categories = [];
-			function renderItem(params, api) {
-			    var categoryIndex = api.value(0);
-			    var start = api.coord([api.value(1), categoryIndex]);
-			    var end = api.coord([api.value(2), categoryIndex]);
-			    var height = api.size([0, 1])[1] * 0.6;
-			    var rectShape = echarts.graphic.clipRectByRect({
-			        x: start[0],
-			        y: start[1] - height / 2,
-			        width: end[0] - start[0],
-			        height: height
-			    }, {
-			        x: params.coordSys.x,
-			        y: params.coordSys.y,
-			        width: params.coordSys.width,
-			        height: params.coordSys.height
-			    });
-			
-			    return rectShape && {
-			        type: 'rect',
-			        shape: rectShape,
-			        style: api.style()
-			    };
-			}
-			
-			function testFun(){
-			var arr= new Array();
-				for(var hours=0;hours<24;hours++){
-					for(var min=0;min<60;min++){
-						for(var sec=0;sec<60;sec++){
-							var bu_h,bu_m,bu_s;
-							hours<10?bu_h="0"+hours:bu_h=String(hours);
-							min<10?bu_m="0"+min:bu_m=String(min);
-							sec<10?bu_s="0"+sec:bu_s=String(sec);
-							arr.push(bu_h+":"+bu_m+":"+bu_s);
-							}
-						}
-					}
-				return arr;
-				}
-			
+		function renderItem(params, api) {
+		    var categoryIndex = api.value(0);
+		    var start = api.coord([api.value(1), categoryIndex]);
+		    var end = api.coord([api.value(2), categoryIndex]);
+		    var height = api.size([0, 1])[1] * 0.6;
+		    var rectShape = echarts.graphic.clipRectByRect({
+		        x: start[0],
+		        y: start[1] - height / 2,
+		        width: end[0] - start[0],
+		        height: height
+		    }, {
+		        x: params.coordSys.x,
+		        y: params.coordSys.y,
+		        width: params.coordSys.width,
+		        height: params.coordSys.height
+		    });
+		
+		    return rectShape && {
+		        type: 'rect',
+		        shape: rectShape,
+		        style: api.style()
+		    };
+		}
 		var	option = {
 			    tooltip: {
 			        formatter: function (params) {

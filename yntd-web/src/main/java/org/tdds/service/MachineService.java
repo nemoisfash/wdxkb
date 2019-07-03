@@ -32,5 +32,4 @@ public interface MachineService{
 
 	void updateImage(Machine machine);
 
-	void updateSatusTimeDiff(Machine entity);
 }

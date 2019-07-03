@@ -39,11 +39,13 @@ public class RunningRecordServiceImpl implements RunningRecordService {
 	
 	@Override
 	public void insert(MonitoringList monitoringList, Machine machine) {
+		Date date = new Date();
 		RunningRecord entity = new RunningRecord();
 			entity.setMachineId(machine.getId());
 			entity.setMachineName(machine.getName());
 			entity.setStartTime(machine.getStartTime());
-			entity.setEndTime(new Date());
+			entity.setEndTime(date);
+			entity.setTimediff(DateUtils.getDatePoor(machine.getStartTime(), date, "min"));
 			entity.setMachineMode(monitoringList.getMachineMode());
 			entity.setMachineStatus(monitoringList.getMachineStatus());
 			entity.setMachiningTimeProgress(monitoringList.getMachiningTimeProgress());
@@ -54,7 +56,6 @@ public class RunningRecordServiceImpl implements RunningRecordService {
 			entity.setOverrideSpindle(monitoringList.getOverrideSpindle());
 			entity.setPartsCountResult(monitoringList.getPartscountResult());
 			entity.setPartsCountTarget(monitoringList.getPartscountTarget());
-			
 			runningRecordDao.insert(entity);
 	}
 
@@ -150,8 +151,8 @@ public class RunningRecordServiceImpl implements RunningRecordService {
 	}
 
 	@Override
-	public Double findRankData(String name) {
-		return runningRecordDao.findRankData(name);
+	public Double findRankData(Long machineId) {
+		return runningRecordDao.findRankData(machineId);
 	}
 
 	@Override

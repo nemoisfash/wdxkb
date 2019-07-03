@@ -92,6 +92,9 @@ public class PowerOffRecord {
 	@Column(name = "spindle_mode")
 	private String spindleMode;
 	
+	@Column(name = "timediff")
+	private Long timediff;
+	
 	public Long getId() {
 		return id;
 	}
@@ -291,4 +294,13 @@ public class PowerOffRecord {
 	public void setEndTime(Date endTime) {
 		this.endTime = endTime;
 	}
+
+	public Long getTimediff() {
+		return timediff;
+	}
+
+	public void setTimediff(Long timediff) {
+		this.timediff = timediff;
+	}
+	
 }

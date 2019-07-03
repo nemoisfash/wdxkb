@@ -81,14 +81,6 @@ public class MachineController extends BasePortalController {
 		map.put("resault", entities);
 		return map;
 	}
-
-	@RequestMapping(value = "updateStatusTimes", method = RequestMethod.GET)
-	private void insertLogging(Map<String, Object> map) {
-	List<Machine> entities = bizMachine.findMachine();
-		for(Machine machine : entities){
-			bizMachine.updateSatusTimeDiff(machine);
-		}
-	}
 	
 	@RequestMapping(value = "alermMessage", method = RequestMethod.GET)
 	@ResponseBody
@@ -163,7 +155,7 @@ public class MachineController extends BasePortalController {
 			List<Map<String, Object>> entities = new LinkedList<>();
 			for (String status : STATUS) {
 				Map<String, Object> entity = new HashMap<>();
-				Double num = bizLogRecord.findData(null, status, machine.getName());
+				Double num = bizLogRecord.findData(null, status, machine.getId());
 				entity.put("value", num);
 				entity.put("name", StatusEnum.getValue(status));
 				entities.add(new JSONObject(entity));
@@ -190,7 +182,7 @@ public class MachineController extends BasePortalController {
 		List<Machine> machines = bizMachine.findMachine();
 		Map<String, Double> sortMap = new HashMap<>();
 		for (Machine machine : machines) {
-			Double num = bizRunningRecord.findRankData(machine.getName());
+			Double num = bizRunningRecord.findRankData(machine.getId());
 			sortMap.put(machine.getName(), num);
 		}
 		return sortMap(sortMap);
@@ -245,7 +237,6 @@ public class MachineController extends BasePortalController {
 		List<Machine> machines = bizMachine.findMachine();
 		int i = 0;
 		for (Machine machine : machines) {
-			i++;
 			Map<String, Object> map2 = new HashMap<>();
 			List<Object> value = new ArrayList<>();
 			value.add(i);
@@ -273,6 +264,7 @@ public class MachineController extends BasePortalController {
 			normalMap.put("color",color);
 			map2.put("itemStyle",normalMap);
 			timeLineData.add(map2);
+			i++;
 		}
 		return timeLineData;
 	}

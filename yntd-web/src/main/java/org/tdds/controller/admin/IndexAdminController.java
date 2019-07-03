@@ -97,7 +97,7 @@ public class IndexAdminController {
 			Map<String,Object> map = new HashMap<>();
 			List<Double> data= new ArrayList<>();
 			for(Machine machine:machines){
-				Double num= bizLogRecord.findData(null,status,machine.getName());
+				Double num= bizLogRecord.findData(null,status,machine.getId());
 				data.add(num);
 			}
 			map.put("data",data);

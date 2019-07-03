@@ -18,6 +18,7 @@ import org.tdds.entity.WaitingRecord;
 import org.tdds.mapper.WaitingRecordMapper;
 import org.tdds.service.WaitingRecordService;
 
+import cn.hxz.webapp.util.DateUtils;
 import net.chenke.playweb.QueryFilters;
 import net.chenke.playweb.support.mybatis.Page;
 import net.chenke.playweb.support.mybatis.PageImpl;
@@ -36,10 +37,12 @@ public class WaitingRecordServiceImpl implements WaitingRecordService{
 	@Override
 	public void insert(MonitoringList monitoringList, Machine entity) {
 		WaitingRecord wRecord = new WaitingRecord();
+		Date date =new Date();
 		wRecord.setMachineId(entity.getId());
 		wRecord.setMachineName(entity.getName());
 		wRecord.setStartTime(entity.getStartTime());
 		wRecord.setEndTime(new Date());
+		wRecord.setTimediff(DateUtils.getDatePoor(entity.getStartTime(), date, "min"));
 		wRecord.setSpindleMode(monitoringList.getSpindleMode());
 		daoWaitingRecord.insert(wRecord);
 	}

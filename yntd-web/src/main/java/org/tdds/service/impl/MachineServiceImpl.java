@@ -148,20 +148,4 @@ public class MachineServiceImpl implements MachineService {
 	public void updateImage(Machine machine) {
 		machineDao.updateByPrimaryKeySelective(machine);
 	}
-
-	@Override
-	public void updateSatusTimeDiff(Machine entity) {
-			String status=entity.getStatus();
-			Long num=DateUtils.getDatePoor(entity.getStartTime(),entity.getEndTime(),"min");
-			if(status.equals(STATUS[0])){
-				entity.setrTimes(num+entity.getrTimes());
-			}else if(status.equals(STATUS[1])){
-				entity.setpTimes(num+entity.getpTimes());
-			}else if(status.equals(STATUS[2])){
-				entity.setaTimes(num+entity.getaTimes());
-			}else if(status.equals(STATUS[3])){
-				entity.setwTimes(num+entity.getwTimes());
-			}
-		 machineDao.updateByPrimaryKeySelective(entity);
-	}
 }

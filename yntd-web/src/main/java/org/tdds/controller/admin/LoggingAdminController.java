@@ -124,7 +124,7 @@ public class LoggingAdminController extends BaseWorkbenchController {
 		Machine machine = bizMachine.load(id);
 		for (String status : STATUS) {
 			Map<String, Object> entity = new HashMap<>();
-			Double num = bizLogRecord.findData(null, status, machine.getName());
+			Double num = bizLogRecord.findData(null, status, machine.getId());
 			entity.put("value", num);
 			entity.put("name", StatusEnum.getValue(status));
 			entities.add(entity);
@@ -151,7 +151,7 @@ public class LoggingAdminController extends BaseWorkbenchController {
 	private Object getGaugeData(String status, Long id) {
 		List<Map<String, Object>> list = new LinkedList<>();
 		Machine machine = bizMachine.load(id);
-		Double num = bizLogRecord.findData(null, status, machine.getName());
+		Double num = bizLogRecord.findData(null, status, machine.getId());
 		Map<String, Object> map = new HashMap<>();
 		if (num == null) {
 			map.put("value", 0);
@@ -186,7 +186,7 @@ public class LoggingAdminController extends BaseWorkbenchController {
 			Map<String, Object> entity = new HashMap<>();
 			List<Object> value = new LinkedList<>();
 			for (String str : days) {
-				Double num = bizLogRecord.findData(str, status, machine.getName());
+				Double num = bizLogRecord.findData(str, status, machine.getId());
 				value.add(num);
 			}
 			entity.put("data", value);

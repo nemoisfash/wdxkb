@@ -9,8 +9,8 @@
     </sql>
  	    <select id="findAlarmData" resultType="java.lang.Double">
 		SELECT
-			 IFNULL(ABS(a_times),0)
-		FROM znzz_machine
+			 IFNULL(sum(timediff),0)
+		FROM znzz_warning_record
 		WHERE
 		 <choose>
 		 	<when test="map.date!=null and map.date!=''">
@@ -20,8 +20,8 @@
 		 		DATE(start_time) =CURRENT_DATE
 		 	</otherwise>
 		 </choose>
-		 <if test="map.machineName!=null and map.machineName!=''">
-		  	AND name =#{map.machineName}
+		 <if test="map.machineId!=null and map.machineId!=''">
+		  	AND machine_id =#{map.machineId}
 		 </if>    
 	</select>
     

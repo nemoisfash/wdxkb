@@ -18,6 +18,7 @@ import org.tdds.entity.WarningRecord;
 import org.tdds.mapper.WarningRecordMapper;
 import org.tdds.service.WarningRecordService;
 
+import cn.hxz.webapp.util.DateUtils;
 import net.chenke.playweb.QueryFilters;
 import net.chenke.playweb.support.mybatis.Page;
 import net.chenke.playweb.support.mybatis.PageImpl;
@@ -36,10 +37,12 @@ public class WarningRecordServiceImpl implements WarningRecordService{
 	@Override
 	public void insert(MonitoringList monitoringList, Machine entity) {
 	WarningRecord warningRecord = new WarningRecord();
+		Date date = new Date();
 		warningRecord.setMachineId(entity.getId());
 		warningRecord.setMachineName(entity.getName());
 		warningRecord.setStartTime(entity.getStartTime());
-		warningRecord.setEndTime(new Date());
+		warningRecord.setEndTime(date);
+		warningRecord.setTimediff(DateUtils.getDatePoor(entity.getStartTime(), date, "min"));
 		warningRecord.setAlarmMessage(monitoringList.getAlarmMessage());
 		warningRecord.setAlarmNo(monitoringList.getAlarmNo());
 		warningRecord.setMachineMode(monitoringList.getMachineMode());

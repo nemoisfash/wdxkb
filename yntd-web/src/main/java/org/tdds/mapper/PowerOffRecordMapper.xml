@@ -8,10 +8,10 @@
     <sql id="Base_Column_List">
     </sql>
          <select id="findPoweroffData" resultType="java.lang.Double">
-		SELECT
-			 IFNULL(ABS(p_times),0) AS timed
-		FROM znzz_machine
-		WHERE
+			SELECT
+				IFNULL(sum(timediff),0)
+			FROM znzz_poweroff_record
+			WHERE
 		 <choose>
 		 	<when test="map.date!=null and map.date!=''">
 		 		 DATE(start_time) =#{map.date} 
@@ -20,8 +20,8 @@
 		 		DATE(start_time) =CURRENT_DATE
 		 	</otherwise>
 		 </choose>
-		 <if test="map.machineName!=null and map.machineName!=''">
-		  	AND name =#{map.machineName}
+		 <if test="map.machineId!=null and map.machineId!=''">
+		  	AND machine_id =#{map.machineId}
 		 </if>
     </select>
      <select id="findAllRecordById" resultType="map">

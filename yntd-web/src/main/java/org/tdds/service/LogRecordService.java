@@ -4,7 +4,7 @@ import java.util.Map;
 
 public interface LogRecordService {
 
-	Double findData(String date, String status, String name);
+	Double findData(String date, String status, Long machineId);
 
 	Map<String, Object> findTimeLineData(Long id, String status);
 }

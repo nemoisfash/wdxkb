@@ -25,7 +25,7 @@ public interface RunningRecordService {
 
 	Double findRunningData(Map<String, Object> map);
 
-	Double findRankData(String name);
+	Double findRankData(Long machineId);
 
 	Map<String, Object> findAllRecordsByMachineId(Long id);
 }

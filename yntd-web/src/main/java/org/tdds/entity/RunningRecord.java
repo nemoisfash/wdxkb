@@ -91,6 +91,21 @@ public class RunningRecord {
 	@Column(name = "spindle_mode")
 	private String spindleMode;
 
+	@Column(name = "timediff")
+	private Long timediff;
+	
+	public Long getTimediff() {
+		return timediff;
+	}
+
+	public void setTimediff(Long timediff) {
+		this.timediff = timediff;
+	}
+
+	public void setSpindleMode(String spindleMode) {
+		this.spindleMode = spindleMode;
+	}
+
 	public Long getId() {
 		return id;
 	}

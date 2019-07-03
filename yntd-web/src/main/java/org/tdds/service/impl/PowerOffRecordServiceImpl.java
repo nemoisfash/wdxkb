@@ -18,6 +18,7 @@ import org.tdds.entity.PowerOffRecord;
 import org.tdds.mapper.PowerOffRecordMapper;
 import org.tdds.service.PowerOffRecordService;
 
+import cn.hxz.webapp.util.DateUtils;
 import net.chenke.playweb.QueryFilters;
 import net.chenke.playweb.support.mybatis.Page;
 import net.chenke.playweb.support.mybatis.PageImpl;
@@ -36,10 +37,12 @@ public class PowerOffRecordServiceImpl implements PowerOffRecordService{
 	@Override
 	public void insert(MonitoringList monitoringList, Machine entity) {
 	PowerOffRecord pr= new PowerOffRecord();
+		Date date = new Date();
 		pr.setMachineId(entity.getId());
 		pr.setMachineName(entity.getName());
 		pr.setStartTime(entity.getStartTime());
-		pr.setEndTime(new Date());
+		pr.setEndTime(date);
+		pr.setTimediff(DateUtils.getDatePoor(entity.getStartTime(), date, "min"));
 		daoPoweroff.insert(pr);
 	}
  

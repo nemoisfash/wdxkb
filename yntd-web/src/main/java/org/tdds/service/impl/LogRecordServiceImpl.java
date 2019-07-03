@@ -35,13 +35,13 @@ public class LogRecordServiceImpl implements LogRecordService {
 	 * @see org.tdds.service.LogRecordService#findData(java.lang.String, java.lang.String, java.lang.Long)
 	 */
 	@Override
-	public Double findData(String date, String status,String name) {
+	public Double findData(String date, String status,Long machineId) {
 		Map<String, Object> map = new HashMap<>();
 		if(date!=null){
 			map.put("date",date);
 		}
-		if(name!=null){
-			map.put("machineName",name);
+		if(machineId!=null){
+			map.put("machineId",machineId);
 		}
 		Double count=0.0;
 		if(status.equalsIgnoreCase(STATUS[0])){
