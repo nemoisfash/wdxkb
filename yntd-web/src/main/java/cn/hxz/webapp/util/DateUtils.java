@@ -92,7 +92,6 @@ public class DateUtils {
 	 * @return
 	 */
 	public static String DateToString(Date date, String str) {
-		
 	 	SimpleDateFormat sdf = new SimpleDateFormat(str);
 		return sdf.format(date);
 		
@@ -140,7 +139,7 @@ public class DateUtils {
 	    }else if(type.equalsIgnoreCase("min")){
 	    	num = diff/ nm;
 	    }
-	    return  num;
+	    return Math.abs(num);
 	}
 	
 }

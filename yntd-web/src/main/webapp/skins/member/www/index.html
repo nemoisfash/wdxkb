@@ -67,7 +67,10 @@
 					<div class="nav-tabs-custom" style="background-color:#081639a1;height:21.625rem;margin-top:20px;">
 						<span class="label label-default">设备运行分析</span>
 						<div style="width:100%;height:80%;margin-top:11px;overflow:hidden;">
-							<ul class="pies" my-Scoller>
+							<ul class="pies" my-Pies my-Scoller>
+								<li echarts-type="pie"></li>
+								<li echarts-type="pie"></li>
+								<li echarts-type="pie"></li>
 								<li echarts-type="pie"></li>
 								<li echarts-type="pie"></li>
 								<li echarts-type="pie"></li>
@@ -89,7 +92,7 @@
 					<div class="nav-tabs-custom" style="background-color:#081639a1;height:26.625rem;margin-top:20px;">
 						<span class="label label-default">时间线</span>
 						<div style="width:100%;height:86%;margin-top:0;overflow:hidden;padding:0">
-							<div style="width:100%;height:100%;" id="timeLine">
+							<div style="width:100%;height:100%;" time-Line>
 								
 							</div>
 						</div>
@@ -99,7 +102,7 @@
 					<div class="nav-tabs-custom" style="background-color:#081639a1;height:30.625rem;margin-top:8px;">
 						<span class="label label-default">设备运行排行</span>
 						<div style="width:100%;height:90%;margin-top:10px;overflow:hidden;padding:0">
-							<div data-ranking='true' style="width:100%;height:100%;">
+							<div data-ranking='true' style="width:100%;height:100%;" ranking-Running>
 								
 							</div>
 						</div>
@@ -186,5 +189,5 @@
 		</section>
 	</body>
 <script src="/themes/website/mycharts/controller/controller.js"></script>
-<script src="/themes/website/mycharts/controller/option/timelineOption.js"></script>
+<!-- <script src="/themes/website/mycharts/controller/option/timelineOption.js"></script> -->
 </html>

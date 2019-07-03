@@ -18,5 +18,5 @@ public interface PowerOffRecordMapper extends DynaMapper<PowerOffRecord> {
 
 	Double findPoweroffData(@Param(value = "map") Map<String, Object> map);
 
-	List<Map<String, Object>> findAllRecordsByMachineId(@Param(value = "machineId") Long machineId);
+	Map<String, Object> findAllRecordsByMachineId(@Param(value = "machineId") Long machineId);
 }

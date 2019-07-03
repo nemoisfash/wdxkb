@@ -11,10 +11,6 @@
     	SELECT id as mid FROM znzz_machine WHERE name=#{machineName};
     </select> 
     
-    <select id="findMachine" resultType="org.tdds.entity.Machine">
-    	SELECT id,code,name,m_ip as mIp,type,machine_no as machineNo,img_url as imgUrl FROM znzz_machine ORDER BY id DESC
-    </select>
-    
      <select id="findMachineName" parameterType="java.lang.Long" resultType="java.lang.String">
     	SELECT name FROM znzz_machine WHERE id=#{id}
     </select>

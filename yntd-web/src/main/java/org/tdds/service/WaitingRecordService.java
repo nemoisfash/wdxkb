@@ -24,5 +24,5 @@ public interface WaitingRecordService {
 
 	Double findWaittingData(Map<String, Object> map);
 
-	List<Map<String, Object>> findAllRecordsByMachineId(Long id);
+	Map<String, Object> findAllRecordsByMachineId(Long id);
 }

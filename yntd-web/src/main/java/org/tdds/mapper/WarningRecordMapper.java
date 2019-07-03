@@ -19,5 +19,5 @@ public interface WarningRecordMapper extends DynaMapper<WarningRecord> {
 
 	Double findAlarmData(@Param(value = "map") Map<String, Object> map);
 
-	List<Map<String, Object>> findAllRecordsByMachineId(@Param(value = "machineId") Long machineId);
+	Map<String, Object> findAllRecordsByMachineId(@Param(value = "machineId") Long machineId);
 }

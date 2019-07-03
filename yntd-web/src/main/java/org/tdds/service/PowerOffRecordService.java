@@ -24,5 +24,5 @@ public interface PowerOffRecordService {
 
 	Double findPoweroffData(Map<String, Object> map);
 
-	List<Map<String, Object>> findAllRecordsByMachineId(Long id);
+	Map<String, Object> findAllRecordsByMachineId(Long id);
 }

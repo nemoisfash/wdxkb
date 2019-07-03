@@ -135,7 +135,7 @@ public class WaitingRecordServiceImpl implements WaitingRecordService{
 		return daoWaitingRecord.findWaittingData(map);
 	}
 	@Override
-	public List<Map<String, Object>> findAllRecordsByMachineId(Long id) {
+	public  Map<String, Object> findAllRecordsByMachineId(Long id) {
 		// TODO Auto-generated method stub
 		return daoWaitingRecord.findAllRecordsByMachineId(id);
 	}

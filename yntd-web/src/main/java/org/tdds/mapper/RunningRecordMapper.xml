@@ -69,7 +69,7 @@
 			 DATE_FORMAT(start_time,'%H:%i:%s')  as startTime,
 			 DATE_FORMAT(end_time,'%H:%i:%s') as end_time,
 			 IFNULL(TIMESTAMPDIFF(MINUTE,start_time,end_time),0)  as diff
-		FROM znzz_running_record
+		FROM znzz_machine
 		WHERE machine_id=#{machineId}
 		AND
 		DATE(start_time) =CURRENT_DATE

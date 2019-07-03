@@ -19,6 +19,7 @@ import org.tdds.entity.RunningRecord;
 import org.tdds.mapper.RunningRecordMapper;
 import org.tdds.service.RunningRecordService;
 
+import cn.hxz.webapp.util.DateUtils;
 import net.chenke.playweb.QueryFilters;
 import net.chenke.playweb.support.mybatis.Page;
 import net.chenke.playweb.support.mybatis.PageImpl;
@@ -33,6 +34,8 @@ public class RunningRecordServiceImpl implements RunningRecordService {
 
 	@Autowired
 	private RunningRecordMapper runningRecordDao;
+	
+	
 	
 	@Override
 	public void insert(MonitoringList monitoringList, Machine machine) {
@@ -51,6 +54,7 @@ public class RunningRecordServiceImpl implements RunningRecordService {
 			entity.setOverrideSpindle(monitoringList.getOverrideSpindle());
 			entity.setPartsCountResult(monitoringList.getPartscountResult());
 			entity.setPartsCountTarget(monitoringList.getPartscountTarget());
+			
 			runningRecordDao.insert(entity);
 	}
 
@@ -151,7 +155,7 @@ public class RunningRecordServiceImpl implements RunningRecordService {
 	}
 
 	@Override
-	public List<Map<String, Object>> findAllRecordsByMachineId(Long id) {
+	public Map<String, Object> findAllRecordsByMachineId(Long id) {
 		 
 		return runningRecordDao.findAllRecordsByMachineId(id);
 	}

@@ -31,4 +31,6 @@ public interface MachineService{
 	void insert(MonitoringList monitoringList);
 
 	void updateImage(Machine machine);
+
+	void updateSatusTimeDiff(Machine entity);
 }

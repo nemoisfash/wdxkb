@@ -19,6 +19,6 @@ public interface RunningRecordMapper extends DynaMapper<RunningRecord> {
 
 	Double findRankData(@Param(value="name") String name);
 
-	List<Map<String, Object>> findAllRecordsByMachineId(@Param(value="machineId") Long machineId);
+	Map<String, Object> findAllRecordsByMachineId(@Param(value="machineId") Long machineId);
 
 }

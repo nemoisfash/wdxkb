@@ -136,7 +136,7 @@ public class PowerOffRecordServiceImpl implements PowerOffRecordService{
 	}
 
 	@Override
-	public List<Map<String, Object>> findAllRecordsByMachineId(Long id) {
+	public  Map<String, Object> findAllRecordsByMachineId(Long id) {
 		// TODO Auto-generated method stub
 		return daoPoweroff.findAllRecordsByMachineId(id);
 	}

@@ -1,7 +1,6 @@
 package org.tdds.service.impl;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,18 +57,18 @@ public class LogRecordServiceImpl implements LogRecordService {
 	}
 
 	@Override
-	public List<Map<String, Object>> findTimeLineData(Long id) {
-		List<Map<String, Object>> runningRecords =bizRunning.findAllRecordsByMachineId(id);
-		List<Map<String, Object>> poweroffRecords =bizPowerOff.findAllRecordsByMachineId(id);
-		List<Map<String, Object>> alarmRecords =bizWarning.findAllRecordsByMachineId(id);
-		List<Map<String, Object>> waitRecords =bizWaiting.findAllRecordsByMachineId(id);
-		runningRecords.addAll(runningRecords);
-		runningRecords.addAll(poweroffRecords);
-		runningRecords.addAll(alarmRecords);
-		runningRecords.addAll(waitRecords);
-		return runningRecords;
-		
+	public Map<String, Object> findTimeLineData(Long id,String status) {
+		 Map<String, Object> map = new HashMap<>();
+		 if(status.equalsIgnoreCase(STATUS[0])){
+			 map= bizRunning.findAllRecordsByMachineId(id);
+		 }else if(status.equalsIgnoreCase(STATUS[1])){
+			 map= bizPowerOff.findAllRecordsByMachineId(id);
+		 }else if(status.equalsIgnoreCase(STATUS[2])){
+			 map=bizWarning.findAllRecordsByMachineId(id);
+		 }else if(status.equalsIgnoreCase(STATUS[3])){
+			 map=bizWaiting.findAllRecordsByMachineId(id);
+		 }
+		return map;
 	}
-
 }
 

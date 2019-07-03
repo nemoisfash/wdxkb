@@ -7,12 +7,6 @@ var dom = document.getElementById("timeLine");
 			var dataCount = 10;
 			var startTime = +new Date();
 			var categories = [];
-			var types = [
-			    {name: '正常运行', color: 'green'},
-			    {name: '报警', color: 'green'},
-			    {name: '等待', color: 'yellow'},
-			    {name: '其他', color: 'black'}
-			];
 			 
 			function renderItem(params, api) {
 			    var categoryIndex = api.value(0);
@@ -57,7 +51,7 @@ var dom = document.getElementById("timeLine");
 			option = {
 			    tooltip: {
 			        formatter: function (params) {
-			            return params.marker + params.name + ': ' + params.value[3] + ' s';
+			            return params.marker + params.name + ':' + params.value[3] + '分钟';
 			        }
 			    },
 			     dataZoom: [{
@@ -153,5 +147,5 @@ var dom = document.getElementById("timeLine");
 							myChart.setOption(option, true);
 						}
 					})
-				},30000)
+				},10000)
 			}

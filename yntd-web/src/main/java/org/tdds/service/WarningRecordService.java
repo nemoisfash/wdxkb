@@ -26,5 +26,5 @@ public interface WarningRecordService {
 
 	Double findAlarmData(Map<String, Object> map);
 
-	List<Map<String, Object>> findAllRecordsByMachineId(Long id);
+	Map<String, Object> findAllRecordsByMachineId(Long id);
 }

@@ -152,7 +152,7 @@ public class WarningRecordServiceImpl implements WarningRecordService{
 	}
 
 	@Override
-	public List<Map<String, Object>> findAllRecordsByMachineId(Long id) {
+	public Map<String, Object> findAllRecordsByMachineId(Long id) {
 		return daoWarningRecord.findAllRecordsByMachineId(id);
 	}
 }

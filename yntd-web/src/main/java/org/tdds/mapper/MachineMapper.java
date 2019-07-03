@@ -13,8 +13,6 @@ public interface MachineMapper extends DynaMapper<Machine> {
 
 	Long selectIdByName(@Param("machineName") String machineName);
 
-	List<Machine> findMachine();
-
 	List<Long> findMachineids();
 
 	String findMachineName(Long id);

@@ -12,7 +12,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,6 +32,7 @@ import org.tdds.service.WarningRecordService;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.hxz.webapp.syscore.support.BasePortalController;
+import cn.hxz.webapp.util.DateUtils;
 import cn.hxz.webapp.util.echarts.StatusEnum;
 import cn.hxz.webapp.util.modbus.Modbus4jUtil;
 
@@ -53,9 +53,13 @@ public class MachineController extends BasePortalController {
 
 	@Autowired
 	private LogRecordService bizLogRecord;
-
+	
+	private static List<Map<String, Object>> timeLineData = new ArrayList<>();
+	
 	// 西部大森manual=running
 	private static final String[] STATUS = { "RUNNING", "POWEROFF", "ALARM", "WAITING"/* ,"MANUAL" */ };
+	
+	private static final String[] COLOR = {"#12b07b","#a6a5a5","#e65a65","#feb501"};
 
 	List<Map<String, Object>> statuslist = new ArrayList<>();
 
@@ -65,23 +69,27 @@ public class MachineController extends BasePortalController {
 		Boolean success = true;
 		List<MonitoringList> entities = bizMonitoring.findAll();
 		for (MonitoringList monitoringList : entities) {
-			Machine entity = bizMachine.findMachineByName(monitoringList.getMachineName());
-			if (entity == null) {
-				bizMachine.insert(monitoringList);
-			} else {
-				bizMachine.update(monitoringList, entity);
-				monitoringList.setMachineName(entity.getCode());
-			}
+			 Machine entity = bizMachine.findMachineByName(monitoringList.getMachineName());
+			 if(entity == null){
+				 bizMachine.insert(monitoringList);
+			 }else{
+				 bizMachine.update(monitoringList, entity);
+			 }
+			 monitoringList.setMachineName(entity.getCode());
 		}
 		Map<String, Object> map = new HashMap<>();
 		map.put("resault", entities);
 		return map;
 	}
 
-	@RequestMapping(value = "insertLogging", method = RequestMethod.GET)
+	@RequestMapping(value = "updateStatusTimes", method = RequestMethod.GET)
 	private void insertLogging(Map<String, Object> map) {
+	List<Machine> entities = bizMachine.findMachine();
+		for(Machine machine : entities){
+			bizMachine.updateSatusTimeDiff(machine);
+		}
 	}
-
+	
 	@RequestMapping(value = "alermMessage", method = RequestMethod.GET)
 	@ResponseBody
 	private Object alermMessage() {
@@ -220,6 +228,11 @@ public class MachineController extends BasePortalController {
 		resault.put("data", createData());
 		return resault;
 	}
+	
+	@RequestMapping(value = "clearTimeLineData", method = RequestMethod.GET)
+	public void timer(){
+		timeLineData.clear();
+	}
 
 	/**
 	 * 
@@ -231,31 +244,37 @@ public class MachineController extends BasePortalController {
 	private List<Map<String, Object>> createData() throws ParseException {
 		List<Machine> machines = bizMachine.findMachine();
 		int i = 0;
-		List<Map<String, Object>> bigList = new ArrayList<>();
 		for (Machine machine : machines) {
 			i++;
-			List<Map<String, Object>> entities = bizLogRecord.findTimeLineData(machine.getId());
-			for (Map<String, Object> map : entities) {
-				Map<String, Object> map2 = new HashMap<>();
-				List<Object> value = new ArrayList<>();
-				value.add(i);
-				String name = Objects.toString(map.get("name"), null);
-				map2.put("name", name);
-				String startTime = Objects.toString(map.get("startTime"), null);
-				value.add(startTime);
-				String endTime = Objects.toString(map.get("end_time"), null);
-				value.add(endTime);
-				String timeDiff = Objects.toString(map.get("diff"), null);
-				value.add(Integer.parseInt(timeDiff));
-				map2.put("value", value);
-				String color=Objects.toString(map.get("color"), null);
-				Map<String, Object> normalMap =new HashMap<>();
-				normalMap.put("color","#"+color);
-				map2.put("itemStyle",normalMap);
-				bigList.add(map2);
+			Map<String, Object> map2 = new HashMap<>();
+			List<Object> value = new ArrayList<>();
+			value.add(i);
+			map2.put("name",StatusEnum.getValue(machine.getStatus()));
+			value.add(DateUtils.DateToString(machine.getStartTime(),"yyyy-MM-dd HH:mm"));
+			value.add(DateUtils.DateToString(machine.getEndTime(),"yyyy-MM-dd HH:mm"));
+			long timeDiff=0;
+			String color=null;
+			if(machine.getStatus().equals(STATUS[0])){
+				color=COLOR[0];
+				timeDiff=machine.getrTimes();
+			}else if(machine.getStatus().equals(STATUS[1])){
+				color=COLOR[1];
+				timeDiff=machine.getpTimes();
+			}else if(machine.getStatus().equals(STATUS[2])){
+				color=COLOR[2];
+				timeDiff=machine.getaTimes();
+			}else if(machine.getStatus().equals(STATUS[3])){
+				color=COLOR[3];
+				timeDiff=machine.getwTimes();
 			}
+			value.add(Math.abs(timeDiff));
+			map2.put("value", value);
+			Map<String, Object> normalMap =new HashMap<>();
+			normalMap.put("color",color);
+			map2.put("itemStyle",normalMap);
+			timeLineData.add(map2);
 		}
-		return bigList;
+		return timeLineData;
 	}
 
 	/**

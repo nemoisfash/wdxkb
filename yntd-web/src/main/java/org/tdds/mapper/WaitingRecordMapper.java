@@ -18,5 +18,5 @@ public interface WaitingRecordMapper extends DynaMapper<WaitingRecord>{
 
 	Double findWaittingData(@Param(value="map")Map<String, Object> map);
 
-	List<Map<String, Object>> findAllRecordsByMachineId(@Param(value="machineId")Long machineId);
+	Map<String, Object> findAllRecordsByMachineId(@Param(value="machineId")Long machineId);
 }

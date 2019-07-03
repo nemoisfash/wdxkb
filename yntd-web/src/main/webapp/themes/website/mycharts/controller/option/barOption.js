@@ -163,7 +163,7 @@ var	_this = this;
 						_this.dataRankingInit(data);
 					}
 				})
-			},3000)
+			},2000)
 	
 		},dataRankingInit:function(data){
 			var _this = this;

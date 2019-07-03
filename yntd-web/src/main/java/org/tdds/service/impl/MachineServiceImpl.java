@@ -50,7 +50,7 @@ public class MachineServiceImpl implements MachineService {
 
 	@Override
 	public List<Machine> findMachine() {
-		return machineDao.findMachine();
+		return machineDao.selectAll();
 	}
 
 	@Override
@@ -117,20 +117,10 @@ public class MachineServiceImpl implements MachineService {
 				 bizWaitingRecord.insert(monitoringList, entity);
 			 }
 				entity.setStatus(mstatus);
-				entity.setStartTime(entity.getEndTime());
+				entity.setStartTime(date);
+				entity.setEndTime(date);
 		}else{
-			Long num=DateUtils.getDatePoor(entity.getStartTime(),new Date(),"min");
-			entity.setEndTime(new Date());
-			if(status.equals(STATUS[0])){
-				entity.setrTimes(num);
-			}else if(status.equals(STATUS[1])){
-				entity.setpTimes(num);
-			}else if(status.equals(STATUS[2])){
-				entity.setaTimes(num);
-			}else if(status.equals(STATUS[3])){
-				entity.setwTimes(num);
-			}
-				
+			entity.setEndTime(date);
 		}
 		return machineDao.updateByPrimaryKeySelective(entity);
 	}
@@ -157,5 +147,21 @@ public class MachineServiceImpl implements MachineService {
 	@Override
 	public void updateImage(Machine machine) {
 		machineDao.updateByPrimaryKeySelective(machine);
+	}
+
+	@Override
+	public void updateSatusTimeDiff(Machine entity) {
+			String status=entity.getStatus();
+			Long num=DateUtils.getDatePoor(entity.getStartTime(),entity.getEndTime(),"min");
+			if(status.equals(STATUS[0])){
+				entity.setrTimes(num+entity.getrTimes());
+			}else if(status.equals(STATUS[1])){
+				entity.setpTimes(num+entity.getpTimes());
+			}else if(status.equals(STATUS[2])){
+				entity.setaTimes(num+entity.getaTimes());
+			}else if(status.equals(STATUS[3])){
+				entity.setwTimes(num+entity.getwTimes());
+			}
+		 machineDao.updateByPrimaryKeySelective(entity);
 	}
 }
