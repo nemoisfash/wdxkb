@@ -77,7 +77,7 @@ public class LoggingAdminController extends BaseWorkbenchController {
 	private MachineService bizMachine;
 	
 	// 西部大森 running=manual
-	private static final String[] STATUS = { "RUNNING", "POWEROFF", "ALARM", "WAITING"/* ,"MANUAL" */ };
+	private static final String[] STATUS = { "RUNNING", "POWEROFF", "ALARM", "WAITING" ,"MANUAL"};
 
 	private static final String uuid = HashUtils.MD5(LoggingAdminController.class.getName());
 

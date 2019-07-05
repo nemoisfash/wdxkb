@@ -55,7 +55,6 @@ public class MachineServiceImpl implements MachineService {
 
 	@Override
 	public List<Long> findMachineids() {
-		// TODO Auto-generated method stub
 		return machineDao.findMachineids();
 	}
 
@@ -101,7 +100,7 @@ public class MachineServiceImpl implements MachineService {
 		Date date = new Date();
 		String today = fmt.format(date);
 		String statusTime= fmt.format(entity.getStartTime());
-		if(!today.equals(statusTime)){
+		if(statusTime !=null || !today.equals(statusTime)){
 			entity.setStartTime(date);
 		}
 		String status=entity.getStatus();
