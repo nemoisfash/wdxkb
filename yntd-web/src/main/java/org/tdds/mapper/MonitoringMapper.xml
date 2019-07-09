@@ -17,9 +17,9 @@
 				Maintenance_Signal as maintenanceSignal,
 				PartsCount_Target as partscountTarget,
 				PartsCount_Result as partscountResult,
-				Override_Rapid as overrideRapid,
-				Override_Spindle as overrideSpindle,
-				Override_Feed as overrideFeed,
+				ifnull(Override_Rapid,'0')as overrideRapid,
+				ifnull(Override_Spindle,'0')as overrideSpindle,
+				ifnull(Override_Feed,'0')as overrideFeed,
 				Spindle_Mode as spindleMode
 			FROM
 				Monitoring_List

@@ -1,6 +1,6 @@
 /**
- * 注意：
- *     别在此文件中添加和具体项目有关的代码
+ * 娉ㄦ剰锛�
+ *     鍒湪姝ゆ枃浠朵腑娣诲姞鍜屽叿浣撻」鐩湁鍏崇殑浠ｇ爜
  */
 /* globals */
 * {font-size:14px;}
@@ -49,7 +49,7 @@ ul.sidebar-menu > li.header { font-size:1.2em; font-weight:bold;}
 em.help-block { line-height: 13px; margin: 2px 0 0 0; }
 .help-block { font-size: 11px; padding: 0; }
 
-/* laydate兼容bootstrap
+/* laydate鍏煎bootstrap
 .laydate_box, .laydate_box * { box-sizing:content-box; } */
 
 /* search_adv */

@@ -8,4 +8,6 @@ public interface MonitoringService {
 	MonitoringList findByName(String name);
 
 	List<MonitoringList> findAll();
+
+	Integer findStatusNum(String status);
 }

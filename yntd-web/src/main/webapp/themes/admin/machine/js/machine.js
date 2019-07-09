@@ -11,20 +11,6 @@ var uuid=$("#uuid").val();
 				$scope.count=res.data.count;
 		})
 		
-/*		$scope.addMachine=function(){
-			layer.open({
-			  type: 2,
-			  title: false,
-			  closeBtn: 0, //不显示关闭按钮
-			  shade: [0],
-			  area: ['340px', '215px'],
-			  offset: 'rb', //右下角弹出
-			  time: 2000, //2秒后自动关闭
-			  anim: 2,
-			  content: ['test/guodu.html', 'no'], //iframe的url，no代表不显示滚动条
-			});
-		}*/
-		
 		$scope.editImg=function(id,imageUrl){
 			$scope.machineId=id;
 			if(typeof imageUrl!="undefined"){
@@ -189,11 +175,12 @@ var uuid=$("#uuid").val();
 			area : ['800px','689px'],
 			content:$("#realTime"),
 			success:function(){
-				createGauge(id);
+				createGauge(name);
 				$interval(function(){
-					console.info($scope.crName);
 					getMonitor($scope.crName);
-				},2000)
+				},5000)
+			},cancel:function(){
+				window.location.reload();
 			}
 		})
 	}
@@ -206,58 +193,30 @@ var uuid=$("#uuid").val();
 			cache : false,
 			ifModified:true,
 			success : function(data) {
-				console.info(data);
 				$scope.monitor=data;
 			}
 		})
 	}
 	
-	function createGauge(id,name){
-		var gaugeArrys=new Array();
-		$.each($("[name='gauge']"),function(){
-			gaugeArrys.push(echarts.init(this));
+	function createGauge(name){
+		var gauges= [];
+		$.each($("#gauges").find("div"),function(){
+			var myGauges=echarts.init(this);
+			gauges.push(myGauges);
 		})
-		
-		$interval(function(){
-			$.ajax({
-				type :"GET",
-				url :"/admin/logging/gauge?id="+id,
-				async:true,
-				cache : false,
-				ifModified:true,
-				success : function(data) {
-					 for(var i=0;i<gaugeArrys.length;i++){
-						 gaugeOption.series[0].data=data[i].data;
-						 gaugeArrys[i].setOption(gaugeOption);
-					 }
+		$http({
+			method: 'GET',
+			url:"/admin/logging/gauge.json?machineName="+name,
+			cache:false,
+			async:false}).then(function(res){
+				console.info(res.data); 
+				for(var i=0;i<gauges.length;i++){
+					gaugeOption.series[0].data[0]=res.data[i];
+					gauges[i].setOption(gaugeOption);
 				}
-			})
-		},4000)
+		})
+		 
+	
 	}
 	
-	$(function(){
-	    new ZouMa().Start();
-	});
-
-	function ZouMa() {
-		this.maxLength = 3;  
-		this.Timer = 6000; 
-		this.Ul = $("div#gauges");
-		var handId; 
-		var self = this;
-		this.Start = function () {
-		    if (self.Ul.children().length < this.maxLength) {
-		        self.Ul.append(self.Ul.children().clone());
-		    }
-		    handId = setInterval(self.Play, self.Timer);
-		}
-			this.Play = function () {
-		    var li = self.Ul.children("div").eq(0);
-		    var left = li.eq(0).width();
-		    li.animate({ "marginLeft": (-1 * left) + "px" }, 1000, function () {
-				$(this).css("margin-left", "auto").appendTo(self.Ul);
-	        });
-	    }
-	}
-	  
 })

@@ -84,7 +84,7 @@
 			
 		},dataLineInit:function(xAxis,series){
 			optionLine.xAxis.data = xAxis;
-			optionLine.series = series;
+			optionLine.series[0] = series.data;
 			this.line.setOption(optionLine);
 		}
 	}

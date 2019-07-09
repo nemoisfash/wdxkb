@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,8 @@ import org.tdds.service.PowerOffRecordService;
 import org.tdds.service.RunningRecordService;
 import org.tdds.service.WaitingRecordService;
 import org.tdds.service.WarningRecordService;
+
+import com.alibaba.fastjson.JSONObject;
 
 import cn.hxz.webapp.syscore.support.BaseWorkbenchController;
 import cn.hxz.webapp.util.ExcelExportUtils;
@@ -78,7 +81,11 @@ public class LoggingAdminController extends BaseWorkbenchController {
 	
 	// 西部大森 running=manual
 	private static final String[] STATUS = { "RUNNING", "POWEROFF", "ALARM", "WAITING" ,"MANUAL"};
-
+	
+	private static final String[] TYPE = { "overrideRapid", "overrideSpindle", "overrideFeed"};
+	
+	private static final String[] TYPE_CN = { "进给倍率", "主轴倍率", "切削倍率"};
+	 
 	private static final String uuid = HashUtils.MD5(LoggingAdminController.class.getName());
 
 	@RequestMapping(value = "/{type}/list", method = RequestMethod.GET)
@@ -134,32 +141,27 @@ public class LoggingAdminController extends BaseWorkbenchController {
 		return map;
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/gauge", method = RequestMethod.GET)
-	@ResponseBody
-	public Object gauge(@RequestParam(value = "id", required = false) Long id, HttpServletRequest request,
+	public Object gauge(@RequestParam(value = "machineName") String machineName, HttpServletRequest request,
 			HttpServletResponse response) {
-		List<Map<String, Object>> entities = new ArrayList<>();
-		for (String status : STATUS) {
-			Map<String, Object> entity = new HashMap<>();
-			entity.put("data", getGaugeData(status, id));
-			entities.add(entity);
+		 List<Map<String, Object>> list = new ArrayList<Map<String,Object>>(); 
+		 MonitoringList entity = bizMonitoring.findByName(machineName);
+		for (String type : TYPE) {
+			Map<String, Object> map = new LinkedHashMap<>();
+			if (type.equalsIgnoreCase(TYPE[0])) {
+				map.put("value",Integer.parseInt(entity.getOverrideRapid()));
+				map.put("name",TYPE_CN[0]);
+			}else if(type.equalsIgnoreCase(TYPE[1])){
+				map.put("value",Integer.parseInt(entity.getOverrideSpindle()));
+				map.put("name",TYPE_CN[1]);
+			}else {
+				map.put("value",Integer.parseInt(entity.getOverrideFeed()));
+				map.put("name",TYPE_CN[2]);
+			}
+			JSONObject jsonObj=new JSONObject(map);
+			list.add(jsonObj);
 		}
-		return entities;
-	}
-
-	@ResponseBody
-	private Object getGaugeData(String status, Long id) {
-		List<Map<String, Object>> list = new LinkedList<>();
-		Machine machine = bizMachine.load(id);
-		Double num = bizLogRecord.findData(null, status, machine.getId());
-		Map<String, Object> map = new HashMap<>();
-		if (num == null) {
-			map.put("value", 0);
-		} else {
-			map.put("value", num);
-		}
-		map.put("name", StatusEnum.getValue(status));
-		list.add(map);
 		return list;
 	}
 	

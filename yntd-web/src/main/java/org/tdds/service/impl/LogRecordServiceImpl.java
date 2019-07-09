@@ -70,5 +70,13 @@ public class LogRecordServiceImpl implements LogRecordService {
 		 }
 		return map;
 	}
+
+	@Override
+	public Double findRunningData(String date) {
+		Map<String, Object> map=new HashMap<String, Object>();
+		map.put("date", date);
+		Double numDouble =bizRunning.findRunningData(map);
+		return numDouble;
+	}
 }
 

@@ -1,7 +1,11 @@
 package org.tdds.controller.admin;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -51,10 +55,23 @@ public class IndexAdminController {
 	public Object data(HttpServletRequest request,HttpServletResponse response){
 		Map<String, Object> entity = new HashMap<>();
 		for(String status:STATUS){
-			Double num= bizLogRecord.findData(null,status,null);
+			Integer num= bizMonitoring.findStatusNum(status);
 			entity.put(status, num);
 		}
 		return entity;
+	}
+	
+	@RequestMapping(value = "/datalist", method = RequestMethod.GET)
+	@ResponseBody
+	public Object datalist(HttpServletRequest request,HttpServletResponse response){
+		List<MonitoringList> entities = bizMonitoring.findAll();
+		for(MonitoringList monitoringList:entities) {
+			Machine entity = bizMachine.findMachineByName(monitoringList.getMachineName());
+			monitoringList.setMachineName(entity.getCode());
+		}
+		Map<String, Object> map = new HashMap<>();
+		map.put("resault", entities);
+		return map;
 	}
 	
 	@RequestMapping(value = "/monitoring", method = RequestMethod.GET)
@@ -67,6 +84,39 @@ public class IndexAdminController {
 		return map;
 	}
 	
+	@ResponseBody
+	@RequestMapping(value = "line", method = RequestMethod.GET)
+	public Object line(HttpServletRequest request, HttpServletResponse res) {
+		Map<String, Object> map = new HashMap<>();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String time = sdf.format(new Date());
+		List<String> days = getMonthDate(time);
+		List<Object> values = new LinkedList<>();
+		for (String date : days) {
+			Double num = bizLogRecord.findRunningData(date);
+			values.add(num);
+		}
+		map.put("data", values);
+		map.put("xAxis", days);
+		return map;	
+	}
+
+	private List<String> getMonthDate(String time) {
+		List<String> days = new LinkedList<>();
+		String strs[] = time.split("-");
+		Calendar calendar = Calendar.getInstance();
+		int year = Integer.parseInt(strs[0]);
+		int month = Integer.parseInt(strs[1]) - 1;
+		calendar.set(year, month, 1);
+		int maxDay = calendar.getMaximum(Calendar.DAY_OF_MONTH);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+		for (int j = 1; j <= maxDay; j++) {
+			calendar.set(year, month, j);
+			time = sdf.format(calendar.getTime());
+			days.add(time);
+		}
+		return days;
+	}
 	
 	/*
 	 *name: '直接访问',
@@ -82,9 +132,10 @@ public class IndexAdminController {
 		List<Machine> machines = bizMachine.findMachines(filters);
 		if(names.isEmpty()){
 			for(Machine machine:machines){
-				names.add(machine.getName());
+				names.add(machine.getCode());
 			}
 		}
+		
 		Map<String,Object> finalmap = new HashMap<>();
 		finalmap.put("series", createSeries(machines));
 		finalmap.put("yAxisData", names);
@@ -103,6 +154,7 @@ public class IndexAdminController {
 			map.put("data",data);
 			map.put("name",StatusEnum.getValue(status));
 			map.put("type","bar");
+			map.put("barWidth","30%");
 			map.put("stack","总量");
 			series.add(map);
 		}

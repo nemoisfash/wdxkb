@@ -1,50 +1,94 @@
-/**
- * 
- */
 var gaugeOption = {
-    tooltip : {
-        formatter: "{a} <br/>{b} : {c}%"
-    },
-    toolbox: {
-        feature: {
-            saveAsImage: {}
-        }
-    },
-    series:[{
-    		data: [{value: 50, name: '完成率'}],
-            type: 'gauge',
-            radius: '80%',
-            center: ['50%', '50%'],
-            min: 0,
-            max: 1440,
-            splitNumber:10,
-            axisLine: {
-                lineStyle: {
-                    width: 10,
-                    color: [[0.2, '#62c87f'], [0.8, '#5d9cec'], [1, '#f15755']]
-                }
-            },axisTick: {
-                length: 9,  
-                lineStyle: { 
-                    color: 'auto'
-                }
-            },splitLine: {
-                length: 18,
-                lineStyle: {
-                    color: 'auto'
-                }
-            },axisLabel: {
-                color: 'green',
-            },detail:{
-                formatter:'{value}分钟',
-                fontSize: 24,
-                offsetCenter: [0, '85%']
-              },title:{
-                  fontSize: 12,
-                  color:'#56e308',
-                  offsetCenter:[0, '55%']
-                },
-        }]
-    
-};
+		  backgroundColor: 'white',
+			title : {
+				top : 5,
+				left : 'center',
+				textStyle : {
+					color : '#000'
+				}
+			},
+			toolbox :{"feature":{"saveAsImage":{"show":true}},"top":10,"left":"right"},
+			tooltip : {
+				show : true,
+				formatter : "{c}%",
+				backgroundColor : '#F7F9FB',
+				borderColor : '#92DAFF',
+				borderWidth : '1px',
+				textStyle : {
+					color : 'black'
+				}
+			},
+			series : [{
+				name : '达标率',
+				type : 'gauge',
+				max : 150,
+				radius : '75%', //图表尺寸
+				center : [ "50%", "45%" ],
+				axisLine : {
+					show : true,
+					lineStyle : {
+						width : 5,
+						shadowColor : 'rgba(0,0,0,0.4)',
+						shadowOffsetY : 10,
+						shadowBlur : 10,
+						color : [ [ 0.3, '#DD3F36' ], [ 0.7, '#FAE521' ],
+								[ 1, '#37B70C' ] ]
+					}
+				},
+				axisTick : {
+					show : false,
+					splitNumber : 10
+				},
+				splitLine : {
+					show : true,
+					length : 10,
+					lineStyle : {
+						color : 'rgba(0,0,0,0.6)'
+					}
+				},
+				axisLabel : {
+					distance : 5,
+					textStyle : {
+						color : "#000",
+						fontSize : 10,
+					},
+					formatter : function(e) {
+						return e
+					}
+				},
+				pointer : {
+					show : true,
+					length : '80%',
+					width : 2
+				},
+				detail : {
+					show : true,
+					offsetCenter : [ 0, '80%' ],
+					formatter:"{value}%",
+					width : 56,
+					height : 20,
+					textStyle : {
+						fontSize : 13,
+						color : "black",
+						fontWeight : 'bolder'
+					},
+					backgroundColor : '#A9DAFF',
+					borderWidth : 2,
+					borderColor : '#45E4D0',
+					shadowColor : 'black', //默认透明
+					shadowBlur : 5
 
+				},
+				title : {
+					textStyle : {
+						fontSize : 16,
+						fontWeight : 'bolder',
+						fontStyle : 'normal',
+						color : "black"
+					},
+					offsetCenter : [ 0, '30%' ]
+				},
+				data:[{name:"asdasd",value:100}]
+				
+			}]
+};
