@@ -114,6 +114,8 @@ public class MachineServiceImpl implements MachineService {
 				 bizWarningRecord.insert(monitoringList, entity);
 			 }else if(status.equals(STATUS[3])){
 				 bizWaitingRecord.insert(monitoringList, entity);
+			 }else {
+				 bizWaitingRecord.insert(monitoringList, entity);
 			 }
 				entity.setStatus(mstatus);
 				entity.setStartTime(date);
