@@ -13,6 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -93,6 +94,7 @@ public class LoggingAdminController extends BaseWorkbenchController {
 			HttpServletResponse response) {
 		QueryFilters filters = FiltersUtils.getQueryFilters(request, response, uuid + type);
 		model.addAttribute("filters", filters);
+		model.addAttribute("type", type);
 		return this.view("/tdds/logging/" + type + "/list");
 	}
 
@@ -104,17 +106,17 @@ public class LoggingAdminController extends BaseWorkbenchController {
 		Map<String, Object> map = new HashMap<>();
 
 		if (type.equalsIgnoreCase(STATUS[0].toLowerCase())) {
-			Page<RunningRecord> runningRecords = bizRunning.findAllRecords(filters, pageable);
-			map.put("runningRecords", runningRecords);
+			Page<RunningRecord> entities = bizRunning.findAllRecords(filters, pageable);
+			map.put("entities", entities);
 		} else if (type.equalsIgnoreCase(STATUS[1].toLowerCase())) {
-			Page<PowerOffRecord> powerOffRecords = bizPowerOff.findAllRecords(filters, pageable);
-			map.put("powerOffRecords", powerOffRecords);
+			Page<PowerOffRecord> entities = bizPowerOff.findAllRecords(filters, pageable);
+			map.put("entities", entities);
 		} else if (type.equalsIgnoreCase(STATUS[2].toLowerCase())) {
-			Page<WarningRecord> warningRecords = bizWarning.findAllRecords(filters, pageable);
-			map.put("warningRecords", warningRecords);
+			Page<WarningRecord> entities = bizWarning.findAllRecords(filters, pageable);
+			map.put("entities", entities);
 		} else if (type.equalsIgnoreCase(STATUS[3].toLowerCase())) {
-			Page<WaitingRecord> waitingRecords = bizWaiting.findAllRecords(filters, pageable);
-			map.put("waitingRecords", waitingRecords);
+			Page<WaitingRecord> entities = bizWaiting.findAllRecords(filters, pageable);
+			map.put("entities", entities);
 		} else {
 			Page<ManualRecord> manualRecords = bizManual.findAllRecords(filters, pageable);
 			map.put("manualRecords", manualRecords);
@@ -240,6 +242,14 @@ public class LoggingAdminController extends BaseWorkbenchController {
 			filename = "设备手动日志";
 			entities = bizManual.exportData(filters);
 		}
+		int i=0;
+		Map<String, Object> lastMap=new HashMap<String, Object>();
+		for(Map<String, Object> map:entities) {
+			String timediffString=Objects.toString(map.get("timediff"),null);
+			i+=Integer.valueOf(timediffString);
+		}
+		lastMap.put("sumtimediff",i);
+		entities.add(lastMap);
 		byte[] bytes = ExcelExportUtils.createExcel(type + "_", null, entities);
 		response.setContentType("application/vnd.ms-excel;charset=utf-8");
 		response.addHeader("Content-Disposition",

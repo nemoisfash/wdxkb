@@ -28,26 +28,31 @@
      		SELECT id as id, record_time as recordTime
 			FROM znzz_waiting_record where machine_id=#{id};
      </select>
-	    <select id="exportData" resultType="map">
-		 SELECT 
-			machine_name as sbmc,
-			maintenance_signal as whxh,
-			partsCount_target as jgmbz,
-			partsCount_result as jgssz,
-			override_rapid as kjbl,
-			override_spindle as zzbl,
-			override_feed as qxbl,
-			spindle_mode as zzms,
-			record_time as jlss
-		FROM znzz_waiting_record
-		where  id &gt; 0
-		<if test="filter.startTime!=null and filter.startTime!='' and filter.endTime!=null and filter.endTime!=''">
-		    AND DATE(record_time) BETWEEN #{filter.startTime} AND #{filter.endTime};
-		</if>
-		<if test="filter.name!=null and filter.name!=''">
-			AND machine_name=#{filter.name}
-		</if>
-	    </select>
+    <select id="exportData" resultType="map">
+			 SELECT 
+				machine_name as sbmc,
+				maintenance_signal as whxh,
+				partsCount_target as jgmbz,
+				partsCount_result as jgssz,
+				override_rapid as kjbl,
+				override_spindle as zzbl,
+				override_feed as qxbl,
+				spindle_mode as zzms,
+				start_time as kssj,
+				end_time as jssj,
+				timediff as timediff
+			FROM znzz_waiting_record
+			where  id &gt; 0
+			<if test="filter.startTime!=null and filter.startTime!='' and filter.endTime!=null and filter.endTime!=''">
+			    AND DATE(startTime) BETWEEN #{filter.startTime} AND #{filter.endTime};
+			</if>
+			<if test="filter.machineName!=null and filter.machineName!=''">
+				AND machine_name=#{filter.machineName}
+			</if>
+			<if test="filter.timediff!=null and filter.timediff!=0">
+				AND timediff BETWEEN 0 AND #{filter.timediff}
+			</if>
+      </select>
 		<select id="findAllRecordsByMachineId" resultType="map">
 		 	SELECT
 		 		'等待' as 'name',

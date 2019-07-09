@@ -3,19 +3,29 @@
  */
 var app = angular.module('myApp', []);
 app.controller('myCtrl', function($scope,$http,$interval) {
+	 var type=$("#type").val();
 	$http({
 		method: 'GET',
-		url:"/admin/logging/running/data.json",
+		url:"/admin/logging/"+type+"/data.json",
 		cache:false,
 		async:false
 	}).then(function(res){
-		$scope.items=res.data.runningRecords.content;
-		var totalElements=res.data.runningRecords.totalElements;
-		var totalPages=res.data.runningRecords.totalPages;
+		$scope.items=res.data.entities.content;
+		var totalElements=res.data.entities.totalElements;
+		var totalPages=res.data.entities.totalPages;
 		var number=res.data.number;
 		pagination(totalElements,totalPages,number)
+		sumTimeDiff(res.data.entities.content)
 })
 
+function sumTimeDiff(obj){
+		var timeDiff=[]
+		var i=0;
+		$.each(obj,function(){
+			i+=this.timediff;
+		})
+		$scope.sumTimeDiff=i;
+}
 
 function pagination(totalElements,totalPages,number){
 	$(".tcdPageCode").createPage({
@@ -42,14 +52,20 @@ $scope.chosenTime=function(){
 $scope.keys=[{key:"name",value:"名称"}]
 
 $scope.search=function(){
-	var val= $scope.value;
-	var key= $scope.selected;
+	var val=$scope.value;
 	if(typeof val=="undefined"){
 		layer.msg("请输入需要查询的内容");
-		$scope.removeFilter(key);
+		$scope.removeFilter("machineName");
 		return;
 	}else{
-		$scope.updateFilter(key,val);
+		$scope.updateFilter("machineName",val);
+	}
+}
+
+$scope.searchByTimeDiff=function(){
+	var timediff=$scope.timediff;
+	if(typeof timediff!="undefined"){
+		$scope.updateFilter("timediff",timediff);
 	}
 }
 
@@ -78,7 +94,7 @@ $scope.removeFilter=function(key){
 }
 
 $scope.exportData=function(){
-	window.location.href="/admin/logging/running/exportdata";
+	window.location.href="/admin/logging/"+type+"/exportdata";
 }
 
 })

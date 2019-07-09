@@ -1,12 +1,13 @@
 <#assign modulePath="${adminPath}/logging"/>
 <@layout.override name="body">
-<input type="hidden" id="uuid" ng-model="uuid" value="${(filters.uuid)!}">
 <div ng-app="myApp" ng-controller="myCtrl">
-<div class="row">
+<input type="hidden" id="uuid" ng-model="uuid" value="${(filters.uuid)!}" />
+<input type="hidden" id="type" ng-model="type" value="${type}" />
+<!-- <div class="row">
 <div class="col-xs-12">
   <div class="box box-info">
     <div class="box-header with-border">
-      <h3 class="box-title">所有设备每日等待状态折线图（单位：分钟）</h3>
+      <h3 class="box-title">所有设备每日运行状态折线图（单位：分钟）</h3>
 	      <div class="box-tools pull-right">
 	        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
 	        </button>
@@ -19,7 +20,7 @@
 	</div>
   </div>
   </div>
-</div>
+</div> -->
 <div class="row">
 	<div class="col-xs-12">
 		<div class="box box-success">
@@ -31,18 +32,15 @@
 				<div class="row">
 					<div class="col-sm-6" style="margin-bottom:3px">
 						<div class="box-tools">
-							<div class="input-group input-group-sm" style="width:359px;">
+							<div class="input-group input-group-sm" style="width:420px;">
 							  <input type="text" name="table_search" 
-							  class="form-control pull-right" ng-model="value" placeholder="输入内容">
+							  class="form-control pull-right" ng-model="value" placeholder="输入设备名称">
 							  <div class="input-group-btn">
-							    <select class="btn btn-default" ng-model="selected">
-							    	 <option ng-repeat="item in keys" value="{{item.key}}">{{item.value}}</option>
-							    </select>
 							    <button type="button" class="btn btn-default" ng-click="search()"> 
 							    	<i class="fa fa-search"></i>
 							    </button>
 							    <button type="button" class="btn btn-warning btn-sm search_adv_btn">
-						       	 高级搜索
+						       	 	高级搜索
 						       </button>
 							  </div>
 							</div>
@@ -61,7 +59,17 @@
 								<@sys.optionList groupId='43'; items>
 									<a href="javascript:;" ng-click="updateFilter('recordTime', ${(items.value)!})" class="${fn.search_adv_item_cur(filters, 'recordTime', '${(items.value)!}')}">${(items.name)!}</a>
 								</@sys.optionList>
-									<a href="javascript:;" ng-click="chosenTime()">自定义时间</a>
+								<a href="javascript:;" ng-click="chosenTime()">自定义时间</a>
+							</div>
+						</div>
+						<div class="search_adv_row">
+							<div class="search_adv_label">持续时间</div>
+							<div class="search_adv_items">
+								<a href="javascript:;" ng-click="removeFilter('timediff')" class="${fn.search_adv_item_cur(filters, 'timediff')}">不限</a>
+								<@sys.optionList groupId='44'; items>
+									<a href="javascript:;" ng-click="updateFilter('timediff', ${(items.value)!})" class="${fn.search_adv_item_cur(filters, 'timediff', '${(items.value)!}')}">${(items.name)!}</a>
+								</@sys.optionList>
+									<input type="number" ng-model="timediff" class="form-control" style="width:80px;height:25px" ng-blur="searchByTimeDiff()"/>
 							</div>
 						</div>
 					</div>
@@ -87,8 +95,9 @@
 				            	<th class="sorting" rowspan="1" colspan="1">主轴倍率</th>
 				            	<th class="sorting" rowspan="1" colspan="1">切削倍率</th>
 				            	<th class="sorting" rowspan="1" colspan="1">主轴模式</th>
-				            	<th class="sorting" rowspan="1" colspan="1">记录时间</th>
-				            	<!-- <th class="sorting" rowspan="1" colspan="1">操作</th> -->
+				            	<th class="sorting" rowspan="1" colspan="1">记录开始时间</th>
+				            	<th class="sorting" rowspan="1" colspan="1">记录结束时间</th>
+				            	<th class="sorting" rowspan="1" colspan="1">持续时间(分钟)</th>
 				           	</tr>
 				           </thead>
 							<tbody>
@@ -109,18 +118,19 @@
 								  <td>{{item.overrideSpindle}}</td>
 								  <td>{{item.overrideFeed}}</td>
 								  <td>{{item.spindleMode}}</td>
-								  <td>{{item.recordTime|date:'yyyy-MM-dd HH:mm:ss'}}</td>
-								 <!--  <td>
-								  	<a class="btn btn-danger btn-xs" title="删除">
-								  		<i class="fa fa-trash" aria-hidden="true"></i>
-								  	</a>
-								  </td> -->
+								  <td>{{item.startTime|date:'yyyy-MM-dd HH:mm:ss'}}</td>
+								  <td>{{item.endTime|date:'yyyy-MM-dd HH:mm:ss'}}</td>
+								  <td>{{item.timediff}}</td>
 								</tr>
 							</tbody>
 						</table>
 			        </div>
 			    </div>
 				 <div class="row"> 
+				 	<div class="col-sm-3" style="float:left;text-align:left;">
+		 				<h5>总计：<span class="label label-success">{{sumTimeDiff}}分钟</span>
+		 				</h5>
+					</div>
 				 	<div class="col-sm-7" style="float:right;text-align: right;">
 		 				<div class="pull-right tcdPageCode"></div>
 					</div>
@@ -141,13 +151,13 @@
 						</div>
 			     		<input type="text" id="startTime" name="startTime" class="Wdate form-control" 
 			     		style="height:33px;border-color:#d2d6de;" 
-			onclick="WdatePicker({maxDate:'#F{$dp.$D(\'endTime\')}'})">
+			onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',maxDate:'#F{$dp.$D(\'endTime\')}'})">
 			 <div class="input-group-addon">
 			  	 <label>结束时间:</label>
 			 </div>
 			<input type="text" id="endTime" name="endTime" class="Wdate form-control" 
-			style="height:33px;border-color:#d2d6de;" 
-			onclick="WdatePicker({minDate:'#F{$dp.$D(\'startTime\')}'})">
+			style="height:33px;border-color:#d2d6de;"
+			onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'#F{$dp.$D(\'startTime\')}'})">
 			   </div>
 			</div>
 		</div>
@@ -160,6 +170,7 @@
 </@layout.override>
 <@layout.override name="js">
 <@layout.super/>
-<script src="/themes/admin/logging/waitinglist.js"></script>
+<!--<script src="/themes/admin/logging/charts/timeline.js"></script>-->
+<script src="/themes/admin/logging/logginglist.js"></script>
 </@layout.override>
 <@layout.extends name="../../../_layouts/bootstrap1.html"/>

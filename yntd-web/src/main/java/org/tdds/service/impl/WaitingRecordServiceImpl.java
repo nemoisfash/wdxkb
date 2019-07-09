@@ -15,6 +15,7 @@ import org.springframework.util.StringUtils;
 import org.tdds.entity.Machine;
 import org.tdds.entity.MonitoringList;
 import org.tdds.entity.WaitingRecord;
+import org.tdds.entity.WarningRecord;
 import org.tdds.mapper.WaitingRecordMapper;
 import org.tdds.service.WaitingRecordService;
 
@@ -56,18 +57,23 @@ public class WaitingRecordServiceImpl implements WaitingRecordService{
 			if(recordTime.indexOf("&")>-1){
 				String startTime=recordTime.split("&")[0];
 				String endTime=recordTime.split("&")[1];
-				criteria.andBetween("recordTime",startTime, endTime);
+				criteria.andEqualTo("startTime", startTime);
+				criteria.andEqualTo("endTime", endTime);
 			} 
 			if(NumberUtils.isNumber(recordTime)){
 				Integer num=Integer.valueOf(recordTime);
 				Map<String, String> map = getTime(num);
-				criteria.andBetween("recordTime",map.get("startTime"), map.get("endTime"));
+				criteria.andBetween("startTime",map.get("startTime"), map.get("endTime"));
+				criteria.andBetween("endTime",map.get("startTime"), map.get("endTime"));
 			}
-		} 
-		if(StringUtils.hasText(Objects.toString(filters.get("name"), null))){
-			 criteria.andEqualTo("machineName", Objects.toString(filters.get("name")));
+		}if(StringUtils.hasText(Objects.toString(filters.get("timediff"), null))){
+			String timediff=Objects.toString(filters.get("timediff"));
+			criteria.andLessThanOrEqualTo("timediff",Integer.valueOf(timediff));
 		 }
-		List<WaitingRecord> entities=daoWaitingRecord.selectByExampleAndRowBounds(example, pageable);
+		if(StringUtils.hasText(Objects.toString(filters.get("machineName"), null))){
+			 criteria.andEqualTo("machineName", Objects.toString(filters.get("machineName")));
+		 }
+ 		List<WaitingRecord> entities=daoWaitingRecord.selectByExampleAndRowBounds(example, pageable);
 		return new PageImpl<WaitingRecord>(entities, pageable);
 	}
 	
@@ -106,23 +112,24 @@ public class WaitingRecordServiceImpl implements WaitingRecordService{
 		Map<String, Object> filter = new HashMap<>();
 		if(StringUtils.hasText(Objects.toString(filters.get("recordTime"), null))){
 			String recordTime = Objects.toString(filters.get("recordTime"), null);
-			String startTime=null;
-			String endTime=null;
 			if(recordTime.indexOf("&")>-1){
-				 startTime=recordTime.split("&")[0];
-				 endTime=recordTime.split("&")[1];
+				String startTime=recordTime.split("&")[0];
+				String endTime=recordTime.split("&")[1];
+				filter.put("startTime", startTime);
+				filter.put("endTime", endTime);
 			} 
 			if(NumberUtils.isNumber(recordTime)){
 				Integer num=Integer.valueOf(recordTime);
 				Map<String, String> map = getTime(num);
-				 startTime=map.get("startTime");
-				 endTime=map.get("endTime");
+				filter.put("startTime",map.get("startTime"));
+				filter.put("endTime",map.get("endTime"));
 			}
-			filter.put("startTime",startTime);
-			filter.put("endTime", endTime);
-		}
-		if(StringUtils.hasText(Objects.toString(filters.get("name"), null))){
-			filter.put("name", Objects.toString(filters.get("name")));
+		}if(StringUtils.hasText(Objects.toString(filters.get("timediff"), null))){
+			String timediff=Objects.toString(filters.get("timediff"));
+			filter.put("timediff",Integer.valueOf(timediff));
+		 }
+		if(StringUtils.hasText(Objects.toString(filters.get("machineName"), null))){
+			filter.put("machineName", Objects.toString(filters.get("machineName")));
 		 }
 		return daoWaitingRecord.exportData(filter);
 	}

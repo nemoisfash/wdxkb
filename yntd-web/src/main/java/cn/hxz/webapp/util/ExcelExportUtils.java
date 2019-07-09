@@ -281,11 +281,7 @@ public class ExcelExportUtils {
 			setTitleStyle(cell);
 		}
 	}
-
-	/**
-	 * 
-	 * 添加特殊行(未完成)
-	 */
+	 
 	private static void createSpecialRows(List<Map<String, Object>> list) {
 		String[] specialRowsTitleZh = getValue(node + has_special_rows_title_zh).split(",");
 		String specialRowsNum = getValue(node + has_special_rows_num);
@@ -294,11 +290,11 @@ public class ExcelExportUtils {
 		Map<String, Object> map = list.get(list.size() - 1);
 		for (int i = 0; i < specialRowsTitleZh.length; i++) {
 			Cell cell = row.createCell(i);
-			setContentStyle(cell);
-			if (map.get(specialRowsTitleZh[i]) != null) {
-				cell.setCellValue(map.get(specialRowsTitleZh[i]).toString());
-			} else {
+			setContentStyle(cell); 
+			if (map.get(specialRowsTitleZh[i]) == null) {
 				cell.setCellValue(specialRowsTitleZh[i]);
+			} else {
+				cell.setCellValue(map.get(specialRowsTitleZh[i]).toString());
 			}
 		}
 	}
