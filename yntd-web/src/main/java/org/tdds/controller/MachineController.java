@@ -154,11 +154,13 @@ public class MachineController extends BasePortalController {
 		for (Machine machine : machines) {
 			List<Map<String, Object>> entities = new LinkedList<>();
 			for (String status : STATUS) {
-				Map<String, Object> entity = new HashMap<>();
-				Double num = bizLogRecord.findData(null, status, machine.getId());
-				entity.put("value", num);
-				entity.put("name", StatusEnum.getValue(status));
-				entities.add(new JSONObject(entity));
+				if(status.equalsIgnoreCase(STATUS[3])) {
+					Map<String, Object> entity = new HashMap<>();
+					Double num = bizLogRecord.findData(null, status, machine.getId());
+					entity.put("value", num);
+					entity.put("name", StatusEnum.getValue(status));
+					entities.add(new JSONObject(entity));
+				}
 			}
 			Map<String, Object> map = new HashMap<>();
 			map.put("data", entities);
