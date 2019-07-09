@@ -57,9 +57,9 @@ public class MachineController extends BasePortalController {
 	private static List<Map<String, Object>> timeLineData = new ArrayList<>();
 	
 	// 西部大森manual=running
-	private static final String[] STATUS = { "RUNNING", "POWEROFF", "ALARM", "WAITING"/* ,"MANUAL" */ };
+	private static final String[] STATUS = { "RUNNING", "POWEROFF", "ALARM", "WAITING" ,"MANUAL"};
 	
-	private static final String[] COLOR = {"#12b07b","#a6a5a5","#e65a65","#feb501"};
+	private static final String[] COLOR = {"#12b07b","#a6a5a5","#e65a65","#feb501","#feb501"};
 
 	List<Map<String, Object>> statuslist = new ArrayList<>();
 
@@ -241,8 +241,8 @@ public class MachineController extends BasePortalController {
 			List<Object> value = new ArrayList<>();
 			value.add(i);
 			map2.put("name",StatusEnum.getValue(machine.getStatus()));
-			value.add(DateUtils.DateToString(machine.getStartTime(),"yyyy-MM-dd HH:mm"));
-			value.add(DateUtils.DateToString(machine.getEndTime(),"yyyy-MM-dd HH:mm"));
+			value.add(DateUtils.DateToString(machine.getStartTime(),"yyyy-MM-dd HH:mm:ss"));
+			value.add(DateUtils.DateToString(machine.getEndTime(),"yyyy-MM-dd HH:mm:ss"));
 			long timeDiff=0;
 			String color=null;
 			if(machine.getStatus().equals(STATUS[0])){
@@ -256,6 +256,9 @@ public class MachineController extends BasePortalController {
 				timeDiff=machine.getaTimes();
 			}else if(machine.getStatus().equals(STATUS[3])){
 				color=COLOR[3];
+				timeDiff=machine.getwTimes();
+			}else{
+				color=COLOR[4];
 				timeDiff=machine.getwTimes();
 			}
 			value.add(Math.abs(timeDiff));

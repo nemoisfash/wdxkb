@@ -50,7 +50,7 @@ $interval(function(){
 		restrict:'A',
 		link:function(scope,elem,attrs){
 			var maxLength=3;
-			var timer =6000;
+			var timer =6000*5;
 			elem.ready(function(){
 			    if (elem.children().length < maxLength) {
 			    	elem.append(elem.children().clone());
@@ -191,7 +191,7 @@ $interval(function(){
 						myChart.hideLoading();
 						myChart.setOption(option, true);
 				})
-			},10000)
+			},10000*6)
 		}
 	}
 }).directive('myPies',function(){
