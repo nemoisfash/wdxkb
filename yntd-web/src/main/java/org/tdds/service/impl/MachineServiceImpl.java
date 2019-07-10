@@ -95,13 +95,7 @@ public class MachineServiceImpl implements MachineService {
 
 	@Override
 	public int update(MonitoringList monitoringList,Machine entity) {
-		SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd");
 		Date date = new Date();
-		String today = fmt.format(date);
-		String statusTime= fmt.format(entity.getStartTime());
-		if(statusTime !=null || !today.equals(statusTime)){
-			entity.setStartTime(date);
-		}
 		String status=entity.getStatus();
 		String mstatus= monitoringList.getMachineSignal();
 		if(!status.equals(mstatus)){
