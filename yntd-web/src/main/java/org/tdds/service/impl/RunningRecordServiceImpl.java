@@ -69,8 +69,9 @@ public class RunningRecordServiceImpl implements RunningRecordService {
 			if(recordTime.indexOf("&")>-1){
 				String startTime=recordTime.split("&")[0];
 				String endTime=recordTime.split("&")[1];
-				criteria.andEqualTo("startTime", startTime);
-				criteria.andEqualTo("endTime", endTime);
+				
+				criteria.andBetween("startTime", startTime, endTime);
+				criteria.andBetween("endTime", startTime, endTime);
 			} 
 			if(NumberUtils.isNumber(recordTime)){
 				Integer num=Integer.valueOf(recordTime);

@@ -52,7 +52,9 @@ public class LogRecordServiceImpl implements LogRecordService {
 			count=bizWarning.findAlarmData(map);
 		}else if(status.equalsIgnoreCase(STATUS[3])){
 			count=bizWaiting.findWaittingData(map);
-		} 
+		} else {
+			count=bizWaiting.findWaittingData(map);
+		}
 		return count;
 	}
 
