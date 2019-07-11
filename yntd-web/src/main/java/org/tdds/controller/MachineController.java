@@ -154,7 +154,7 @@ public class MachineController extends BasePortalController {
 		for (Machine machine : machines) {
 			List<Map<String, Object>> entities = new LinkedList<>();
 			for (String status : STATUS) {
-				if(!status.equalsIgnoreCase(STATUS[3])) {
+				if(!status.equalsIgnoreCase(STATUS[4])) {
 					Map<String, Object> entity = new HashMap<>();
 					Double num = bizLogRecord.findData(null, status, machine.getId());
 					entity.put("value", num);

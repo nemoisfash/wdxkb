@@ -191,7 +191,7 @@ $interval(function(){
 						myChart.hideLoading();
 						myChart.setOption(option, true);
 				})
-			},10000*6)
+			},2000)
 		}
 	}
 }).directive('myPies',function(){
