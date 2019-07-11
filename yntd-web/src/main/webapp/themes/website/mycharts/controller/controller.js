@@ -65,13 +65,13 @@ $interval(function(){
 			})
 		}
 	}
-}).directive('timeLine',function($interval,$http){
+}).directive('timeLine',function($interval,$http,$timeout){
 	return{
 		restrict:'A',
 		link:function(scope,elem,attrs){
 			var myChart = echarts.init(elem.get(0));
-			myChart.showLoading('default', {text:'数据统计中...',maskColor: '#07112a61',textColor: '#36b0f3',});
-		function renderItem(params, api) {
+/*			myChart.showLoading('default', {text:'数据统计中...',maskColor: '#07112a61',textColor: '#36b0f3',});
+*/		function renderItem(params, api) {
 		    var categoryIndex = api.value(0);
 		    var start = api.coord([api.value(1), categoryIndex]);
 		    var end = api.coord([api.value(2), categoryIndex]);
@@ -161,7 +161,7 @@ $interval(function(){
 			                fontSize: '10',
 			            }
 			        },
-			        data: []
+			        data:[],
 			    },
 			    series: [{
 			        type: 'custom',
@@ -178,20 +178,32 @@ $interval(function(){
 			        data: []
 			    }]
 			};
-			
-			$interval(function(){
+		
 			$http({
+				method: 'GET',
+				url:"/member/timeLine/categories.json",
+				cache:false,
+				async:false
+			}).then(function(res){
+				setSeriesData();
+				option.yAxis.data=res.data.stringList;
+			})
+			
+			function setSeriesData(){
+				$http({
 					method: 'GET',
-					url:"/member/timeLine.json",
+					url:"/member/timeLine/seriesData.json",
 					cache:false,
-					async:false}).then(function(res){
-						option.yAxis.data=res.data.categories;
-						option.yAxis.max=res.data.categories.length;
-						option.series[0].data=res.data.data;
-						myChart.hideLoading();
-						myChart.setOption(option, true);
+					async:false
+				}).then(function(res){
+					var c=option.series[0].data.concat(res.data);
+					option.series[0].data=c;
+					$timeout(function(){
+						setSeriesData();
+						myChart.setOption(option,true);
+					},3000)
 				})
-			},10000*6)
+			}
 		}
 	}
 }).directive('myPies',function(){

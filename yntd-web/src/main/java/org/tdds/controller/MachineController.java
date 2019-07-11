@@ -54,7 +54,7 @@ public class MachineController extends BasePortalController {
 	@Autowired
 	private LogRecordService bizLogRecord;
 	
-	private static List<Map<String, Object>> timeLineData = new ArrayList<>();
+	private static List<String> NAMES = new ArrayList<>();
 	
 	// 西部大森manual=running
 	private static final String[] STATUS = { "RUNNING", "POWEROFF", "ALARM", "WAITING" ,"MANUAL"};
@@ -67,8 +67,10 @@ public class MachineController extends BasePortalController {
 	@RequestMapping(value = "datalist", method = RequestMethod.GET)
 	public Object loging(HttpServletRequest request, HttpServletResponse res) {
 		Boolean success = true;
-		List<MonitoringList> entities = bizMonitoring.findAll();
+		List<MonitoringList> entities = bizMonitoring.findAll();		
+			NAMES.clear();
 		for (MonitoringList monitoringList : entities) {
+			 NAMES.add(monitoringList.getMachineName());
 			 Machine entity = bizMachine.findMachineByName(monitoringList.getMachineName());
 			 if(entity == null){
 				 bizMachine.insert(monitoringList);
@@ -200,7 +202,12 @@ public class MachineController extends BasePortalController {
 		});
 		return list;
 	}
-
+	
+	@RequestMapping(value = "/timeLine/categories", method = RequestMethod.GET)
+	public Object categories(HttpServletRequest request, HttpServletResponse response){
+		 return  NAMES;
+	}
+	
 	/**
 	 * 
 	 * @param request
@@ -208,70 +215,42 @@ public class MachineController extends BasePortalController {
 	 * @return
 	 * @throws ParseException
 	 */
-
-	@RequestMapping(value = "timeLine", method = RequestMethod.GET)
+	@RequestMapping(value = "/timeLine/seriesData", method = RequestMethod.GET)
 	@ResponseBody
 	public Object timer(HttpServletRequest request, HttpServletResponse response) throws ParseException {
 		List<Machine> machines = bizMachine.findMachine();
-		List<String> names = new ArrayList<>();
-		for (Machine machine : machines) {
-			names.add(machine.getName());
-		}
-		Map<String, Object> resault = new HashMap<>();
-		resault.put("categories", names);
-		resault.put("data", createData());
-		return resault;
-	}
-	
-	@RequestMapping(value = "clearTimeLineData", method = RequestMethod.GET)
-	public void timer(){
-		timeLineData.clear();
-	}
-
-	/**
-	 * 
-	 * itemStyle:{ normal:{color:'#72b362'} }
-	 * @return
-	 * @throws ParseException
-	 */
-	@ResponseBody
-	private List<Map<String, Object>> createData() throws ParseException {
-		List<Machine> machines = bizMachine.findMachine();
-		int i = 0;
-		for (Machine machine : machines) {
+		int i=0;
+		List<Map<String, Object>> list= new LinkedList<Map<String,Object>>();
+		for (Machine machine:machines) {
 			Map<String, Object> map2 = new HashMap<>();
 			List<Object> value = new ArrayList<>();
 			value.add(i);
-			map2.put("name",StatusEnum.getValue(machine.getStatus()));
 			value.add(DateUtils.DateToString(machine.getStartTime(),"yyyy-MM-dd HH:mm:ss"));
 			value.add(DateUtils.DateToString(machine.getEndTime(),"yyyy-MM-dd HH:mm:ss"));
 			long timeDiff=0;
 			String color=null;
 			if(machine.getStatus().equals(STATUS[0])){
 				color=COLOR[0];
-				timeDiff=machine.getrTimes();
 			}else if(machine.getStatus().equals(STATUS[1])){
 				color=COLOR[1];
-				timeDiff=machine.getpTimes();
 			}else if(machine.getStatus().equals(STATUS[2])){
 				color=COLOR[2];
-				timeDiff=machine.getaTimes();
 			}else if(machine.getStatus().equals(STATUS[3])){
 				color=COLOR[3];
-				timeDiff=machine.getwTimes();
 			}else{
 				color=COLOR[4];
-				timeDiff=machine.getwTimes();
 			}
+			timeDiff=DateUtils.getDatePoor(machine.getStartTime(), machine.getEndTime(), "min");
 			value.add(Math.abs(timeDiff));
 			map2.put("value", value);
 			Map<String, Object> normalMap =new HashMap<>();
 			normalMap.put("color",color);
 			map2.put("itemStyle",normalMap);
-			timeLineData.add(map2);
+			list.add(new JSONObject(map2));
 			i++;
 		}
-		return timeLineData;
+		
+		return list;
 	}
 
 	/**
