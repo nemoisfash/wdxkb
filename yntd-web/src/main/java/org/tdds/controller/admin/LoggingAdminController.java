@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import javax.enterprise.inject.New;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -174,6 +175,26 @@ public class LoggingAdminController extends BaseWorkbenchController {
 		MonitoringList montior = bizMonitoring.findByName(name);
 		montior.setMachineSignal(StatusEnum.getValue(montior.getMachineSignal()));
 		return montior;
+	}
+	
+	@RequestMapping(value = "/{type}/sumTimeDiff", method = RequestMethod.GET)
+	@ResponseBody
+	public Object sumTimeDiff(@PathVariable String type, HttpServletRequest request,
+			HttpServletResponse response) {
+		QueryFilters filters = FiltersUtils.getQueryFilters(request, response, uuid + type);
+		Double num =0.0;
+		if(type.equalsIgnoreCase(STATUS[0])) {
+			num=bizRunning.findTimeDiffByFilters(filters);
+		}else if(type.equalsIgnoreCase(STATUS[1])) {
+			num=bizPowerOff.findTimeDiffByFilters(filters);
+		}else if(type.equalsIgnoreCase(STATUS[2])) {
+			num=bizWarning.findTimeDiffByFilters(filters);
+		}else{
+			num=bizWaiting.findTimeDiffByFilters(filters);
+		}
+		 Map<String, Object> map = new HashMap<String, Object>();
+		 map.put("timediff", num);
+		return map;
 	}
 
 	@RequestMapping(value = "/line", method = RequestMethod.GET)

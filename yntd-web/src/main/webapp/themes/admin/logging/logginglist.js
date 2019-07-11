@@ -15,16 +15,18 @@ app.controller('myCtrl', function($scope,$http,$interval) {
 		var totalPages=res.data.entities.totalPages;
 		var number=res.data.number;
 		pagination(totalElements,totalPages,number)
-		sumTimeDiff(res.data.entities.content)
+		sumTimeDiff(type)
 })
 
-function sumTimeDiff(obj){
-		var timeDiff=[]
-		var i=0;
-		$.each(obj,function(){
-			i+=this.timediff;
+function sumTimeDiff(type){
+		$http({
+			method: 'GET',
+			url:"/admin/logging/"+type+"/sumTimeDiff.json",
+			cache:false,
+			async:false
+		}).then(function(res){
+			 $scope.sumTimeDiff=res.data.timediff;
 		})
-		$scope.sumTimeDiff=i;
 }
 
 function pagination(totalElements,totalPages,number){

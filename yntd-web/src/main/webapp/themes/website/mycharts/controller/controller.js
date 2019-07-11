@@ -70,8 +70,8 @@ $interval(function(){
 		restrict:'A',
 		link:function(scope,elem,attrs){
 			var myChart = echarts.init(elem.get(0));
-/*			myChart.showLoading('default', {text:'数据统计中...',maskColor: '#07112a61',textColor: '#36b0f3',});
-*/		function renderItem(params, api) {
+			myChart.showLoading('default', {text:'数据统计中...',maskColor: '#07112a61',textColor: '#36b0f3',});
+		function renderItem(params, api) {
 		    var categoryIndex = api.value(0);
 		    var start = api.coord([api.value(1), categoryIndex]);
 		    var end = api.coord([api.value(2), categoryIndex]);
@@ -185,6 +185,7 @@ $interval(function(){
 				cache:false,
 				async:false
 			}).then(function(res){
+				myChart.hideLoading();
 				setSeriesData();
 				option.yAxis.data=res.data.stringList;
 			})
@@ -200,8 +201,12 @@ $interval(function(){
 					option.series[0].data=c;
 					$timeout(function(){
 						setSeriesData();
-						myChart.setOption(option,true);
-					},3000)
+						myChart.setOption(option,{
+							    notMerge:true,
+							    lazyUpdate:false,
+							    silent:false
+						});
+					},10000*6)
 				})
 			}
 		}

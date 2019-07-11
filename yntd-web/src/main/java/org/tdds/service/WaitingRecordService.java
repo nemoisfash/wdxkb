@@ -25,4 +25,6 @@ public interface WaitingRecordService {
 	Double findWaittingData(Map<String, Object> map);
 
 	Map<String, Object> findAllRecordsByMachineId(Long id);
+
+	Double findTimeDiffByFilters(QueryFilters filters);
 }

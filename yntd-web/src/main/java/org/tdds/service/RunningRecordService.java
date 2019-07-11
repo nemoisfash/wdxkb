@@ -28,4 +28,6 @@ public interface RunningRecordService {
 	Double findRankData(Long machineId);
 
 	Map<String, Object> findAllRecordsByMachineId(Long id);
+
+	Double findTimeDiffByFilters(QueryFilters filters);
 }

@@ -21,4 +21,6 @@ public interface RunningRecordMapper extends DynaMapper<RunningRecord> {
 
 	Map<String, Object> findAllRecordsByMachineId(@Param(value="machineId") Long machineId);
 
+	Double findTimeDiffByFilters(@Param(value="filter")Map<String, Object> filter);
+
 }

@@ -25,4 +25,6 @@ public interface PowerOffRecordService {
 	Double findPoweroffData(Map<String, Object> map);
 
 	Map<String, Object> findAllRecordsByMachineId(Long id);
+
+	Double findTimeDiffByFilters(QueryFilters filters);
 }

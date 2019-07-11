@@ -225,8 +225,8 @@ public class MachineController extends BasePortalController {
 			Map<String, Object> map2 = new HashMap<>();
 			List<Object> value = new ArrayList<>();
 			value.add(i);
-			value.add(DateUtils.DateToString(machine.getStartTime(),"yyyy-MM-dd HH:mm:ss"));
-			value.add(DateUtils.DateToString(machine.getEndTime(),"yyyy-MM-dd HH:mm:ss"));
+			value.add(DateUtils.DateToString(machine.getStartTime(),"yyyy-MM-dd HH:mm"));
+			value.add(DateUtils.DateToString(machine.getEndTime(),"yyyy-MM-dd HH:mm"));
 			long timeDiff=0;
 			String color=null;
 			if(machine.getStatus().equals(STATUS[0])){

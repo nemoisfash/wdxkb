@@ -15,7 +15,6 @@ import org.springframework.util.StringUtils;
 import org.tdds.entity.Machine;
 import org.tdds.entity.MonitoringList;
 import org.tdds.entity.WaitingRecord;
-import org.tdds.entity.WarningRecord;
 import org.tdds.mapper.WaitingRecordMapper;
 import org.tdds.service.WaitingRecordService;
 
@@ -148,5 +147,31 @@ public class WaitingRecordServiceImpl implements WaitingRecordService{
 	public  Map<String, Object> findAllRecordsByMachineId(Long id) {
 		// TODO Auto-generated method stub
 		return daoWaitingRecord.findAllRecordsByMachineId(id);
+	}
+	@Override
+	public Double findTimeDiffByFilters(QueryFilters filters) {
+		Map<String, Object> filter = new HashMap<>();
+		if(StringUtils.hasText(Objects.toString(filters.get("recordTime"), null))){
+			String recordTime = Objects.toString(filters.get("recordTime"), null);
+			if(recordTime.indexOf("&")>-1){
+				String startTime=recordTime.split("&")[0];
+				String endTime=recordTime.split("&")[1];
+				filter.put("startTime", startTime);
+				filter.put("endTime", endTime);
+			} 
+			if(NumberUtils.isNumber(recordTime)){
+				Integer num=Integer.valueOf(recordTime);
+				Map<String, String> map = getTime(num);
+				filter.put("startTime",map.get("startTime"));
+				filter.put("endTime",map.get("endTime"));
+			}
+		}if(StringUtils.hasText(Objects.toString(filters.get("timediff"), null))){
+			String timediff=Objects.toString(filters.get("timediff"));
+			filter.put("timediff",Integer.valueOf(timediff));
+		 }
+		if(StringUtils.hasText(Objects.toString(filters.get("machineName"), null))){
+			filter.put("machineName", Objects.toString(filters.get("machineName")));
+		 }
+		return daoWaitingRecord.findTimeDiffByFilters(filter);
 	}
 }
