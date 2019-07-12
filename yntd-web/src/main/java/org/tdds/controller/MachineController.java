@@ -23,9 +23,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.tdds.entity.Machine;
 import org.tdds.entity.MonitoringList;
+import org.tdds.entity.Report;
 import org.tdds.service.LogRecordService;
 import org.tdds.service.MachineService;
 import org.tdds.service.MonitoringService;
+import org.tdds.service.ReportService;
 import org.tdds.service.RunningRecordService;
 import org.tdds.service.WarningRecordService;
 
@@ -53,6 +55,9 @@ public class MachineController extends BasePortalController {
 
 	@Autowired
 	private LogRecordService bizLogRecord;
+	
+	@Autowired
+	private ReportService bizLogReport;
 	
 	private static List<String> NAMES = new ArrayList<>();
 	
@@ -208,6 +213,41 @@ public class MachineController extends BasePortalController {
 		 return  NAMES;
 	}
 	
+	@RequestMapping(value = "/reportList", method = RequestMethod.GET)
+	@ResponseBody
+	public Object reportList(HttpServletRequest request, HttpServletResponse response){
+		List<Report> reportsList = bizLogReport.findAll();
+		List<Map<String, Object>> entities= new ArrayList<>();
+		for(Report report:reportsList) {
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("machineName",report.getMachineName());
+			map.put("plannedOtime", report.getPlannedOtime());
+			map.put("actualOtime", report.getActualOtime());
+			map.put("timeOee", createOee(report.getPlannedOtime(),report.getActualOtime()));
+			map.put("plannedCapacity", report.getPlannedCapacity());
+			map.put("actualCapacity", report.getActualCapacity());
+			map.put("performanceOee", createOee(report.getPlannedCapacity(),report.getActualCapacity()));
+			map.put("goodNumber", report.getGoodNumber());
+			map.put("defectiveNumber", report.getDefectiveNumber());
+			/*
+			 * map.put("goodYield",
+			 * createYield(report.getPlannedCapacity(),report.getActualCapacity()));
+			 */
+			entities.add(map);
+		}
+		return entities;
+		
+	}
+	
+	private String createOee(Integer dividend, Integer divisor) {
+		Double numDouble =0.00;
+		if(dividend!=0) {
+			numDouble=Double.valueOf(divisor/dividend);
+		}
+		
+		return numDouble*100+"%";
+	}
+
 	/**
 	 * 
 	 * @param request

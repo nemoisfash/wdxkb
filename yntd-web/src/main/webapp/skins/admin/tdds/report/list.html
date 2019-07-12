@@ -1,0 +1,66 @@
+<#assign modulePath="${adminPath}/report"/>
+<@layout.override name="body">
+<style>
+.input-form {
+    border-radius: 0;
+    box-shadow: none;
+    border-color:#d2d6de00;
+}
+</style>
+<div class="col-xs-12" ng-app="myApp" ng-controller="myCtrl">
+<div class="box">
+		<div class="box-header">
+		  <h3 class="box-title">报表统计</h3>
+		</div>
+		<div class="box-body">
+			<div id="example1_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
+			<div class="row" >
+				<div class="col-sm-12">
+					<table id="example1" class="table table-bordered" role="grid" aria-describedby="example1_info">
+					<thead>
+						<tr role="row">
+							<th rowspan="1" colspan="1" style="width:100px;">设备名称</th>
+							<th rowspan="1" colspan="1" style="width:100px;">计划作业时间</th>
+							<th rowspan="1" colspan="1" style="width:100px;">实际作业时间</th>
+							<th rowspan="1" colspan="1" style="width:50px;">计划产能</th>
+							<th rowspan="1" colspan="1" style="width:100px;">实际产能</th>
+							<th rowspan="1" colspan="1" style="width:50px;">良品数量</th>
+							<th rowspan="1" colspan="1" style="width:100px;">不良品数量</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr role="row" class="odd" ng-repeat="item in items" id="{{item.id}}" submit-Input>
+						  <td>{{item.machineName}}</td>
+						  <td>
+						  <input type="number" class="input-form" id="plannedOtime" name="plannedOtime" value="{{item.plannedOtime}}"/>
+						  </td>
+						  <td>
+						  <input type="number"  class="input-form" id="actualOtime" name="actualOtime" value="{{item.actualOtime}}" />
+						  </td>
+						  <td>
+						  <input type="number"  class="input-form" id="plannedCapacity" name="plannedCapacity" value="{{item.plannedCapacity}}"/>
+						  </td>
+						  <td>
+						  <input type="number"  class="input-form" id="actualCapacity" name="actualCapacity" value="{{item.actualCapacity}}"/>
+						  </td>
+						  <td>
+						  <input type="number"  class="input-form" id="goodNumber" name="goodNumber" value="{{item.goodNumber}}"/>
+						  </td>
+						  <td>
+						  <input type="number"  class="input-form" id="defectiveNumber" name="defectiveNumber" value="{{item.defectiveNumber}}"/>
+						  </td>
+						</tr>
+					</tbody>
+				</table>
+      	 	</div>
+			</div>
+			</div>
+			</div>
+		</div>
+</div>
+</@layout.override>
+<@layout.override name="js">
+<@layout.super/>
+<script src="/themes/admin/report/report.js"></script>
+</@layout.override>
+<@layout.extends name="../../_layouts/bootstrap1.html"/>

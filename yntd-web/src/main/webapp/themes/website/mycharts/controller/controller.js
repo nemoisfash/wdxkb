@@ -2,24 +2,33 @@ var app = angular.module('myApp', []);
 app.controller('myCtrl', function($scope,$http,$interval) {
 $interval(function(){
 	$http({
-			method: 'GET',
-			url:"/member/datalist.json",
-			cache:false,
-			async:false}).then(function(res){
-			$scope.items=res.data.resault;
-			$scope.switchStatus(res.data.resault);
-		})
-	},1000)
+		method: 'GET',
+		url:"/member/datalist.json",
+		cache:false,
+		async:false}).then(function(res){
+		$scope.items=res.data.resault;
+		$scope.switchStatus(res.data.resault);
+	})
+},1000)
+
+$http({
+	method: 'GET',
+	url:"/member/reportList.json",
+	cache:false,
+	async:false}).then(function(res){
+	$scope.reports=res.data.resault;
+})
+
 	
-	$scope.switchStatus=function(obj){
-		$.each(obj,function(){
-			 var status=this.machineSignal;
-			 var machineName=this.machineName;
-			 $("#"+machineName+"_m").attr("class","")
-			 $("#"+machineName+"_m").text(machineName);
-			 $("#"+machineName+"_m").addClass("circle"+" "+"circle-"+status.toLowerCase()+" "+"headerBox");
-		})
-	}
+$scope.switchStatus=function(obj){
+	$.each(obj,function(){
+		 var status=this.machineSignal;
+		 var machineName=this.machineName;
+		 $("#"+machineName+"_m").attr("class","")
+		 $("#"+machineName+"_m").text(machineName);
+		 $("#"+machineName+"_m").addClass("circle"+" "+"circle-"+status.toLowerCase()+" "+"headerBox");
+	})
+}
 
 }).directive('myClock',function($interval,$http){
 	return{
