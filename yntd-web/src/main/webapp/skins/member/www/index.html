@@ -110,45 +110,45 @@
 					<div class="nav-tabs-custom" style="background-color:#081639a1;height:17.625rem;margin-top:20px;">
 						<span class="label label-default">设备生产计划与执行数据</span>
 					 	<div style="width:100%;height:100%;margin-top:0;overflow:hidden;">
-						 <div class="col-md-3" style="height:100%" ng-repeat="item in items">
+						 <div class="col-md-3" style="height:100%" ng-repeat="report in reports">
 				          <div class="box box-default" style="overflow:hidden;margin-top:6px;">
 				            <div class="box-header with-border">
 				              <h4 class="box-title" style="color:#f2f2f3;margin-bottom:1px;font-size:14px">
-				               {{item.machineName}} <span>OEE:80%</span>
+				               {{report.machineName}}
 				              </h4>
 				            </div>
 				            <div class="box-body">
 				              <div class="alert" style="height:46px">
 			              		<h6 style="color:#f2f2f3;margin-top:-9px;margin-bottom:1px;">
-				               		计划作业时间:30h
+				               		计划作业时间:{{report.plannedOtime}}
 				              	</h6>
 			              		<h6 style="color:#f2f2f3;margin-top:1px;margin-bottom:1px;">
-				               		实际作业时间:25h
+				               		实际作业时间:{{report.plannedOtime}}
 				              	</h6>
 			              		<h6 style="color:#f2f2f3;margin-top:1px;margin-bottom:1px;">
-				               		时间稼动率:30%
+				               		时间稼动率:{{report.timeOee}}
 				              	</h6>
 				              </div>
 				              <div class="alert" style="height:46px">
 				              	<h6 style="color:#f2f2f3;margin-top:-9px;margin-bottom:1px;">
-				               		计划完成数量:3000
+				               		计划完成数量:{{report.plannedCapacity}}
 				              	</h6>
 			              		<h6 style="color:#f2f2f3;margin-top:1px;margin-bottom:1px;">
-				               		实际完成数量:2500
+				               		实际完成数量:{{report.actualCapacity}}
 				              	</h6>
 			              		<h6 style="color:#f2f2f3;margin-top:1px;margin-bottom:1px;">
-				               		性能稼动率:75%
+				               		性能稼动率:{{report.performanceOee}}
 				              	</h6>
 				              </div>
 				              <div class="alert" style="height:46px">
 				              	 <h6 style="color:#f2f2f3;margin-top:-9px;margin-bottom:1px;">
-				               		完成数量:1000
+				               		加工数量:{{report.goodNumber}}
 				              	</h6>
 			              		<h6 style="color:#f2f2f3;margin-top:1px;margin-bottom:1px;">
-				               		良品数量:999
+				               		良品数量:{{report.defectiveNumber}}
 				              	</h6>
 			              		<h6 style="color:#f2f2f3;margin-top:1px;margin-bottom:1px;">
-				               		良品率:99.9%
+				               		良品率:{{report.goodYield}}
 				              	</h6>
 				              </div>
 				            </div>

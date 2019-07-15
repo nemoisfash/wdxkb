@@ -55,16 +55,16 @@ public class MachineController extends BasePortalController {
 
 	@Autowired
 	private LogRecordService bizLogRecord;
-	
+
 	@Autowired
 	private ReportService bizLogReport;
-	
+
 	private static List<String> NAMES = new ArrayList<>();
-	
+
 	// 西部大森manual=running
-	private static final String[] STATUS = { "RUNNING", "POWEROFF", "ALARM", "WAITING" ,"MANUAL"};
-	
-	private static final String[] COLOR = {"#12b07b","#a6a5a5","#e65a65","#feb501","#feb501"};
+	private static final String[] STATUS = { "RUNNING", "POWEROFF", "ALARM", "WAITING", "MANUAL" };
+
+	private static final String[] COLOR = { "#12b07b", "#a6a5a5", "#e65a65", "#feb501", "#feb501" };
 
 	List<Map<String, Object>> statuslist = new ArrayList<>();
 
@@ -72,23 +72,23 @@ public class MachineController extends BasePortalController {
 	@RequestMapping(value = "datalist", method = RequestMethod.GET)
 	public Object loging(HttpServletRequest request, HttpServletResponse res) {
 		Boolean success = true;
-		List<MonitoringList> entities = bizMonitoring.findAll();		
-			NAMES.clear();
+		List<MonitoringList> entities = bizMonitoring.findAll();
+		NAMES.clear();
 		for (MonitoringList monitoringList : entities) {
-			 NAMES.add(monitoringList.getMachineName());
-			 Machine entity = bizMachine.findMachineByName(monitoringList.getMachineName());
-			 if(entity == null){
-				 bizMachine.insert(monitoringList);
-			 }else{
-				 bizMachine.update(monitoringList, entity);
-			 }
-			 monitoringList.setMachineName(entity.getCode());
+			NAMES.add(monitoringList.getMachineName());
+			Machine entity = bizMachine.findMachineByName(monitoringList.getMachineName());
+			if (entity == null) {
+				bizMachine.insert(monitoringList);
+			} else {
+				bizMachine.update(monitoringList, entity);
+			}
+			monitoringList.setMachineName(entity.getCode());
 		}
 		Map<String, Object> map = new HashMap<>();
 		map.put("resault", entities);
 		return map;
 	}
-	
+
 	@RequestMapping(value = "alermMessage", method = RequestMethod.GET)
 	@ResponseBody
 	private Object alermMessage() {
@@ -161,7 +161,7 @@ public class MachineController extends BasePortalController {
 		for (Machine machine : machines) {
 			List<Map<String, Object>> entities = new LinkedList<>();
 			for (String status : STATUS) {
-				if(!status.equalsIgnoreCase(STATUS[4])) {
+				if (!status.equalsIgnoreCase(STATUS[4])) {
 					Map<String, Object> entity = new HashMap<>();
 					Double num = bizLogRecord.findData(null, status, machine.getId());
 					entity.put("value", num);
@@ -207,45 +207,49 @@ public class MachineController extends BasePortalController {
 		});
 		return list;
 	}
-	
+
 	@RequestMapping(value = "/timeLine/categories", method = RequestMethod.GET)
-	public Object categories(HttpServletRequest request, HttpServletResponse response){
-		 return  NAMES;
+	public Object categories(HttpServletRequest request, HttpServletResponse response) {
+		return NAMES;
 	}
-	
+
 	@RequestMapping(value = "/reportList", method = RequestMethod.GET)
 	@ResponseBody
-	public Object reportList(HttpServletRequest request, HttpServletResponse response){
+	public Object reportList(HttpServletRequest request, HttpServletResponse response) {
 		List<Report> reportsList = bizLogReport.findAll();
-		List<Map<String, Object>> entities= new ArrayList<>();
-		for(Report report:reportsList) {
+		List<Map<String, Object>> entities = new ArrayList<>();
+		for (Report report : reportsList) {
 			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("machineName",report.getMachineName());
-			map.put("plannedOtime", report.getPlannedOtime());
-			map.put("actualOtime", report.getActualOtime());
-			map.put("timeOee", createOee(report.getPlannedOtime(),report.getActualOtime()));
+			map.put("machineName", report.getMachineName());
+			map.put("plannedOtime", report.getPlannedOtime()+"H");
+			map.put("actualOtime", report.getActualOtime()+"H");
+			map.put("timeOee", createOee(report.getPlannedOtime(), report.getActualOtime()));
 			map.put("plannedCapacity", report.getPlannedCapacity());
 			map.put("actualCapacity", report.getActualCapacity());
-			map.put("performanceOee", createOee(report.getPlannedCapacity(),report.getActualCapacity()));
+			map.put("performanceOee", createOee(report.getPlannedCapacity(), report.getActualCapacity()));
+			map.put("number", report.getNumber());
 			map.put("goodNumber", report.getGoodNumber());
-			map.put("defectiveNumber", report.getDefectiveNumber());
-			/*
-			 * map.put("goodYield",
-			 * createYield(report.getPlannedCapacity(),report.getActualCapacity()));
-			 */
+			map.put("goodYield",createOee(report.getNumber(),report.getGoodNumber()));
 			entities.add(map);
 		}
 		return entities;
-		
 	}
-	
+
 	private String createOee(Integer dividend, Integer divisor) {
-		Double numDouble =0.00;
-		if(dividend!=0) {
-			numDouble=Double.valueOf(divisor/dividend);
+		Double numDouble = 0.00;
+		if (dividend != 0) {
+			numDouble = Double.valueOf(divisor / dividend);
 		}
-		
-		return numDouble*100+"%";
+		return numDouble * 100 + "%";
+	}
+
+	private String createYield(Integer good, Integer defective) {
+		Integer sumInteger = good + defective;
+		String goodYield = null;
+		if (sumInteger != 0) {
+			goodYield = 1-(good / sumInteger)* 100 + "%";
+		}
+		return goodYield;
 	}
 
 	/**
@@ -259,45 +263,44 @@ public class MachineController extends BasePortalController {
 	@ResponseBody
 	public Object timer(HttpServletRequest request, HttpServletResponse response) throws ParseException {
 		List<Machine> machines = bizMachine.findMachine();
-		int i=0;
-		List<Map<String, Object>> list= new LinkedList<Map<String,Object>>();
-		for (Machine machine:machines) {
+		int i = 0;
+		List<Map<String, Object>> list = new LinkedList<Map<String, Object>>();
+		for (Machine machine : machines) {
 			Map<String, Object> map2 = new HashMap<>();
 			List<Object> value = new ArrayList<>();
 			value.add(i);
-			value.add(DateUtils.DateToString(machine.getStartTime(),"yyyy-MM-dd HH:mm"));
-			value.add(DateUtils.DateToString(machine.getEndTime(),"yyyy-MM-dd HH:mm"));
-			long timeDiff=0;
-			String color=null;
-			if(machine.getStatus().equals(STATUS[0])){
-				color=COLOR[0];
-			}else if(machine.getStatus().equals(STATUS[1])){
-				color=COLOR[1];
-			}else if(machine.getStatus().equals(STATUS[2])){
-				color=COLOR[2];
-			}else if(machine.getStatus().equals(STATUS[3])){
-				color=COLOR[3];
-			}else{
-				color=COLOR[4];
+			value.add(DateUtils.DateToString(machine.getStartTime(), "yyyy-MM-dd HH:mm"));
+			value.add(DateUtils.DateToString(machine.getEndTime(), "yyyy-MM-dd HH:mm"));
+			long timeDiff = 0;
+			String color = null;
+			if (machine.getStatus().equals(STATUS[0])) {
+				color = COLOR[0];
+			} else if (machine.getStatus().equals(STATUS[1])) {
+				color = COLOR[1];
+			} else if (machine.getStatus().equals(STATUS[2])) {
+				color = COLOR[2];
+			} else if (machine.getStatus().equals(STATUS[3])) {
+				color = COLOR[3];
+			} else {
+				color = COLOR[4];
 			}
-			timeDiff=DateUtils.getDatePoor(machine.getStartTime(), machine.getEndTime(), "min");
+			timeDiff = DateUtils.getDatePoor(machine.getStartTime(), machine.getEndTime(), "min");
 			value.add(Math.abs(timeDiff));
 			map2.put("value", value);
-			Map<String, Object> normalMap =new HashMap<>();
-			normalMap.put("color",color);
-			map2.put("itemStyle",normalMap);
+			Map<String, Object> normalMap = new HashMap<>();
+			normalMap.put("color", color);
+			map2.put("itemStyle", normalMap);
 			list.add(new JSONObject(map2));
 			i++;
 		}
-		
+
 		return list;
 	}
 
 	/**
 	 * @param running:运行
 	 * @param waitting:等待
-	 * @param warning:报警
-	 *            status=1:停机 status=0:运行
+	 * @param warning:报警  status=1:停机 status=0:运行
 	 * @param ip:设备ip
 	 * @param port:端口号
 	 * @return io 设备采集数据状态

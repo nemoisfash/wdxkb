@@ -32,11 +32,11 @@ public class Report {
 	@Column(name = "actual_capacity")
 	private Integer actualCapacity;
 	
-	@Column(name = "good_number")
-	private Integer goodNumber;
+	@Column(name = "number")
+	private Integer number;
 	
-	@Column(name = "defective_number")
-	private Integer defectiveNumber ;
+	@Column(name = "good_number")
+	private Integer goodNumber ;
 
 	@Column(name = "machine_name")
 	private String machineName;
@@ -105,12 +105,11 @@ public class Report {
 		this.goodNumber = goodNumber;
 	}
 
-	public Integer getDefectiveNumber() {
-		return defectiveNumber;
+	public Integer getNumber() {
+		return number;
 	}
 
-	public void setDefectiveNumber(Integer defectiveNumber) {
-		this.defectiveNumber = defectiveNumber;
+	public void setNumber(Integer number) {
+		this.number = number;
 	}
-	
 }

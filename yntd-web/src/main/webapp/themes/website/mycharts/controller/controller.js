@@ -9,16 +9,17 @@ $interval(function(){
 		$scope.items=res.data.resault;
 		$scope.switchStatus(res.data.resault);
 	})
-},1000)
+},3000)
 
-$http({
-	method: 'GET',
-	url:"/member/reportList.json",
-	cache:false,
-	async:false}).then(function(res){
-	$scope.reports=res.data.resault;
-})
-
+$interval(function(){
+	$http({
+		method: 'GET',
+		url:"/member/reportList.json",
+		cache:false,
+		async:false}).then(function(res){
+		$scope.reports=res.data;
+	})
+},10000)
 	
 $scope.switchStatus=function(obj){
 	$.each(obj,function(){
