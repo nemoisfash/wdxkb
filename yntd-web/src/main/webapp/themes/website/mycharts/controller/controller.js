@@ -10,16 +10,13 @@ $interval(function(){
 		$scope.switchStatus(res.data.resault);
 	})
 },3000)
-
-$interval(function(){
-	$http({
-		method: 'GET',
-		url:"/member/reportList.json",
-		cache:false,
-		async:false}).then(function(res){
-		$scope.reports=res.data;
-	})
-},10000)
+$http({
+	method: 'GET',
+	url:"/member/reportList.json",
+	cache:false,
+	async:false}).then(function(res){
+	$scope.reports=res.data;
+})
 	
 $scope.switchStatus=function(obj){
 	$.each(obj,function(){
@@ -59,20 +56,20 @@ $scope.switchStatus=function(obj){
 	return{
 		restrict:'A',
 		link:function(scope,elem,attrs){
-			var maxLength=3;
-			var timer =6000*5;
-			elem.ready(function(){
-			    if (elem.children().length < maxLength) {
-			    	elem.append(elem.children().clone());
+			scope.$on('repeatFinished', function (event) {
+			var oUl =  elem.find("ul")[0];
+			var aLi = $(oUl).find("li");
+		    oUl.innerHTML += oUl.innerHTML;
+		    oUl.style.width = aLi.eq(0).offsetWidth * aLi.length + 'px';
+			    var speed = 2;
+			    function move(){
+			        if (oUl.offsetLeft > 0) {
+			            oUl.style.left = -oUl.offsetWidth / 2 + 'px';
+			        }
+			        oUl.style.left = oUl.offsetLeft + speed + 'px';
 			    }
-			    $interval(function(){
-			    	var fchild=elem.children(":first");
-			    	var left=fchild.width();
-			    	fchild.animate({ "marginLeft": (-1 * left) + "px" },2000, function () {
-						$(this).css("margin-left", "auto").appendTo(elem);
-			        });
-			    },timer);
-			})
+					timer = setInterval(move,30);
+			});			    		
 		}
 	}
 }).directive('timeLine',function($interval,$http,$timeout){
@@ -222,7 +219,28 @@ $scope.switchStatus=function(obj){
 		}
 	}
 }).directive('myPies',function(){
-	var pies = new MyPies();
+	return{
+		restrict:'A',
+		link:function(){
+			var pies = new MyPies();
+		}
+	}
 }).directive('rankingRunning',function(){
-	var ranking = new Ranking();
+	return{
+		restrict:'A',
+		link:function(){
+			var ranking = new Ranking();
+		}
+	}
+}).directive('ngRepeatFinished',function($timeout){
+	return{
+		restrict:'A',
+		link:function(scope,elem,attrs){
+			if(scope.$last==true){
+				$timeout(function() {
+                    scope.$emit('repeatFinished');
+                });
+			}
+		}
+	}
 })

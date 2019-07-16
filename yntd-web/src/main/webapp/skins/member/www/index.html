@@ -16,6 +16,14 @@
 		<link href="/assets/fonts/font-awesome4.7.0/font-awesome.css" rel="stylesheet" type="text/css" media="all" />
   		<link href="/assets/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet" type="text/css" media="all" />
 		<link href="/themes/website/css/index.css" rel="stylesheet" type="text/css" media="all" />
+		<style type="text/css">
+		.nav>li>a {
+			position: relative;
+			display: block;
+			padding: 1px 2px;
+			border:1px solid #337aab;  
+		}
+		</style>
 	</head>
 	<body ng-app="myApp" ng-controller="myCtrl">
 		<section class="header" style="background-color:#06091000;height:8%;margin-top:10px;">
@@ -107,56 +115,68 @@
 							</div>
 						</div>
 					</div>
-					<div class="nav-tabs-custom" style="background-color:#081639a1;height:17.625rem;margin-top:20px;">
+					<div class="nav-tabs-custom" style="background-color:#081639a1;height:25rem;margin-top:20px;overflow: hidden;">
 						<span class="label label-default">设备生产计划与执行数据</span>
-					 	<div style="width:100%;height:100%;margin-top:0;overflow:hidden;">
-						 <div class="col-md-3" style="height:100%" ng-repeat="report in reports">
-				          <div class="box box-default" style="overflow:hidden;margin-top:6px;">
-				            <div class="box-header with-border">
-				              <h4 class="box-title" style="color:#f2f2f3;margin-bottom:1px;font-size:14px">
-				               {{report.machineName}}
-				              </h4>
-				            </div>
-				            <div class="box-body">
-				              <div class="alert" style="height:46px">
-			              		<h6 style="color:#f2f2f3;margin-top:-9px;margin-bottom:1px;">
-				               		计划作业时间:{{report.plannedOtime}}
-				              	</h6>
-			              		<h6 style="color:#f2f2f3;margin-top:1px;margin-bottom:1px;">
-				               		实际作业时间:{{report.actualOtime}}
-				              	</h6> 
-			              		<h6 style="color:#f2f2f3;margin-top:1px;margin-bottom:1px;">
-				               		时间稼动率:{{report.timeOee}}
-				              	</h6>
-				              </div>
-				              <div class="alert" style="height:46px">
-				              	<h6 style="color:#f2f2f3;margin-top:-9px;margin-bottom:1px;">
-				               		计划完成数量:{{report.plannedCapacity}}
-				              	</h6>
-			              		<h6 style="color:#f2f2f3;margin-top:1px;margin-bottom:1px;">
-				               		实际完成数量:{{report.actualCapacity}}
-				              	</h6>
-			              		<h6 style="color:#f2f2f3;margin-top:1px;margin-bottom:1px;">
-				               		性能稼动率:{{report.performanceOee}}
-				              	</h6>
-				              </div>
-				              <div class="alert" style="height:46px">
-				              	 <h6 style="color:#f2f2f3;margin-top:-9px;margin-bottom:1px;">
-				               		加工数量:{{report.number}}
-				              	</h6>
-			              		<h6 style="color:#f2f2f3;margin-top:1px;margin-bottom:1px;">
-				               		良品数量:{{report.goodNumber}}
-				              	</h6>
-			              		<h6 style="color:#f2f2f3;margin-top:1px;margin-bottom:1px;">
-				               		良品率:{{report.goodYield}}
-				              	</h6>
-				              </div>
-				            </div>
-				          </div>
-     					</div>
+						<div style="width:100%;height:86%;margin-top:15px;overflow:hidden;position:relative;" my-Scoller>
+						    <ul class="nav" style="width:1440px;height:100%;margin:0;padding:0;position:absolute;top:0;left:0;">
+							      <li style="border-radius:5px;background-color:#081f4900;display:inline-block;width:15%;height:100%;margin-left:10px" ng-repeat="report in reports" ng-Repeat-Finished>
+								      	<div class="box box-solid">
+								              <h3 class="box-title" style="margin-top: 0px;margin-bottom:0px;color:#337aab">{{report.machineName}}</h3>
+								            <div class="box-body no-padding">
+								              <ul class="nav nav-pills nav-stacked">
+								                <li>
+								                	<a>
+								                		计划作业时间:{{report.plannedOtime}}
+								                	</a>
+							                	</li>
+								                <li>
+								                	<a>
+								                	实际作业时间:{{report.actualOtime}}
+							                		</a>
+							                	</li>
+								                <li>
+								                	<a>
+								                	 时间稼动率:{{report.timeOee}}
+							                		</a>
+						                		</li>
+								                <li>
+								                	<a>
+								                		 计划完成数量:{{report.plannedCapacity}}
+							                		</a>
+							                	</li>
+								                <li>
+								                	<a>
+								                		 实际完成数量:{{report.actualCapacity}}
+							                		</a>
+						                		</li>
+								                <li>
+								                	<a>
+								                		 性能稼动率:{{report.performanceOee}}
+							                		</a>
+								                </li>
+								                <li>
+								                	<a>
+								                		 完成数量:{{report.number}}
+								                	</a>
+							                	</li>
+								                <li>
+								                	<a href="#">
+								                		 良品数量:{{report.goodNumber}}
+								                	</a>
+							                	</li>
+								                <li>
+								                	<a href="#">
+								                		良品率:{{report.goodYield}}
+								                	</a>
+							                	</li>
+								              </ul>
+								            </div>
+	    								</div>
+							      </li>
+						    </ul>
 						</div>
 					</div>
-					<div class="nav-tabs-custom" style="background-color:#081639a1;height:24.625rem;margin-top:20px;">
+					<div class="nav-tabs-custom" style="background-color:#081639a1;height:17.625rem;margin-top:20px;">
 						<span class="label label-default">设备实时数据</span>
 						<div style="width:100%;height:100%;margin-top:15px;overflow:hidden;">
 				          <div class="box box-default col-md-3" ng-repeat="item in items">
