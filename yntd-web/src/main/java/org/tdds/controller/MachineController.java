@@ -1,5 +1,6 @@
 package org.tdds.controller;
 
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -229,27 +230,45 @@ public class MachineController extends BasePortalController {
 			map.put("performanceOee", createOee(report.getPlannedCapacity(), report.getActualCapacity()));
 			map.put("number", report.getNumber());
 			map.put("goodNumber", report.getGoodNumber());
-			map.put("goodYield",createOee(report.getNumber(),report.getGoodNumber()));
+			map.put("goodYield",createGoodYield(report.getNumber(),report.getGoodNumber()));
 			entities.add(map);
 		}
 		return entities;
 	}
 
-	private String createOee(Integer dividend, Integer divisor) {
-		Double numDouble = 0.00;
-		if (dividend != 0) {
-			numDouble = Double.valueOf(divisor / dividend);
+	private String createOee(int dividend, int divisor) {
+		String f = null;
+		if(dividend!=0) {
+			if(dividend==divisor) {
+				f="100";
+			}else {
+				Double numDouble =(Double.valueOf(divisor) / Double.valueOf(dividend))*100;
+	 			f= new DecimalFormat("#.00").format(numDouble);
+			}
+		}else {
+			f="0";
 		}
-		return numDouble * 100 + "%";
+		return  f + "%";
 	}
-
-	private String createYield(Integer good, Integer defective) {
-		Integer sumInteger = good + defective;
-		String goodYield = null;
-		if (sumInteger != 0) {
-			goodYield = 1-(good / sumInteger)* 100 + "%";
+ 
+	
+	private String createGoodYield(int dividend, int divisor) {
+		String f = null;
+		if(dividend!=0) {
+			if(dividend==divisor) {
+				f="100";
+			}else {
+				if (dividend<divisor) {
+					f="0";
+				}else {
+					Double numDouble =(1-(Double.valueOf(divisor) / Double.valueOf(dividend)))*100;
+		 			f= new DecimalFormat("#.00").format(numDouble);
+				}
+			}
+		}else {
+			f="0";
 		}
-		return goodYield;
+		return  f + "%";
 	}
 
 	/**
