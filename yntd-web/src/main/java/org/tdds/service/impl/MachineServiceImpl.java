@@ -1,6 +1,5 @@
 package org.tdds.service.impl;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +7,7 @@ import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.tdds.entity.Machine;
 import org.tdds.entity.MonitoringList;
 import org.tdds.mapper.MachineMapper;
@@ -17,10 +17,10 @@ import org.tdds.service.RunningRecordService;
 import org.tdds.service.WaitingRecordService;
 import org.tdds.service.WarningRecordService;
 
+import cn.hxz.webapp.util.DateUtils;
 import net.chenke.playweb.QueryFilters;
 import tk.mybatis.mapper.entity.Example;
 import tk.mybatis.mapper.entity.Example.Criteria;
-import org.springframework.util.StringUtils;
 
 @Service
 public class MachineServiceImpl implements MachineService {
@@ -114,7 +114,24 @@ public class MachineServiceImpl implements MachineService {
 				entity.setStartTime(date);
 				entity.setEndTime(date);
 		}else{
-			entity.setEndTime(date);
+			long timediff=DateUtils.getDatePoor(entity.getStartTime(),entity.getEndTime(), "min");
+			if(timediff >10L) {
+					if(status.equals(STATUS[0])){
+						 bizRunningRecord.insert(monitoringList, entity);
+					}else if(status.equals(STATUS[1])){
+						 bizPowerOff.insert(monitoringList, entity);
+					}else if(status.equals(STATUS[2])){
+						 bizWarningRecord.insert(monitoringList, entity);
+					}else if(status.equals(STATUS[3])){
+						 bizWaitingRecord.insert(monitoringList, entity);
+					}else {
+						 bizWaitingRecord.insert(monitoringList, entity);
+					}
+						entity.setStartTime(date);
+						entity.setEndTime(date);
+			}else {
+						entity.setEndTime(date);
+			}
 		}
 		return machineDao.updateByPrimaryKeySelective(entity);
 	}
