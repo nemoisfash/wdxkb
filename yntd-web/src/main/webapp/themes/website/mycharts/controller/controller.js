@@ -42,7 +42,7 @@ $scope.switchStatus=function(obj){
 				if(time==="0:0:0"){
 					localStorage.setItem('flash',"true");
 				}
-				if(now.getMinutes().toString()=="60"){
+				if(now.getMinutes()==10){
 					$http({
 						method: 'GET',
 						url:"/member/insertLogging.json",
