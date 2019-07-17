@@ -39,20 +39,12 @@ $scope.switchStatus=function(obj){
 			$interval(function(){
 				var now = new Date();
 				var time = now.getHours()+":"+now.getMinutes()+":"+now.getSeconds();
+				if(time==="0:0:0"){
+					localStorage.setItem('flash',"true");
+				}
 				var date = now.getFullYear()+"-"+(now.getMonth()+1)+"-"+now.getDate()+" "+time+" "+"星期"+weekArray[now.getDay()];
 				elem.text(date);
-				if(now.getHours().toString=="0"){
-					clearTimeLineData()
-				}
 			},1000)
-			
-			function clearTimeLineData(){
-				$http({
-					method: 'GET',
-					url:"/member/clearTimeLineData.json",
-					cache:false,
-					async:false})
-			}
 		}
 	}
 }).directive('myScoller',function($interval){
@@ -220,7 +212,13 @@ $scope.switchStatus=function(obj){
 					cache:false,
 					async:false
 				}).then(function(res){
-					var c=option.series[0].data.concat(res.data);
+					var flash=localStorage.getItem('flash');
+					var c;
+					if(flash=="true"){
+						c=[];
+						localStorage.setItem('flash',"false");
+					}  
+					c=option.series[0].data.concat(res.data);
 					option.series[0].data=c;
 					$timeout(function(){
 						setSeriesData();
@@ -229,7 +227,7 @@ $scope.switchStatus=function(obj){
 							    lazyUpdate:false,
 							    silent:false
 						});
-					},10000*6)
+					},10000*3)
 				})
 			}
 		}

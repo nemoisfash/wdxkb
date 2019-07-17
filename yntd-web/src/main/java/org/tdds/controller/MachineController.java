@@ -90,7 +90,7 @@ public class MachineController extends BasePortalController {
 		return map;
 	}
 
-	@RequestMapping(value = "alermMessage", method = RequestMethod.GET)
+	@RequestMapping(value = "/alermMessage", method = RequestMethod.GET)
 	@ResponseBody
 	private Object alermMessage() {
 		Map<String, Object> map = new HashMap<>();
@@ -98,7 +98,7 @@ public class MachineController extends BasePortalController {
 		map.put("resault", entities);
 		return map;
 	}
-
+	
 	/**
 	 * 每天每小时设备运行状况 一天24*60分钟
 	 * 
