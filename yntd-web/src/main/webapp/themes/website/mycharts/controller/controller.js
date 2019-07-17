@@ -10,14 +10,17 @@ $interval(function(){
 		$scope.switchStatus(res.data.resault);
 	})
 },3000)
-$http({
-	method: 'GET',
-	url:"/member/reportList.json",
-	cache:false,
-	async:false}).then(function(res){
-	$scope.reports=res.data;
-})
-	
+
+$interval(function(){
+	$http({
+		method: 'GET',
+		url:"/member/reportList.json",
+		cache:false,
+		async:false}).then(function(res){
+		$scope.reports=res.data;
+	})
+},48000)
+
 $scope.switchStatus=function(obj){
 	$.each(obj,function(){
 		 var status=this.machineSignal;
@@ -56,20 +59,33 @@ $scope.switchStatus=function(obj){
 	return{
 		restrict:'A',
 		link:function(scope,elem,attrs){
-			scope.$on('repeatFinished', function (event) {
-			var oUl =  elem.find("ul")[0];
-			var aLi = $(oUl).find("li");
-		    oUl.innerHTML += oUl.innerHTML;
-		    oUl.style.width = aLi.eq(0).offsetWidth * aLi.length + 'px';
-			    var speed = 2;
-			    function move(){
-			        if (oUl.offsetLeft > 0) {
-			            oUl.style.left = -oUl.offsetWidth / 2 + 'px';
-			        }
-			        oUl.style.left = oUl.offsetLeft + speed + 'px';
+			var maxLength=3;
+			var timer =6000*5;
+			elem.ready(function(){
+			    if (elem.children().length < maxLength) {
+			    	elem.append(elem.children().clone());
 			    }
-					timer = setInterval(move,30);
-			});			    		
+			    $interval(function(){
+			    	var fchild=elem.children(":first");
+			    	var left=fchild.width();
+			    	fchild.animate({ "marginLeft": (-1 * left) + "px" },2000, function () {
+						$(this).css("margin-left", "auto").appendTo(elem);
+			        });
+			    },timer);
+			})
+		}
+	}
+}).directive('rollUp',function($interval){
+	return{
+		restrict:'A',
+		link:function(scope,elem,attrs){
+			scope.$on('repeatFinished',function(event){
+				$interval(function(){
+					var fristTr=elem.find("tr").eq(0);
+				 	fristTr.remove(); 
+				 	elem.append(fristTr.clone(true));
+				},6000)
+			})
 		}
 	}
 }).directive('timeLine',function($interval,$http,$timeout){

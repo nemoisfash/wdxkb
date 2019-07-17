@@ -290,7 +290,6 @@ public class MachineController extends BasePortalController {
 			value.add(i);
 			value.add(DateUtils.DateToString(machine.getStartTime(), "yyyy-MM-dd HH:mm"));
 			value.add(DateUtils.DateToString(machine.getEndTime(), "yyyy-MM-dd HH:mm"));
-			long timeDiff = 0;
 			String color = null;
 			if (machine.getStatus().equals(STATUS[0])) {
 				color = COLOR[0];
@@ -303,7 +302,7 @@ public class MachineController extends BasePortalController {
 			} else {
 				color = COLOR[4];
 			}
-			timeDiff = DateUtils.getDatePoor(machine.getStartTime(), machine.getEndTime(), "min");
+			long timeDiff = DateUtils.getDatePoor(machine.getStartTime(), machine.getEndTime(), "min");
 			value.add(Math.abs(timeDiff));
 			map2.put("value", value);
 			Map<String, Object> normalMap = new HashMap<>();

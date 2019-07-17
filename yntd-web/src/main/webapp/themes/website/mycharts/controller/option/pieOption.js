@@ -30,6 +30,7 @@ var optionPie = {
 		            name:'',
 		            type:'pie',
 		            radius: ['55%', '70%'],
+		         /*   center : ['50%', '30%']*/
 		            avoidLabelOverlap: false,
 		            clockwise: true, //饼图的扇区是否是顺时针排布
 		            minAngle:14,
