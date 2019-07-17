@@ -42,6 +42,13 @@ $scope.switchStatus=function(obj){
 				if(time==="0:0:0"){
 					localStorage.setItem('flash',"true");
 				}
+				if(now.getMinutes().toString()=="60"){
+					$http({
+						method: 'GET',
+						url:"/member/insertLogging.json",
+						cache:false,
+						async:false})
+				}
 				var date = now.getFullYear()+"-"+(now.getMonth()+1)+"-"+now.getDate()+" "+time+" "+"星期"+weekArray[now.getDay()];
 				elem.text(date);
 			},1000)

@@ -28,8 +28,10 @@ import org.tdds.entity.Report;
 import org.tdds.service.LogRecordService;
 import org.tdds.service.MachineService;
 import org.tdds.service.MonitoringService;
+import org.tdds.service.PowerOffRecordService;
 import org.tdds.service.ReportService;
 import org.tdds.service.RunningRecordService;
+import org.tdds.service.WaitingRecordService;
 import org.tdds.service.WarningRecordService;
 
 import com.alibaba.fastjson.JSONObject;
@@ -53,6 +55,13 @@ public class MachineController extends BasePortalController {
 
 	@Autowired
 	private RunningRecordService bizRunningRecord;
+	
+	@Autowired
+	private WaitingRecordService bizWaitingRecord;
+	
+
+	@Autowired
+	private PowerOffRecordService bizPowerOff;
 
 	@Autowired
 	private LogRecordService bizLogRecord;
@@ -213,7 +222,26 @@ public class MachineController extends BasePortalController {
 	public Object categories(HttpServletRequest request, HttpServletResponse response) {
 		return NAMES;
 	}
-
+	
+	@RequestMapping(value = "/insertLogging", method = RequestMethod.GET)
+	public void updateStartTime(HttpServletRequest request, HttpServletResponse response){
+		List<MonitoringList> entities = bizMonitoring.findAll();
+		for (MonitoringList monitoringList : entities) {
+			Machine entity =bizMachine.findMachineByName(monitoringList.getMachineName());
+			String status = monitoringList.getMachineSignal();
+			 if(status.equals(STATUS[0])){
+				 bizRunningRecord.insert(monitoringList, entity);
+			 }else if(status.equals(STATUS[1])){
+				 bizPowerOff.insert(monitoringList, entity);
+			 }else if(status.equals(STATUS[2])){
+				 bizWarningRecord.insert(monitoringList, entity);
+			 }else if(status.equals(STATUS[3])){
+				 bizWaitingRecord.insert(monitoringList, entity);
+			 }else {
+				 bizWaitingRecord.insert(monitoringList, entity);
+			 }
+		}
+	}
 	@RequestMapping(value = "/reportList", method = RequestMethod.GET)
 	@ResponseBody
 	public Object reportList(HttpServletRequest request, HttpServletResponse response) {
@@ -230,7 +258,7 @@ public class MachineController extends BasePortalController {
 			map.put("performanceOee", createOee(report.getPlannedCapacity(), report.getActualCapacity()));
 			map.put("number", report.getNumber());
 			map.put("goodNumber", report.getGoodNumber());
-			map.put("goodYield",createGoodYield(report.getNumber(),report.getGoodNumber()));
+			map.put("goodYield",createOee(report.getNumber(),report.getGoodNumber()));
 			entities.add(map);
 		}
 		return entities;
@@ -244,26 +272,6 @@ public class MachineController extends BasePortalController {
 			}else {
 				Double numDouble =(Double.valueOf(divisor) / Double.valueOf(dividend))*100;
 	 			f= new DecimalFormat("#.00").format(numDouble);
-			}
-		}else {
-			f="0";
-		}
-		return  f + "%";
-	}
- 
-	
-	private String createGoodYield(int dividend, int divisor) {
-		String f = null;
-		if(dividend!=0) {
-			if(dividend==divisor) {
-				f="100";
-			}else {
-				if (dividend<divisor) {
-					f="0";
-				}else {
-					Double numDouble =(1-(Double.valueOf(divisor) / Double.valueOf(dividend)))*100;
-		 			f= new DecimalFormat("#.00").format(numDouble);
-				}
 			}
 		}else {
 			f="0";
