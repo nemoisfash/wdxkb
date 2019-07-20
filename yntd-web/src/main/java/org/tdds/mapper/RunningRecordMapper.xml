@@ -89,8 +89,8 @@
 			FROM znzz_running_record
 			where  id &gt; 0
 			<if test="filter.startTime!=null and filter.startTime!='' and filter.endTime!=null and filter.endTime!=''">
-			    AND DATE(start_time) BETWEEN #{filter.startTime} AND #{filter.endTime}
-			    AND DATE(end_time) BETWEEN #{filter.startTime} AND #{filter.endTime}
+			    AND start_time BETWEEN #{filter.startTime} AND #{filter.endTime}
+			    AND end_time BETWEEN #{filter.startTime} AND #{filter.endTime}
 			</if>
 			<if test="filter.machineName!=null and filter.machineName!=''">
 				AND machine_name=#{filter.machineName}

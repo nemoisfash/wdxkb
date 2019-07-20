@@ -1,5 +1,6 @@
 package org.tdds.controller.admin;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,7 @@ import org.tdds.service.MachineService;
 import cn.hxz.webapp.syscore.entity.Site;
 import cn.hxz.webapp.syscore.support.BaseWorkbenchController;
 import cn.hxz.webapp.util.AjaxFileUploadUtil;
+import cn.hxz.webapp.util.JdbcUtils;
 import cn.hxz.webapp.util.UploadUtils;
 import net.chenke.playweb.QueryFilters;
 import net.chenke.playweb.util.FiltersUtils;
@@ -46,6 +48,24 @@ public class MachineAdminController extends BaseWorkbenchController {
 	@RequestMapping(value = "/data", method = RequestMethod.GET)
 	@ResponseBody
 	public Object data(Model model,HttpServletRequest request, HttpServletResponse response){
+		Map<String, Object> filter = new HashMap<String, Object>();
+		List<Map<String, Object>> entities=new ArrayList<>();
+		List<String> deviceNos= null;
+			try {
+				if(JdbcUtils.getConnection()){
+					deviceNos=JdbcUtils.getDeviceNos();
+					for(String deviceNo:deviceNos) {
+						filter.put("deviceNo",deviceNo);
+						Map<String, Object>	map= JdbcUtils.selectResultSet(filter);
+						entities.add(map);
+					}
+					JdbcUtils.close(JdbcUtils.conn);
+					System.out.println(entities);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		
 		Boolean success=true;
 		Map<String, Object> map = new HashMap<>();
 		QueryFilters filters = FiltersUtils.getQueryFilters(request, response, uuid);

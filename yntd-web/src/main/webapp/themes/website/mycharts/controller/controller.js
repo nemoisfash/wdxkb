@@ -1,6 +1,6 @@
 var app = angular.module('myApp', []);
 app.controller('myCtrl', function($scope,$http,$interval) {
-$interval(function(){
+/*$interval(function(){
 	$http({
 		method: 'GET',
 		url:"/member/datalist.json",
@@ -9,9 +9,9 @@ $interval(function(){
 		$scope.items=res.data.resault;
 		$scope.switchStatus(res.data.resault);
 	})
-},3000)
+},3000)*/
 
-$interval(function(){
+/*$interval(function(){
 	$http({
 		method: 'GET',
 		url:"/member/reportList.json",
@@ -19,7 +19,7 @@ $interval(function(){
 		async:false}).then(function(res){
 		$scope.reports=res.data;
 	})
-},48000)
+},48000)*/
 
 $scope.switchStatus=function(obj){
 	$.each(obj,function(){
