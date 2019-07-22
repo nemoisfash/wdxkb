@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>看板首页</title>
+	    <script src="/assets/jquery/dist/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="/assets/echarts/echarts.min.js"></script>
+		<!-- <script src="../js/machinestatus.js"></script>  -->
+		<script src="/themes/website/js/jquery.liMarquee.js"></script>
+		<script src="/assets/angular/angular.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="/themes/website/mycharts/controller/option/barOption.js"></script>
+		<script src="/themes/website/mycharts/controller/option/lineOption.js"></script>
+		<script src="/themes/website/mycharts/controller/option/pieOption.js"></script>
+		<script src="/themes/website/mycharts/controller/option/customOption.js"></script>
+		<script src="/themes/website/mycharts/controller/option/mywebsocket.js"></script>
+		<link href="/assets/fonts/font-awesome4.7.0/font-awesome.css" rel="stylesheet" type="text/css" media="all" />
+  		<link href="/assets/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet" type="text/css" media="all" />
+		<link href="/themes/website/css/index.css" rel="stylesheet" type="text/css" media="all" />
+		<style type="text/css">
+		.nav>li>a {
+			position: relative;
+			display: block;
+			padding: 1px 2px;
+			border:1px solid #337aab;  
+		}
+		.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+		    color: #36b0f3;
+		    border: 1px solid #33a8ea40;
+		    background-color: #66339900;
+		}
+		</style>
+	</head>
+	<body ng-app="myApp" ng-controller="myCtrl">
+		<section class="header" style="background-color:#06091000;height:8%;margin-top:10px;">
+			<img width="100%" height="100%" src="/themes/website/images/title2.png">
+			<div id="clock" class="clock" my-Clock></div>
+		</section>
+		<section class="content" style="margin:14px;">
+			<div class="row">
+				<section class="col-lg-6 connectedSortable ui-sortable">
+					<!-----内边框颜色 4d91d8----->
+					<div class="nav-tabs-custom" style="background-color:#081639a1;height:24.625rem;margin-top:8px;">
+						<span class="label label-default">车间设备分布</span>
+						<div style="background-color:#07132d00;width:100%;height:80%;margin-top:20px">
+							<!-- <img width="100%" height="100%" src="/themes/website/images/wdx/wdxbj.png"></img> -->
+							<span id="NLX4000_m" class="circle circle-running headerBox" style="top:14%;left:3%;">
+							</span>
+							<span id="6150B_m" class="circle circle-running headerBox" style="top:14%;left:14%;">
+							</span>
+							<span id="K6150_m" class="circle circle-running headerBox" style="top:14%;left:25%;">
+							</span>
+							<span id="K6150B_m" class="circle circle-running headerBox" style="top:14%;left:36%;">
+							</span>
+						 	<span id="7236A_m" class="circle circle-running headerBox" style="top:14%;left:47%;">
+							</span> 
+							 <span id="H700M_m" class="circle circle-running headerBox" style="top:14%;left:58%;">
+							</span>
+							<span id="150NC1_m" class="circle circle-running headerBox" style="top:14%;left:69%;">
+							</span>
+							<span id="150NC2_m" class="circle circle-running headerBox" style="top:14%;left:80%;">
+							</span>
+							<span id="D9332_m" class="circle circle-running headerBox" style="top:14%;left:91%;">
+							</span>
+							
+							<span id="FTC40_m" class="circle circle-running headerBox" style="top:22%;left:8%;">
+							</span>
+							<span id="4501_m" class="circle circle-running headerBox" style="top:22%;left:19%;">
+							</span>
+							<span id="4502_m" class="circle circle-running headerBox" style="top:22%;left:30%;">
+							</span>
+							<span id="250Plus_m" class="circle circle-running headerBox" style="top:22%;left:41%;">
+							</span>
+							<span id="1100A_m" class="circle circle-running headerBox" style="top:22%;left:52%;">
+							</span>
+							<span id="610A1_m" class="circle circle-running headerBox" style="top:22%;left:63%;">
+							</span>
+							<span id="610A2_m" class="circle circle-running headerBox" style="top:22%;left:74%;">
+							</span>
+							<span id="32SA_m" class="circle circle-running headerBox" style="top:22%;left:85%;">
+							</span>
+							
+							<span id="5132_m" class="circle circle-running headerBox" style="top:7%;left:8%;">
+							</span>
+							<span id="5132A_m" class="circle circle-running headerBox" style="top:7%;left:19%;">
+							</span>
+							<span id="7236A1_m" class="circle circle-running headerBox" style="top:7%;left:30%;">
+							</span>
+							<span id="7236A2_m" class="circle circle-running headerBox" style="top:7%;left:41%;">
+							</span>
+							<span id="7236B_m" class="circle circle-running headerBox" style="top:7%;left:52%;">
+							</span>
+							<span id="7236A3_m" class="circle circle-running headerBox" style="top:7%;left:63%;">
+							</span>
+							<span id="NVG8CT_m" class="circle circle-running headerBox" style="top:7%;left:74%;">
+							</span>
+						</div>
+						<div style="width:100%;height:2.25rem;text-align:center;line-height:2.25rem;">
+							<a class="btn btn-sx" style="background-color:#12b07b"></a>
+							<span style="color:#FFFFFF">运行<span>
+							<a class="btn btn-sx" style="background-color:#a6a5a5"></a>
+							<span style="color:#FFFFFF">停机<span>
+							<a class="btn btn-sx" style="background-color:#e65a65"></a>
+							<span style="color:#FFFFFF">报警<span>
+							<a class="btn btn-sx" style="background-color:#feb501"></a>
+							<span style="color:#FFFFFF">等待<span>
+						</div>
+					</div>
+					<div class="nav-tabs-custom" style="background-color:#081639a1;height:21.625rem;margin-top:20px;">
+						<span class="label label-default">设备运行分析</span>
+						<div style="width:100%;height:80%;margin-top:11px;overflow:hidden;">
+							<ul class="pies" my-Pies my-Scoller>
+								<li echarts-type="pie"></li>
+								<li echarts-type="pie"></li>
+								<li echarts-type="pie"></li>
+								<li echarts-type="pie"></li>
+								<li echarts-type="pie"></li>
+								<li echarts-type="pie"></li>
+								<li echarts-type="pie"></li>
+								<li echarts-type="pie"></li>
+								<li echarts-type="pie"></li>
+								<li echarts-type="pie"></li>
+								<li echarts-type="pie"></li>
+								<li echarts-type="pie"></li>
+								<li echarts-type="pie"></li>
+								<li echarts-type="pie"></li>
+								<li echarts-type="pie"></li>
+								<li echarts-type="pie"></li>
+								<li echarts-type="pie"></li>
+								<li echarts-type="pie"></li>
+								<li echarts-type="pie"></li>
+								<li echarts-type="pie"></li>
+								<li echarts-type="pie"></li>
+								<li echarts-type="pie"></li>
+								<li echarts-type="pie"></li>
+								<li echarts-type="pie"></li>
+								<li echarts-type="pie"></li>
+							</ul>
+						</div>
+						<div style="width:100%;height:2.25rem;text-align:center;line-height:2.25rem;">
+							<a class="btn btn-sx" style="background-color:#12b07b"></a>
+							<span style="color:#FFFFFF">运行<span>
+							<a class="btn btn-sx" style="background-color:#a6a5a5"></a>
+							<span style="color:#FFFFFF">停机<span>
+							<a class="btn btn-sx" style="background-color:#e65a65"></a>
+							<span style="color:#FFFFFF">报警<span>
+							<a class="btn btn-sx" style="background-color:#feb501"></a>
+							<span style="color:#FFFFFF">等待<span>
+						</div>
+					</div>
+					<div class="nav-tabs-custom" style="background-color:#081639a1;height:26.625rem;margin-top:20px;">
+						<span class="label label-default">时间线</span>
+						<div style="width:100%;height:100%;" time-Line>
+						</div>
+					</div>
+				</section>
+				<section class="col-lg-6 connectedSortable ui-sortable">
+					<div class="nav-tabs-custom" style="background-color:#081639a1;height:30.625rem;margin-top:8px;">
+						<span class="label label-default">设备运行排行</span>
+						<div style="width:100%;height:90%;margin-top:10px;overflow:hidden;padding:0">
+							<div data-ranking='true' style="width:100%;height:100%;" ranking-Running>
+								
+							</div>
+						</div>
+					</div>
+					<div class="nav-tabs-custom" style="background-color:#081639a1;height:25rem;margin-top:20px;overflow: hidden;">
+						<span class="label label-default">设备生产计划与执行数据</span>
+						<div style="width:100%;height:100%;margin-top:0;overflow:hidden;">
+						<table class="table table-bordered" style="margin-top:10px">
+						<thead>
+							<tr role="row">
+								<th rowspan="1" colspan="1">设备名称</th>
+								<th rowspan="1" colspan="1">计划作业时间</th>
+								<th rowspan="1" colspan="1">实际作业时间</th>
+								<th rowspan="1" colspan="1">时间稼动率</th>
+								<th rowspan="1" colspan="1">计划产能</th>
+								<th rowspan="1" colspan="1">实际产能</th>
+								<th rowspan="1" colspan="1">性能稼动率</th>
+								<th rowspan="1" colspan="1">加工数量</th>
+								<th rowspan="1" colspan="1">良品数量</th>
+								<th rowspan="1" colspan="1">良品率</th>
+							</tr>
+						</thead>
+						<tbody roll-Up>
+							<tr role="row" class="odd" ng-repeat="report in reports" ng-Repeat-Finished>
+							  <td>{{report.machineName}}</td>
+							  <td>{{report.plannedOtime}}</td>
+							  <td>{{report.actualOtime}}</td>
+							  <td>{{report.timeOee}}</td>
+							  <td>{{report.plannedCapacity}}</td>
+							  <td>{{report.actualCapacity}}</td>
+							  <td>{{report.performanceOee}}</td>
+							  <td>{{report.number}}</td>
+							  <td>{{report.goodNumber}}</td>
+							  <td>{{report.goodYield}}</td>
+							</tr>
+						</tbody>
+					</table>
+						</div>
+					</div>
+					<div class="nav-tabs-custom" style="background-color:#081639a1;height:17.625rem;margin-top:20px;">
+						<span class="label label-default">设备实时数据</span>
+						<div style="width:100%;height:100%;margin-top:15px;overflow:hidden;">
+				          <div class="box box-default col-md-3" ng-repeat="item in items">
+				            <div class="box-body">
+				              <div class="alert" style="margin-bottom:10px;background:#0a78f27a;height:75px">
+				               <h6 class="box-title" style="color:#f2f2f3;margin-top:1px;font-size:14px">
+				               	{{item.machineName}}
+				               </h6>
+			              		<h6 style="color:#f2f2f3;margin-top:-8px;margin-bottom:1px;">
+				               		快速进给:{{item.overrideRapid}}%
+				              	</h6>
+				              	 <hr class="spk-hr"/>
+			              		<h6 style="color:#f2f2f3;margin-top:5px;margin-bottom:1px;">
+				               		主轴倍率:{{item.overrideRapid}}%
+				              	</h6>
+				              	<hr class="spk-hr"/>
+				              </div>
+				            </div>
+				          </div>
+						</div>
+					</div>
+				</section>
+			</div>
+			<footer class="main-footer mainfooter">
+			    <strong>技术支持：<a target="blank" href="http://www.huaxinzhi.com">银川华信智信息技术有限公司</a>
+					电话：0951-6996116 邮件：huaxinzhi@huaxinzhi.com
+		    	</strong>
+		    	<b>版本</b> 2.4.0
+			</footer>
+		</section>
+	</body>
+<script src="/themes/website/mycharts/controller/controller.js"></script>
+<!-- <script src="/themes/website/mycharts/controller/option/timelineOption.js"></script> -->
+</html>
