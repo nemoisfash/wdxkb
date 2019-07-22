@@ -1,6 +1,6 @@
 var app = angular.module('myApp', []);
 app.controller('myCtrl', function($scope,$http,$interval) {
-/*$interval(function(){
+$interval(function(){
 	$http({
 		method: 'GET',
 		url:"/member/datalist.json",
@@ -9,9 +9,9 @@ app.controller('myCtrl', function($scope,$http,$interval) {
 		$scope.items=res.data.resault;
 		$scope.switchStatus(res.data.resault);
 	})
-},3000)*/
+},10000)
 
-/*$interval(function(){
+$interval(function(){
 	$http({
 		method: 'GET',
 		url:"/member/reportList.json",
@@ -19,7 +19,7 @@ app.controller('myCtrl', function($scope,$http,$interval) {
 		async:false}).then(function(res){
 		$scope.reports=res.data;
 	})
-},48000)*/
+},48000)
 
 $scope.switchStatus=function(obj){
 	$.each(obj,function(){
@@ -73,9 +73,9 @@ $scope.switchStatus=function(obj){
 		link:function(scope,elem,attrs){
 			scope.$on('repeatFinished',function(event){
 				$interval(function(){
-					var fristTr=elem.find("tr").eq(0);
-				 	fristTr.remove(); 
-				 	elem.append(fristTr.clone(true));
+					var childFr=elem.children(".roll-up").eq(0);
+					childFr.remove(); 
+				 	elem.append(childFr.clone(true));
 				},6000)
 			})
 		}
@@ -114,46 +114,55 @@ $scope.switchStatus=function(obj){
 			        formatter: function (params) {
 			            return params.marker + params.name + ':' + params.value[3] + '分钟';
 			        }
+			    },/*,dataZoom:[{
+		            type: 'slider',
+		            xAxisIndex: 0,
+		            filterMode: 'weakFilter',
+		            height: 20,
+		            bottom: 0,
+		            start: 0,
+		            end: 100,
+		            handleIcon: 'M10.7,11.9H9.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4h1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
+		            handleSize: '80%',
+		            showDetail: true
+		        }, {
+		            type: 'inside',
+		            id: 'insideX',
+		            xAxisIndex: 0,
+		            filterMode: 'weakFilter',
+		            start: 0,
+		            end: 100,
+		            zoomOnMouseWheel: true,
+		            moveOnMouseMove: true
+		        }],*/
+			    grid: {
+			        left: '10%',
+			        top: '12%',
+			        right: '2%',
+			        bottom: '8%',
+			        containLabel: false
 			    },
-			     dataZoom: [{
-			            type: 'slider',
-			            xAxisIndex: 0,
-			            filterMode: 'weakFilter',
-			            height: 20,
-			            bottom: 0,
-			            start: 0,
-			            end: 100,
-			            handleIcon: 'M10.7,11.9H9.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4h1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
-			            handleSize: '80%',
-			            showDetail: true
-			        }, {
-			            type: 'inside',
-			            id: 'insideX',
-			            xAxisIndex: 0,
-			            filterMode: 'weakFilter',
-			            start: 95,
-			            end: 100,
-			            zoomOnMouseWheel: true,
-			            moveOnMouseMove: true
-			        }],
-			        xAxis:{
+		        xAxis:{
 			            type: 'time',
 			            position: 'top',
 			            splitLine: {
 			                lineStyle: {
-			                    color: ['#E9EDFF']
+			                    color: ['#34a9eb']
 			                }
 			            },
 			            axisLine: {
-			                show: false
+			                show: false,
+			                lineStyle: {
+			                    color: '#34a9eb'
+			                }
 			            },
 			            axisTick: {
 			                lineStyle: {
-			                    color: '#929ABA'
+			                    color: '#34a9eb'
 			                }
 			            },
 			            axisLabel: {
-			                color: '#929ABA',
+			                color: '#34a9eb',
 			                inside: false,
 			                align: 'center'
 			            }
@@ -161,19 +170,26 @@ $scope.switchStatus=function(obj){
 			    yAxis: {
 			    	type:"category",
 			    	boundaryGap: ['20%', '20%'],
-			    	min: 0,
-		            max:8,
-		            axisTick: 'none',
+			    	min:0,
+		            max:25,
+		            position:'left',
 			    	axisLine: {
-			                show: true,
-			                lineStyle: {
-			                    color: '#929ABA'
-			                }
+		                show:true,
+		                lineStyle: {
+		                    color: '#929ABA'
+		                }
+			        },
+			        axisTick:{
+			        	show:true,
+			        	interval:0,
+			        	length:2
 			        },
 			        axisLabel: {
+			        	interval:0,
+			        	margin:10,
 			            textStyle: {
-			                color: '#ffffff',
-			                fontSize: '10',
+			                color: '#34a9eb',
+			                fontSize: '8',
 			            }
 			        },
 			        data:[],
@@ -200,9 +216,11 @@ $scope.switchStatus=function(obj){
 				cache:false,
 				async:false
 			}).then(function(res){
+				option.yAxis.data=res.data;
+				option.yAxis.max=res.data.length;
 				myChart.hideLoading();
 				setSeriesData();
-				option.yAxis.data=res.data.stringList;
+				
 			})
 			
 			function setSeriesData(){
@@ -227,7 +245,7 @@ $scope.switchStatus=function(obj){
 							    lazyUpdate:false,
 							    silent:false
 						});
-					},10000*3)
+					},4000)
 				})
 			}
 		}

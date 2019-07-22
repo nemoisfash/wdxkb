@@ -114,44 +114,22 @@ public class MachineController extends BasePortalController {
 	@RequestMapping(value = "line", method = RequestMethod.GET)
 	public Object line(HttpServletRequest request, HttpServletResponse res) {
 		Map<String, Object> map = new HashMap<>();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		String time = sdf.format(new Date());
-		List<String> days = getMonthDate(time);
+		List<String> times = new ArrayList<>();
 		List<Map<String, Object>> maps = new ArrayList<>();
-		for (String status : STATUS) {
-			Map<String, Object> entity = new HashMap<>();
-			List<Object> value = new LinkedList<>();
-			for (String date : days) {
-				Double num = bizLogRecord.findData(date, status, null);
-				value.add(num);
+		List<Machine> machines = bizMachine.findMachine();
+		for(Machine entity:machines) {
+			if(!entity.getIo()) {
+				
 			}
-			entity.put("data", value);
-			entity.put("name", StatusEnum.getValue(status));
-			entity.put("type", "line");
-			maps.add(entity);
 		}
-		map.put("xAxis", days);
+		map.put("xAxis",DateUtils.DateToString(new Date(),"yyyy-MM-dd HH:mm:ss"));
 		map.put("series", maps);
+		
 		return map;
 	}
-
-	private List<String> getMonthDate(String time) {
-		List<String> days = new LinkedList<>();
-		String strs[] = time.split("-");
-		Calendar calendar = Calendar.getInstance();
-		int year = Integer.parseInt(strs[0]);
-		int month = Integer.parseInt(strs[1]) - 1;
-		calendar.set(year, month, 1);
-		int maxDay = calendar.getMaximum(Calendar.DAY_OF_MONTH);
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		for (int j = 1; j <= maxDay; j++) {
-			calendar.set(year, month, j);
-			time = sdf.format(calendar.getTime());
-			days.add(time);
-		}
-		return days;
-	}
-
+	
+	
+	
 	/**
 	 * 
 	 * @param request
