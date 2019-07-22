@@ -57,6 +57,17 @@ public class Machine {
 
 	@Column(name = "w_times")
 	private Long wTimes;
+	
+	@Column(name = "io")
+	private Boolean io;
+	
+	public Boolean getIo() {
+		return io;
+	}
+
+	public void setIo(Boolean io) {
+		this.io = io;
+	}
 
 	public Long getId() {
 		return id;

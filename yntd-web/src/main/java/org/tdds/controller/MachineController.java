@@ -33,6 +33,9 @@ import org.tdds.service.RunningRecordService;
 import org.tdds.service.WarningRecordService;
 
 import com.alibaba.fastjson.JSONObject;
+import com.serotonin.modbus4j.exception.ErrorResponseException;
+import com.serotonin.modbus4j.exception.ModbusInitException;
+import com.serotonin.modbus4j.exception.ModbusTransportException;
 
 import cn.hxz.webapp.syscore.support.BasePortalController;
 import cn.hxz.webapp.util.DateUtils;
@@ -60,8 +63,6 @@ public class MachineController extends BasePortalController {
 	@Autowired
 	private ReportService bizLogReport;
 
-	private static List<String> NAMES = new ArrayList<>();
-
 	// 西部大森manual=running
 	private static final String[] STATUS = { "RUNNING", "POWEROFF", "ALARM", "WAITING", "MANUAL" };
 
@@ -73,17 +74,20 @@ public class MachineController extends BasePortalController {
 	@RequestMapping(value = "datalist", method = RequestMethod.GET)
 	public Object loging(HttpServletRequest request, HttpServletResponse res) {
 		Boolean success = true;
-		List<MonitoringList> entities = bizMonitoring.findAll();
-		NAMES.clear();
-		for (MonitoringList monitoringList : entities) {
-			NAMES.add(monitoringList.getMachineName());
-			Machine entity = bizMachine.findMachineByName(monitoringList.getMachineName());
-			if (entity == null) {
-				bizMachine.insert(monitoringList);
-			} else {
-				bizMachine.update(monitoringList, entity);
+		List<Machine> machines = bizMachine.findMachine();
+		List<MonitoringList> entities = new ArrayList<>();
+		for (Machine machine : machines) {
+			MonitoringList monitor=null;
+			if(machine.getIo()){
+				monitor=new MonitoringList();
+				monitor.setMachineName(machine.getName());
+				monitor.setMachineSignal(getStatus(machine.getmIp()));
+			}else{
+				monitor=bizMonitoring.findByName(machine.getName());
 			}
-			monitoringList.setMachineName(entity.getCode());
+				bizMachine.update(monitor,machine);
+				monitor.setMachineName(machine.getCode());
+				entities.add(monitor);
 		}
 		Map<String, Object> map = new HashMap<>();
 		map.put("resault", entities);
@@ -210,8 +214,14 @@ public class MachineController extends BasePortalController {
 	}
 
 	@RequestMapping(value = "/timeLine/categories", method = RequestMethod.GET)
+	@ResponseBody
 	public Object categories(HttpServletRequest request, HttpServletResponse response) {
-		return NAMES;
+		List<Machine> machines = bizMachine.findMachine();
+		List<String> names = new ArrayList<>();
+		for(Machine entity: machines){
+			names.add(entity.getName());
+		}
+		 return names;
 	}
  
 	@RequestMapping(value = "/reportList", method = RequestMethod.GET)
@@ -304,7 +314,7 @@ public class MachineController extends BasePortalController {
 	 * @return io 设备采集数据状态
 	 */
 	private String getStatus(String ip) {
-		String status = "RUNNING";
+		String status = STATUS[0];
 		Boolean running = true;
 		Boolean waitting = true;
 		Boolean warning = true;
@@ -312,18 +322,20 @@ public class MachineController extends BasePortalController {
 			running = Modbus4jUtil.readInputStatus(ip, 502, 1, 0);
 			waitting = Modbus4jUtil.readInputStatus(ip, 502, 1, 1);
 			warning = Modbus4jUtil.readInputStatus(ip, 502, 1, 2);
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (ModbusTransportException | ErrorResponseException
+				| ModbusInitException e) {
+			status=STATUS[1];
 		}
 		if (running) {
-			if (waitting) {
-				status = "WAITING";
-			} else if (warning) {
-				status = "MANUAL";
+			if (!waitting) {
+				status = STATUS[3];
+			}
+			if (warning) {
+				status = STATUS[2];
 			}
 
 		} else if (running == null) {
-			status = "POWEROFF";
+			status = STATUS[1];
 		}
 
 		return status;
