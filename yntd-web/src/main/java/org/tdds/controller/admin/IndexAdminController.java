@@ -23,7 +23,12 @@ import org.tdds.service.LogRecordService;
 import org.tdds.service.MachineService;
 import org.tdds.service.MonitoringService;
 
+import com.serotonin.modbus4j.exception.ErrorResponseException;
+import com.serotonin.modbus4j.exception.ModbusInitException;
+import com.serotonin.modbus4j.exception.ModbusTransportException;
+
 import cn.hxz.webapp.util.echarts.StatusEnum;
+import cn.hxz.webapp.util.modbus.Modbus4jUtil;
 import net.chenke.playweb.QueryFilters;
 import net.chenke.playweb.util.FiltersUtils;
 import net.chenke.playweb.util.HashUtils;
@@ -55,7 +60,7 @@ public class IndexAdminController {
 	public Object data(HttpServletRequest request,HttpServletResponse response){
 		Map<String, Object> entity = new HashMap<>();
 		for(String status:STATUS){
-			Integer num= bizMonitoring.findStatusNum(status);
+			Integer num= bizMachine.findStatusNum(status);
 			entity.put(status, num);
 		}
 		return entity;
@@ -64,13 +69,21 @@ public class IndexAdminController {
 	@RequestMapping(value = "/datalist", method = RequestMethod.GET)
 	@ResponseBody
 	public Object datalist(HttpServletRequest request,HttpServletResponse response){
-		List<MonitoringList> entities = bizMonitoring.findAll();
-		for(MonitoringList monitoringList:entities) {
-			Machine entity = bizMachine.findMachineByName(monitoringList.getMachineName());
-			monitoringList.setMachineName(entity.getCode());
+		List<Machine> machines = bizMachine.findMachine();
+		List<MonitoringList> monitoringLists =new ArrayList<>();
+		for(Machine entity:machines){
+			MonitoringList monitoringlist=null;
+			if(entity.getIo()) {
+				monitoringlist=new MonitoringList();
+				monitoringlist.setMachineSignal(getStatus(entity.getmIp()));
+			}else {
+				monitoringlist=bizMonitoring.findByName(entity.getName());
+			}
+			monitoringlist.setMachineName(entity.getCode());
+			monitoringLists.add(monitoringlist);
 		}
 		Map<String, Object> map = new HashMap<>();
-		map.put("resault", entities);
+		map.put("resault", monitoringLists);
 		return map;
 	}
 	
@@ -159,6 +172,34 @@ public class IndexAdminController {
 			series.add(map);
 		}
 		return series;
+	}
+	
+	private String getStatus(String ip) {
+		String status = STATUS[0];
+		Boolean running = true;
+		Boolean waitting = true;
+		Boolean warning = true;
+		try {
+			running = Modbus4jUtil.readInputStatus(ip, 502, 1, 0);
+			waitting = Modbus4jUtil.readInputStatus(ip, 502, 1, 1);
+			warning = Modbus4jUtil.readInputStatus(ip, 502, 1, 2);
+		} catch (ModbusTransportException | ErrorResponseException
+				| ModbusInitException e) {
+			status=STATUS[1];
+		}
+		if (running) {
+			if (!waitting) {
+				status = STATUS[3];
+			}
+			if (warning) {
+				status = STATUS[2];
+			}
+
+		} else if (running == null) {
+			status = STATUS[1];
+		}
+
+		return status;
 	}
 	
 }

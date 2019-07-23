@@ -19,6 +19,9 @@ import org.tdds.service.WarningRecordService;
 
 import cn.hxz.webapp.util.DateUtils;
 import net.chenke.playweb.QueryFilters;
+import net.chenke.playweb.support.mybatis.Page;
+import net.chenke.playweb.support.mybatis.PageImpl;
+import net.chenke.playweb.support.mybatis.PageRequest;
 import tk.mybatis.mapper.entity.Example;
 import tk.mybatis.mapper.entity.Example.Criteria;
 
@@ -64,18 +67,19 @@ public class MachineServiceImpl implements MachineService {
 	}
 
 	@Override
-	public List<Machine> findMachines(QueryFilters filters) {
+	public Page<Machine> findMachines(QueryFilters filters,PageRequest pageable) {
 		 Example example = new Example(Machine.class);
 		 Criteria criteria = example.createCriteria();
 		 if(StringUtils.hasText(Objects.toString(filters.get("name"), null))){
 			 criteria.andEqualTo("name", Objects.toString(filters.get("name")));
-		 }else if(StringUtils.hasText(Objects.toString(filters.get("machineNo"), null))){
-			 criteria.andEqualTo("machineNo", Objects.toString(filters.get("name")));
+		 }else if(StringUtils.hasText(Objects.toString(filters.get("code"), null))){
+			 criteria.andEqualTo("code", Objects.toString(filters.get("name")));
 		 }else if(StringUtils.hasText(Objects.toString(filters.get("type"), null))){
 			 String type =Objects.toString(filters.get("type"));
 			 criteria.andEqualTo("type",Long.parseLong(type));
 		 }
-		 return machineDao.selectByExample(example);
+		 List<Machine> entities = machineDao.selectByExampleAndRowBounds(example, pageable);
+		 return new PageImpl<Machine>(entities, pageable);
 	}
 
 	@Override
@@ -158,5 +162,17 @@ public class MachineServiceImpl implements MachineService {
 	@Override
 	public void updateImage(Machine machine) {
 		machineDao.updateByPrimaryKeySelective(machine);
+	}
+
+	@Override
+	public List<Machine> findMachines(QueryFilters filters) {
+		return machineDao.selectAll();
+	}
+
+	@Override
+	public Integer findStatusNum(String status) {
+		Machine machine = new Machine();
+		machine.setStatus(status);
+		return machineDao.selectCount(machine);
 	}
 }

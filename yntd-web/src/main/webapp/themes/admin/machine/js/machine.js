@@ -7,8 +7,12 @@ var uuid=$("#uuid").val();
 				cache:false,
 				async:false
 			}).then(function(res){
-				$scope.items=res.data.resault;
+				$scope.items=res.data.resault.content;
 				$scope.count=res.data.count;
+				var totalElements=res.data.resault.totalElements;
+				var totalPages=res.data.resault.totalPages;
+				var number=res.data.number;
+				pagination(totalElements,totalPages,number)
 		})
 		
 		$scope.editImg=function(id,imageUrl){
@@ -81,27 +85,17 @@ var uuid=$("#uuid").val();
 					 
 				}
 			})
-			/*$scope.exportData(id);*/
-			 /*if(typeof id=="undefined"){
-				 id=0;
-			 }
-			 window.location.href= "/admin/machine/exportdata.json?node="+"machine_"+"&id="+id;*/
+		 
 		}
-		
-		/*$scope.exportData=function(id){
-			
-			window.location.href= "/admin/machine/exportdata.json?node="+"machine_"+"&id="+id;
-		}*/
 		
 		$scope.search=function(){
 			var val= $scope.value;
-			var key= $scope.selected;
 			if(typeof val=="undefined"){
-				layer.msg("请输入需要查询的内容");
-				$scope.removeFilter(key);
+				layer.msg("请输入设备名称");
+				$scope.removeFilter("name");
 				return;
 			}else{
-				$scope.updateFilter(key,val);
+				$scope.updateFilter("name",val);
 			}
 		}
 		
@@ -111,8 +105,6 @@ var uuid=$("#uuid").val();
 		$scope.removeFilter=function(key){
 			Fw.removeFilter(uuid,key);
 		}
-		$scope.keys=[{key:"name",value:"名称"},
-		             {key:"machineNo",value:"机台编号"}]
 		
 		$scope.logingData=function(id,name,code,ip,image){
 			layer.open({
@@ -161,6 +153,7 @@ var uuid=$("#uuid").val();
 				optionLine.xAxis.data=data.xAxis;
 				optionLine.series=data.series;
 				line.setOption(optionLine);
+				
 			}
 		})
 	}
@@ -219,4 +212,14 @@ var uuid=$("#uuid").val();
 	
 	}
 	
+	function pagination(totalElements,totalPages,number){
+		$(".tcdPageCode").createPage({
+			elementCount :totalElements,
+			pageCount :totalPages,
+			current :number,
+			backFn : function(to){
+				Fw.updateFilter(uuid, 'page', to);
+			}
+		})
+	};
 })

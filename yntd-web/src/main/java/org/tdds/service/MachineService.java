@@ -7,6 +7,8 @@ import org.tdds.entity.Machine;
 import org.tdds.entity.MonitoringList;
 
 import net.chenke.playweb.QueryFilters;
+import net.chenke.playweb.support.mybatis.Page;
+import net.chenke.playweb.support.mybatis.PageRequest;
 
 public interface MachineService{
 
@@ -18,7 +20,7 @@ public interface MachineService{
 
 	String findMachineNames(Long id);
 
-	List<Machine> findMachines(QueryFilters filters);
+	Page<Machine> findMachines(QueryFilters filters,PageRequest pageable);
 
 	Machine load(Long id);
 
@@ -31,5 +33,9 @@ public interface MachineService{
 	void insert(MonitoringList monitoringList);
 
 	void updateImage(Machine machine);
+
+	List<Machine> findMachines(QueryFilters filters);
+
+	Integer findStatusNum(String status);
 
 }

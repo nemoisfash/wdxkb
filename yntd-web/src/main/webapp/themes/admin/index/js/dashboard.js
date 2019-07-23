@@ -15,6 +15,7 @@ app.controller('myCon', function($scope,$http,$interval) {
 			$scope.waiting=res.data.WAITING;
 		})
 	},2000)
+	
 	 $interval(function(){
 		$http({
 				method: 'GET',

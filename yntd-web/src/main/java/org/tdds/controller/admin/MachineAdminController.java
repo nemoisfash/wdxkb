@@ -1,8 +1,6 @@
 package org.tdds.controller.admin;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,9 +21,10 @@ import org.tdds.service.MachineService;
 import cn.hxz.webapp.syscore.entity.Site;
 import cn.hxz.webapp.syscore.support.BaseWorkbenchController;
 import cn.hxz.webapp.util.AjaxFileUploadUtil;
-import cn.hxz.webapp.util.JdbcUtils;
 import cn.hxz.webapp.util.UploadUtils;
 import net.chenke.playweb.QueryFilters;
+import net.chenke.playweb.support.mybatis.Page;
+import net.chenke.playweb.support.mybatis.PageRequest;
 import net.chenke.playweb.util.FiltersUtils;
 import net.chenke.playweb.util.HashUtils;
 
@@ -48,34 +47,18 @@ public class MachineAdminController extends BaseWorkbenchController {
 	@RequestMapping(value = "/data", method = RequestMethod.GET)
 	@ResponseBody
 	public Object data(Model model,HttpServletRequest request, HttpServletResponse response){
-		Map<String, Object> filter = new HashMap<String, Object>();
-		List<Map<String, Object>> entities=new ArrayList<>();
-		List<String> deviceNos= null;
-			try {
-				if(JdbcUtils.getConnection()){
-					deviceNos=JdbcUtils.getDeviceNos();
-					for(String deviceNo:deviceNos) {
-						filter.put("deviceNo",deviceNo);
-						Map<String, Object>	map= JdbcUtils.selectResultSet(filter);
-						entities.add(map);
-					}
-					JdbcUtils.close(JdbcUtils.conn);
-					System.out.println(entities);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		
 		Boolean success=true;
 		Map<String, Object> map = new HashMap<>();
 		QueryFilters filters = FiltersUtils.getQueryFilters(request, response, uuid);
-		List<Machine> machines = bizMachine.findMachines(filters);
+		PageRequest pageable = FiltersUtils.getPageable(filters);
+		Page<Machine> machines = bizMachine.findMachines(filters,pageable);
 		if(machines==null){
 			success=false;
 		}
 		map.put("success", success);
 		map.put("resault",machines);
-		map.put("count",machines.size());
+		map.put("count",machines.getContent().size());
+		map.put("number", pageable.getPageNumber());
 		return map;
 	}
 	

@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.enterprise.inject.New;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -44,10 +43,14 @@ import org.tdds.service.WaitingRecordService;
 import org.tdds.service.WarningRecordService;
 
 import com.alibaba.fastjson.JSONObject;
+import com.serotonin.modbus4j.exception.ErrorResponseException;
+import com.serotonin.modbus4j.exception.ModbusInitException;
+import com.serotonin.modbus4j.exception.ModbusTransportException;
 
 import cn.hxz.webapp.syscore.support.BaseWorkbenchController;
 import cn.hxz.webapp.util.ExcelExportUtils;
 import cn.hxz.webapp.util.echarts.StatusEnum;
+import cn.hxz.webapp.util.modbus.Modbus4jUtil;
 import net.chenke.playweb.QueryFilters;
 import net.chenke.playweb.support.mybatis.Page;
 import net.chenke.playweb.support.mybatis.PageRequest;
@@ -153,13 +156,25 @@ public class LoggingAdminController extends BaseWorkbenchController {
 		for (String type : TYPE) {
 			Map<String, Object> map = new LinkedHashMap<>();
 			if (type.equalsIgnoreCase(TYPE[0])) {
-				map.put("value",Integer.parseInt(entity.getOverrideRapid()));
+				if(entity!=null) {
+					map.put("value",Integer.parseInt(entity.getOverrideRapid()));
+				}else {
+					map.put("value",0);
+				}
 				map.put("name",TYPE_CN[0]);
 			}else if(type.equalsIgnoreCase(TYPE[1])){
-				map.put("value",Integer.parseInt(entity.getOverrideSpindle()));
+				if(entity!=null) {
+					map.put("value",Integer.parseInt(entity.getOverrideSpindle()));
+				}else {
+					map.put("value",0);
+				}
 				map.put("name",TYPE_CN[1]);
 			}else {
-				map.put("value",Integer.parseInt(entity.getOverrideFeed()));
+				if(entity!=null) {
+					map.put("value",Integer.parseInt(entity.getOverrideFeed()));
+				}else {
+					map.put("value",0);
+				}
 				map.put("name",TYPE_CN[2]);
 			}
 			JSONObject jsonObj=new JSONObject(map);
@@ -172,8 +187,16 @@ public class LoggingAdminController extends BaseWorkbenchController {
 	@ResponseBody
 	public Object monitor(@RequestParam(value = "name", required = false) String name, HttpServletRequest request,
 			HttpServletResponse response) {
-		MonitoringList montior = bizMonitoring.findByName(name);
-		montior.setMachineSignal(StatusEnum.getValue(montior.getMachineSignal()));
+		Machine machine = bizMachine.findMachineByName(name);
+		MonitoringList montior =null;
+		if(!machine.getIo()) {
+			montior=bizMonitoring.findByName(name);
+			montior.setMachineSignal(StatusEnum.getValue(montior.getMachineSignal()));
+		}else {
+			montior =new MonitoringList();
+			String status=getStatus(machine.getmIp());
+			montior.setMachineStatus(StatusEnum.getValue(status));
+		}
 		return montior;
 	}
 	
@@ -282,4 +305,33 @@ public class LoggingAdminController extends BaseWorkbenchController {
 			e.printStackTrace();
 		}
 	}
+	
+	private String getStatus(String ip) {
+		String status = STATUS[0];
+		Boolean running = true;
+		Boolean waitting = true;
+		Boolean warning = true;
+		try {
+			running = Modbus4jUtil.readInputStatus(ip, 502, 1, 0);
+			waitting = Modbus4jUtil.readInputStatus(ip, 502, 1, 1);
+			warning = Modbus4jUtil.readInputStatus(ip, 502, 1, 2);
+		} catch (ModbusTransportException | ErrorResponseException
+				| ModbusInitException e) {
+			status=STATUS[1];
+		}
+		if (running) {
+			if (!waitting) {
+				status = STATUS[3];
+			}
+			if (warning) {
+				status = STATUS[2];
+			}
+
+		} else if (running == null) {
+			status = STATUS[1];
+		}
+
+		return status;
+	}
+	
 }

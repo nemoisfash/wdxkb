@@ -40,6 +40,8 @@
     },
     xAxis: {
         type: 'category',
+        min:0,
+        max:25,
         splitLine: {
             show: false
         },
@@ -52,6 +54,8 @@
             show: false
         },
         axisLabel: {
+        	interval:0,
+        	rotate:"-30",
             fontSize: 13,
             color: '#5F5F6B'
         },

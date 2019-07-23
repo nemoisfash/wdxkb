@@ -7,8 +7,24 @@ var uuid=$("#uuid").val();
 				cache:false,
 				async:false
 			}).then(function(res){
-				$scope.items=res.data.entities;
+				$scope.items=res.data.result.content;
+				var totalElements=res.data.result.totalElements;
+				var totalPages=res.data.result.totalPages;
+				var number=res.data.number;
+				pagination(totalElements,totalPages,number)
 		})
+		
+		function pagination(totalElements,totalPages,number){
+			$(".tcdPageCode").createPage({
+			elementCount :totalElements,
+			pageCount :totalPages,
+			current :number,
+			backFn : function(to){
+			Fw.updateFilter(uuid, 'page', to);
+				}
+			})
+		};
+		
 		
 }).directive('submitInput',function($timeout){
 	return{

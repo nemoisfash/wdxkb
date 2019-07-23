@@ -8,6 +8,7 @@
 }
 </style>
 <div class="col-xs-12" ng-app="myApp" ng-controller="myCtrl">
+<input type="hidden" id="uuid" name="uuid" value="${(filters.uuid)!}" />
 <div class="box">
 		<div class="box-header">
 		  <h3 class="box-title">报表统计</h3>
@@ -54,6 +55,16 @@
 					</tbody>
 				</table>
       	 	</div>
+			</div>
+			<div class="row">
+					<div class="col-sm-5">
+						<div class="dataTables_info" id="example1_info" role="status" aria-live="polite">
+							<span class="label label-default">共{{count}}台</span>
+						</div>
+					</div>
+					<div class="col-sm-7" style="float:right;text-align: right;">
+						<div class="pull-right tcdPageCode"></div>
+					</div>
 			</div>
 			</div>
 			</div>
