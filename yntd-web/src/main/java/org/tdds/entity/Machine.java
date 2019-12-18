@@ -59,13 +59,24 @@ public class Machine {
 	private Long wTimes;
 	
 	@Column(name = "io")
-	private Boolean io;
+	private Integer io;
 	
-	public Boolean getIo() {
+	@Column(name = "mqtt_sorce")
+	private Integer mqttSorce;
+	
+	public Integer getMqttSorce() {
+		return mqttSorce;
+	}
+
+	public void setMqttSorce(Integer mqttSorce) {
+		this.mqttSorce = mqttSorce;
+	}
+
+	public Integer getIo() {
 		return io;
 	}
 
-	public void setIo(Boolean io) {
+	public void setIo(Integer io) {
 		this.io = io;
 	}
 

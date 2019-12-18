@@ -4,13 +4,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.tdds.entity.Machine;
-import org.tdds.entity.MonitoringList;
 import org.tdds.entity.WaitingRecord;
 
 import net.chenke.playweb.QueryFilters;
 import net.chenke.playweb.support.mybatis.Page;
 import net.chenke.playweb.support.mybatis.PageRequest;
-
 
 public interface WaitingRecordService {
 
@@ -20,7 +18,7 @@ public interface WaitingRecordService {
 
 	List<String> findTimeLineTimes(Long id);
 
-	void insert(MonitoringList monitoringList, Machine entity);
+	void insert(Map<String, Object> monitoringList, Machine entity);
 
 	Double findWaittingData(Map<String, Object> map);
 

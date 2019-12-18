@@ -34,7 +34,6 @@ var optionBar = {
 	    	type:"category",
 	    	position: 'left',
 	    	min:0,
-            max:25,
 	    	axisTick:{
 	        	show:true,
 	        	interval:0,
@@ -45,14 +44,14 @@ var optionBar = {
 	        },
 	        offset: '30',
 	        axisLabel: {
-	        	interval:0,
+	           interval:0,
 	        	margin:10,
 	            textStyle: {
 	                color: '#34a9eb',
 	                fontSize: '8',
 	            }
 	        },
-	        data: ['南昌转运中心', '广州转运中心', '杭州转运中心', '宁夏转运中心', '兰州转运中心', '南宁转运中心', '长沙转运中心', '武汉转运中心', '合肥转运中心', '贵州转运中心']
+	        data: []
 	    }],
 	    series: [{
 	            name: '条',

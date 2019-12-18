@@ -1,6 +1,5 @@
 package org.tdds.service.impl;
 
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -14,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.tdds.entity.Machine;
-import org.tdds.entity.MonitoringList;
 import org.tdds.entity.RunningRecord;
 import org.tdds.mapper.RunningRecordMapper;
 import org.tdds.service.RunningRecordService;
@@ -29,34 +27,32 @@ import tk.mybatis.mapper.entity.Example.Criteria;
 
 @Service
 public class RunningRecordServiceImpl implements RunningRecordService {
-	
-	private  static final String ORDER_BY="id desc";
+
+	private static final String ORDER_BY = "id desc";
 
 	@Autowired
 	private RunningRecordMapper runningRecordDao;
-	
-	
-	
+
 	@Override
-	public void insert(MonitoringList monitoringList, Machine machine) {
+	public void insert(Map<String, Object> monitoringList, Machine machine) {
 		Date date = new Date();
 		RunningRecord entity = new RunningRecord();
-			entity.setMachineId(machine.getId());
-			entity.setMachineName(machine.getName());
-			entity.setStartTime(machine.getStartTime());
-			entity.setEndTime(date);
-			entity.setTimediff(DateUtils.getDatePoor(machine.getStartTime(), date, "min"));
-			entity.setMachineMode(monitoringList.getMachineMode());
-			entity.setMachineStatus(monitoringList.getMachineStatus());
-			entity.setMachiningTimeProgress(monitoringList.getMachiningTimeProgress());
-			entity.setMainProgramNo(monitoringList.getMainprogramNo());
-			entity.setMaintenanceSignal(monitoringList.getMaintenanceSignal());
-			entity.setOverrideFeed(monitoringList.getOverrideFeed());
-			entity.setOverrideRapid(monitoringList.getOverrideRapid());
-			entity.setOverrideSpindle(monitoringList.getOverrideSpindle());
-			entity.setPartsCountResult(monitoringList.getPartscountResult());
-			entity.setPartsCountTarget(monitoringList.getPartscountTarget());
-			runningRecordDao.insert(entity);
+		entity.setMachineId(machine.getId());
+		entity.setMachineName(machine.getName());
+		entity.setStartTime(machine.getStartTime());
+		entity.setEndTime(date);
+		entity.setTimediff(DateUtils.getDatePoor(machine.getStartTime(), date, "min"));
+		entity.setMachineMode(Objects.toString(monitoringList.get("machineMode"), null));
+		entity.setMachineStatus(Objects.toString(monitoringList.get("machineStatus"), null));
+		entity.setMachineStatus(Objects.toString(monitoringList.get("machiningTimeProgress"), null));
+		entity.setMachineStatus(Objects.toString(monitoringList.get("mainprogramNo"), null));
+		entity.setMachineStatus(Objects.toString(monitoringList.get("maintenanceSignal"), null));
+		entity.setMachineStatus(Objects.toString(monitoringList.get("overrideFeed"), null));
+		entity.setMachineStatus(Objects.toString(monitoringList.get("overrideRapid"), null));
+		entity.setMachineStatus(Objects.toString(monitoringList.get("overrideSpindle"), null));
+		entity.setMachineStatus(Objects.toString(monitoringList.get("partscountResult"), null));
+		entity.setMachineStatus(Objects.toString(monitoringList.get("partscountTarget"), null));
+		runningRecordDao.insert(entity);
 	}
 
 	@Override
@@ -64,35 +60,36 @@ public class RunningRecordServiceImpl implements RunningRecordService {
 		Example example = new Example(RunningRecord.class);
 		example.setOrderByClause(ORDER_BY);
 		Criteria criteria = example.createCriteria();
-		if(StringUtils.hasText(Objects.toString(filters.get("recordTime"), null))){
+		if (StringUtils.hasText(Objects.toString(filters.get("recordTime"), null))) {
 			String recordTime = Objects.toString(filters.get("recordTime"), null);
-			if(recordTime.indexOf("&")>-1){
-				String startTime=recordTime.split("&")[0];
-				String endTime=recordTime.split("&")[1];
+			if (recordTime.indexOf("&") > -1) {
+				String startTime = recordTime.split("&")[0];
+				String endTime = recordTime.split("&")[1];
 				criteria.andBetween("startTime", startTime, endTime);
 				criteria.andBetween("endTime", startTime, endTime);
-			} 
-			if(NumberUtils.isNumber(recordTime)){
-				Integer num=Integer.valueOf(recordTime);
-				Map<String, String> map = getTime(num);
-				criteria.andBetween("startTime",map.get("startTime"), map.get("endTime"));
-				criteria.andBetween("endTime",map.get("startTime"), map.get("endTime"));
 			}
-		}if(StringUtils.hasText(Objects.toString(filters.get("timediff"), null))){
-			String timediff=Objects.toString(filters.get("timediff"));
-			criteria.andLessThanOrEqualTo("timediff",Integer.valueOf(timediff));
-		 }
-		if(StringUtils.hasText(Objects.toString(filters.get("machineName"), null))){
-			 criteria.andEqualTo("machineName", Objects.toString(filters.get("machineName")));
-		 }
- 		List<RunningRecord> entities=runningRecordDao.selectByExampleAndRowBounds(example, pageable);
+			if (NumberUtils.isNumber(recordTime)) {
+				Integer num = Integer.valueOf(recordTime);
+				Map<String, String> map = getTime(num);
+				criteria.andBetween("startTime", map.get("startTime"), map.get("endTime"));
+				criteria.andBetween("endTime", map.get("startTime"), map.get("endTime"));
+			}
+		}
+		if (StringUtils.hasText(Objects.toString(filters.get("timediff"), null))) {
+			String timediff = Objects.toString(filters.get("timediff"));
+			criteria.andLessThanOrEqualTo("timediff", Integer.valueOf(timediff));
+		}
+		if (StringUtils.hasText(Objects.toString(filters.get("machineName"), null))) {
+			criteria.andEqualTo("machineName", Objects.toString(filters.get("machineName")));
+		}
+		List<RunningRecord> entities = runningRecordDao.selectByExampleAndRowBounds(example, pageable);
 		return new PageImpl<RunningRecord>(entities, pageable);
 	}
-	
-	private Map<String, String> getTime(Integer flag){
-		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+	private Map<String, String> getTime(Integer flag) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Calendar now = Calendar.getInstance();
-		Map<String , String> timeMap = new HashMap<>();
+		Map<String, String> timeMap = new HashMap<>();
 		timeMap.put("endTime", sdf.format(now.getTime()));
 		switch (flag) {
 		case 3:
@@ -122,27 +119,28 @@ public class RunningRecordServiceImpl implements RunningRecordService {
 	@Override
 	public List<Map<String, Object>> exportData(QueryFilters filters) {
 		Map<String, Object> filter = new HashMap<>();
-		if(StringUtils.hasText(Objects.toString(filters.get("recordTime"), null))){
+		if (StringUtils.hasText(Objects.toString(filters.get("recordTime"), null))) {
 			String recordTime = Objects.toString(filters.get("recordTime"), null);
-			if(recordTime.indexOf("&")>-1){
-				String startTime=recordTime.split("&")[0];
-				String endTime=recordTime.split("&")[1];
+			if (recordTime.indexOf("&") > -1) {
+				String startTime = recordTime.split("&")[0];
+				String endTime = recordTime.split("&")[1];
 				filter.put("startTime", startTime);
 				filter.put("endTime", endTime);
-			} 
-			if(NumberUtils.isNumber(recordTime)){
-				Integer num=Integer.valueOf(recordTime);
-				Map<String, String> map = getTime(num);
-				filter.put("startTime",map.get("startTime"));
-				filter.put("endTime",map.get("endTime"));
 			}
-		}if(StringUtils.hasText(Objects.toString(filters.get("timediff"), null))){
-			String timediff=Objects.toString(filters.get("timediff"));
-			filter.put("timediff",Integer.valueOf(timediff));
-		 }
-		if(StringUtils.hasText(Objects.toString(filters.get("machineName"), null))){
+			if (NumberUtils.isNumber(recordTime)) {
+				Integer num = Integer.valueOf(recordTime);
+				Map<String, String> map = getTime(num);
+				filter.put("startTime", map.get("startTime"));
+				filter.put("endTime", map.get("endTime"));
+			}
+		}
+		if (StringUtils.hasText(Objects.toString(filters.get("timediff"), null))) {
+			String timediff = Objects.toString(filters.get("timediff"));
+			filter.put("timediff", Integer.valueOf(timediff));
+		}
+		if (StringUtils.hasText(Objects.toString(filters.get("machineName"), null))) {
 			filter.put("machineName", Objects.toString(filters.get("machineName")));
-		 }
+		}
 		return runningRecordDao.exportData(filter);
 	}
 
@@ -163,34 +161,35 @@ public class RunningRecordServiceImpl implements RunningRecordService {
 
 	@Override
 	public Map<String, Object> findAllRecordsByMachineId(Long id) {
-		 
+
 		return runningRecordDao.findAllRecordsByMachineId(id);
 	}
 
 	@Override
 	public Double findTimeDiffByFilters(QueryFilters filters) {
 		Map<String, Object> filter = new HashMap<>();
-		if(StringUtils.hasText(Objects.toString(filters.get("recordTime"), null))){
+		if (StringUtils.hasText(Objects.toString(filters.get("recordTime"), null))) {
 			String recordTime = Objects.toString(filters.get("recordTime"), null);
-			if(recordTime.indexOf("&")>-1){
-				String startTime=recordTime.split("&")[0];
-				String endTime=recordTime.split("&")[1];
+			if (recordTime.indexOf("&") > -1) {
+				String startTime = recordTime.split("&")[0];
+				String endTime = recordTime.split("&")[1];
 				filter.put("startTime", startTime);
 				filter.put("endTime", endTime);
-			} 
-			if(NumberUtils.isNumber(recordTime)){
-				Integer num=Integer.valueOf(recordTime);
-				Map<String, String> map = getTime(num);
-				filter.put("startTime",map.get("startTime"));
-				filter.put("endTime",map.get("endTime"));
 			}
-		}if(StringUtils.hasText(Objects.toString(filters.get("timediff"), null))){
-			String timediff=Objects.toString(filters.get("timediff"));
-			filter.put("timediff",Integer.valueOf(timediff));
-		 }
-		if(StringUtils.hasText(Objects.toString(filters.get("machineName"), null))){
+			if (NumberUtils.isNumber(recordTime)) {
+				Integer num = Integer.valueOf(recordTime);
+				Map<String, String> map = getTime(num);
+				filter.put("startTime", map.get("startTime"));
+				filter.put("endTime", map.get("endTime"));
+			}
+		}
+		if (StringUtils.hasText(Objects.toString(filters.get("timediff"), null))) {
+			String timediff = Objects.toString(filters.get("timediff"));
+			filter.put("timediff", Integer.valueOf(timediff));
+		}
+		if (StringUtils.hasText(Objects.toString(filters.get("machineName"), null))) {
 			filter.put("machineName", Objects.toString(filters.get("machineName")));
-		 }
+		}
 		return runningRecordDao.findTimeDiffByFilters(filter);
 	}
 }

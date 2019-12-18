@@ -7,7 +7,7 @@
     <!-- 单表查询结果列 -->
     <sql id="Base_Column_List">
     </sql>
-		<select id="selectOneByName" resultType="org.tdds.entity.MonitoringList">
+		<select id="selectOneByName" resultType="java.util.HashMap">
 		<![CDATA[
 			SELECT
 				Machine_Name as machineName,

@@ -98,10 +98,10 @@ public class MachineServiceImpl implements MachineService {
 	}
 
 	@Override
-	public int update(MonitoringList monitoringList,Machine entity) {
+	public int update(Map<String,Object>monitoringList,Machine entity) {
 		Date date = new Date();
 		String status=entity.getStatus();
-		String mstatus= monitoringList.getMachineSignal();
+		String mstatus= Objects.toString(monitoringList.get("machineSignal"),null) ;
 		if(!status.equals(mstatus)){
 			 if(status.equals(STATUS[0])){
 				 bizRunningRecord.insert(monitoringList, entity);

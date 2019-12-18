@@ -26,7 +26,7 @@ public interface MachineService{
 
 	List<Map<String, Object>> exportInfore(Long id);
 
-	int update(MonitoringList machine,Machine entity);
+	int update(Map<String, Object> monitor,Machine entity);
 
 	Machine findMachineByName(String machineName);
 	

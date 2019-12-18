@@ -51,17 +51,19 @@ body{
 .circle{
 	display:inline-block;
 	border-radius:50%;
-	height:60px;
-	width:60px;
+	height:30px;
+	width:30px;
 	text-align:center;
 	line-height:53px;
 	position:absolute;
-	color:#FFF0FF;
+	color:#10e213;
 	background:#07070a69;
+	font-weight:bold;
+	font-size:15px
 }
 
 .circle-running{
-	border:5px solid #12b07b;
+	border:2px solid #12b07b;
 }
 .circle-poweroff{
 	border:5px solid #a6a5a5;
@@ -73,7 +75,7 @@ body{
 	border:5px solid #feb501;
 }
 
-.circle-manual{
+.circle-unknow{
 	border:5px solid #feb501;
 }
 

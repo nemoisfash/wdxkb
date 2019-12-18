@@ -2,9 +2,7 @@ package org.tdds.controller;
 
 import java.text.DecimalFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -23,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.tdds.entity.Machine;
-import org.tdds.entity.MonitoringList;
 import org.tdds.entity.Report;
 import org.tdds.service.LogRecordService;
 import org.tdds.service.MachineService;
@@ -56,7 +53,7 @@ public class MachineController extends BasePortalController {
 
 	@Autowired
 	private RunningRecordService bizRunningRecord;
- 
+
 	@Autowired
 	private LogRecordService bizLogRecord;
 
@@ -70,24 +67,29 @@ public class MachineController extends BasePortalController {
 
 	List<Map<String, Object>> statuslist = new ArrayList<>();
 
-	@SuppressWarnings("unused")
+	@ResponseBody
 	@RequestMapping(value = "datalist", method = RequestMethod.GET)
 	public Object loging(HttpServletRequest request, HttpServletResponse res) {
 		Boolean success = true;
 		List<Machine> machines = bizMachine.findMachine();
-		List<MonitoringList> entities = new ArrayList<>();
+		List<Map<String, Object>> entities = new ArrayList<>();
 		for (Machine machine : machines) {
-			MonitoringList monitor=null;
-			if(machine.getIo()){
-				monitor=new MonitoringList();
-				monitor.setMachineName(machine.getName());
-				monitor.setMachineSignal(getStatus(machine.getmIp()));
-			}else{
-				monitor=bizMonitoring.findByName(machine.getName());
+			Map<String, Object> monitor = null;
+			if (machine.getIo() != null) {
+				if (machine.getIo() == 0) {
+					monitor = bizMonitoring.findByName(machine.getCode());
+				} else if (machine.getIo() == 1) {
+					monitor = new HashMap();
+					monitor.put("machineName", machine.getName());
+					monitor.put("machineSignal", getStatus(machine.getmIp()));
+				} else if (machine.getIo() == 2) {
+					monitor = bizMonitoring.subscriberJsonFromMqttServer(machine);
+				}
 			}
-				bizMachine.update(monitor,machine);
-				monitor.setMachineName(machine.getCode());
+			if(!monitor.isEmpty()) {
+				bizMachine.update(monitor, machine);
 				entities.add(monitor);
+			}
 		}
 		Map<String, Object> map = new HashMap<>();
 		map.put("resault", entities);
@@ -102,7 +104,7 @@ public class MachineController extends BasePortalController {
 		map.put("resault", entities);
 		return map;
 	}
-	
+
 	/**
 	 * 每天每小时设备运行状况 一天24*60分钟
 	 * 
@@ -117,19 +119,15 @@ public class MachineController extends BasePortalController {
 		List<String> times = new ArrayList<>();
 		List<Map<String, Object>> maps = new ArrayList<>();
 		List<Machine> machines = bizMachine.findMachine();
-		for(Machine entity:machines) {
-			if(!entity.getIo()) {
-				
-			}
+		for (Machine entity : machines) {
+
 		}
-		map.put("xAxis",DateUtils.DateToString(new Date(),"yyyy-MM-dd HH:mm:ss"));
+		map.put("xAxis", DateUtils.DateToString(new Date(), "yyyy-MM-dd HH:mm:ss"));
 		map.put("series", maps);
-		
+
 		return map;
 	}
-	
-	
-	
+
 	/**
 	 * 
 	 * @param request
@@ -196,12 +194,12 @@ public class MachineController extends BasePortalController {
 	public Object categories(HttpServletRequest request, HttpServletResponse response) {
 		List<Machine> machines = bizMachine.findMachine();
 		List<String> names = new ArrayList<>();
-		for(Machine entity: machines){
+		for (Machine entity : machines) {
 			names.add(entity.getName());
 		}
-		 return names;
+		return names;
 	}
- 
+
 	@RequestMapping(value = "/reportList", method = RequestMethod.GET)
 	@ResponseBody
 	public Object reportList(HttpServletRequest request, HttpServletResponse response) {
@@ -210,15 +208,15 @@ public class MachineController extends BasePortalController {
 		for (Report report : reportsList) {
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("machineName", report.getMachineName());
-			map.put("plannedOtime", report.getPlannedOtime()+"H");
-			map.put("actualOtime", report.getActualOtime()+"H");
+			map.put("plannedOtime", report.getPlannedOtime() + "H");
+			map.put("actualOtime", report.getActualOtime() + "H");
 			map.put("timeOee", createOee(report.getPlannedOtime(), report.getActualOtime()));
 			map.put("plannedCapacity", report.getPlannedCapacity());
 			map.put("actualCapacity", report.getActualCapacity());
 			map.put("performanceOee", createOee(report.getPlannedCapacity(), report.getActualCapacity()));
 			map.put("number", report.getNumber());
 			map.put("goodNumber", report.getGoodNumber());
-			map.put("goodYield",createOee(report.getNumber(),report.getGoodNumber()));
+			map.put("goodYield", createOee(report.getNumber(), report.getGoodNumber()));
 			entities.add(map);
 		}
 		return entities;
@@ -226,17 +224,17 @@ public class MachineController extends BasePortalController {
 
 	private String createOee(int dividend, int divisor) {
 		String f = null;
-		if(dividend!=0) {
-			if(dividend==divisor) {
-				f="100";
-			}else {
-				Double numDouble =(Double.valueOf(divisor) / Double.valueOf(dividend))*100;
-	 			f= new DecimalFormat("#.00").format(numDouble);
+		if (dividend != 0) {
+			if (dividend == divisor) {
+				f = "100";
+			} else {
+				Double numDouble = (Double.valueOf(divisor) / Double.valueOf(dividend)) * 100;
+				f = new DecimalFormat("#.00").format(numDouble);
 			}
-		}else {
-			f="0";
+		} else {
+			f = "0";
 		}
-		return  f + "%";
+		return f + "%";
 	}
 
 	/**
@@ -256,8 +254,16 @@ public class MachineController extends BasePortalController {
 			Map<String, Object> map2 = new HashMap<>();
 			List<Object> value = new ArrayList<>();
 			value.add(i);
-			value.add(DateUtils.DateToString(machine.getStartTime(), "yyyy-MM-dd HH:mm"));
-			value.add(DateUtils.DateToString(machine.getEndTime(), "yyyy-MM-dd HH:mm"));
+			if (machine.getStartTime() != null) {
+				value.add(DateUtils.DateToString(machine.getStartTime(), "yyyy-MM-dd HH:mm"));
+			} else {
+				value.add(DateUtils.DateToString(new Date(), "yyyy-MM-dd HH:mm"));
+			}
+			if (machine.getEndTime() != null) {
+				value.add(DateUtils.DateToString(machine.getEndTime(), "yyyy-MM-dd HH:mm"));
+			} else {
+				value.add(DateUtils.DateToString(new Date(), "yyyy-MM-dd HH:mm"));
+			}
 			String color = null;
 			if (machine.getStatus().equals(STATUS[0])) {
 				color = COLOR[0];
@@ -270,7 +276,13 @@ public class MachineController extends BasePortalController {
 			} else {
 				color = COLOR[4];
 			}
-			long timeDiff = DateUtils.getDatePoor(machine.getStartTime(), machine.getEndTime(), "min");
+			Long timeDiff = null;
+			if (machine.getStartTime() != null && machine.getEndTime() != null) {
+				timeDiff = DateUtils.getDatePoor(machine.getStartTime(), machine.getEndTime(), "min");
+			} else {
+				timeDiff = 1L;
+			}
+
 			value.add(Math.abs(timeDiff));
 			map2.put("value", value);
 			Map<String, Object> normalMap = new HashMap<>();
@@ -300,9 +312,8 @@ public class MachineController extends BasePortalController {
 			running = Modbus4jUtil.readInputStatus(ip, 502, 1, 0);
 			waitting = Modbus4jUtil.readInputStatus(ip, 502, 1, 1);
 			warning = Modbus4jUtil.readInputStatus(ip, 502, 1, 2);
-		} catch (ModbusTransportException | ErrorResponseException
-				| ModbusInitException e) {
-			status=STATUS[1];
+		} catch (ModbusTransportException | ErrorResponseException | ModbusInitException e) {
+			status = STATUS[1];
 		}
 		if (running) {
 			if (!waitting) {

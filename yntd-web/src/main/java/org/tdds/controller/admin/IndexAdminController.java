@@ -73,7 +73,7 @@ public class IndexAdminController {
 		List<MonitoringList> monitoringLists =new ArrayList<>();
 		for(Machine entity:machines){
 			MonitoringList monitoringlist=null;
-			if(entity.getIo()) {
+			if(entity.getIo()==1) {
 				monitoringlist=new MonitoringList();
 				monitoringlist.setMachineSignal(getStatus(entity.getmIp()));
 			}else {

@@ -14,7 +14,7 @@ import net.chenke.playweb.support.mybatis.PageRequest;
 
 public interface PowerOffRecordService {
 	
-	void insert(MonitoringList monitoringList, Machine entity);
+	void insert(Map<String, Object> monitoringList, Machine entity);
 
 	Page<PowerOffRecord> findAllRecords(QueryFilters filters, PageRequest pageable);
 

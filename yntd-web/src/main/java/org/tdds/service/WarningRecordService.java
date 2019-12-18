@@ -22,7 +22,7 @@ public interface WarningRecordService {
 
 	List<String> findTimeLineTimes(Long id);
 
-	void insert(MonitoringList monitoringList, Machine entity);
+	void insert(Map<String, Object> monitoringList, Machine entity);
 
 	Double findAlarmData(Map<String, Object> map);
 

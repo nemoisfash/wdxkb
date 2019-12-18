@@ -15,7 +15,7 @@ import net.chenke.playweb.support.mybatis.PageRequest;
 
 public interface RunningRecordService {
 
-	void insert(MonitoringList monitoringList, Machine entity);
+	void insert(Map<String, Object> monitoringList, Machine entity);
 
 	Page<RunningRecord> findAllRecords(QueryFilters filters, PageRequest pageable);
 

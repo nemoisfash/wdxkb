@@ -189,7 +189,8 @@ public class LoggingAdminController extends BaseWorkbenchController {
 			HttpServletResponse response) {
 		Machine machine = bizMachine.findMachineByName(name);
 		MonitoringList montior =null;
-		if(!machine.getIo()) {
+		//TODO
+		if(machine.getIo()==1) {
 			montior=bizMonitoring.findByName(name);
 			montior.setMachineSignal(StatusEnum.getValue(montior.getMachineSignal()));
 		}else {

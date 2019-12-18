@@ -1,17 +1,19 @@
 var app = angular.module('myApp', []);
 app.controller('myCtrl', function($scope,$http,$interval) {
-$interval(function(){
 	$http({
 		method: 'GET',
 		url:"/member/datalist.json",
 		cache:false,
 		async:false}).then(function(res){
 		$scope.items=res.data.resault;
+		console.info(res.data.resault);
 		$scope.switchStatus(res.data.resault);
 	})
-},10000)
+/*$interval(function(){
 
-$interval(function(){
+},10000)*/
+
+/*$interval(function(){
 	$http({
 		method: 'GET',
 		url:"/member/reportList.json",
@@ -19,11 +21,16 @@ $interval(function(){
 		async:false}).then(function(res){
 		$scope.reports=res.data;
 	})
-},48000)
+},48000)*/
 
 $scope.switchStatus=function(obj){
 	$.each(obj,function(){
-		 var status=this.machineSignal;
+		var status="";
+		 if(this.machineSignal==null||this.machineSignal==""){
+			 status="UNKNOW";
+		 }else{
+			 status=this.machineSignal;
+		 }
 		 var machineName=this.machineName;
 		 $("#"+machineName+"_m").attr("class","")
 		 $("#"+machineName+"_m").text(machineName);
@@ -114,27 +121,7 @@ $scope.switchStatus=function(obj){
 			        formatter: function (params) {
 			            return params.marker + params.name + ':' + params.value[3] + '分钟';
 			        }
-			    },/*,dataZoom:[{
-		            type: 'slider',
-		            xAxisIndex: 0,
-		            filterMode: 'weakFilter',
-		            height: 20,
-		            bottom: 0,
-		            start: 0,
-		            end: 100,
-		            handleIcon: 'M10.7,11.9H9.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4h1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
-		            handleSize: '80%',
-		            showDetail: true
-		        }, {
-		            type: 'inside',
-		            id: 'insideX',
-		            xAxisIndex: 0,
-		            filterMode: 'weakFilter',
-		            start: 0,
-		            end: 100,
-		            zoomOnMouseWheel: true,
-		            moveOnMouseMove: true
-		        }],*/
+			    },
 			    grid: {
 			        left: '10%',
 			        top: '12%',
@@ -170,8 +157,6 @@ $scope.switchStatus=function(obj){
 			    yAxis: {
 			    	type:"category",
 			    	boundaryGap: ['20%', '20%'],
-			    	min:0,
-		            max:25,
 		            position:'left',
 			    	axisLine: {
 		                show:true,
@@ -209,7 +194,6 @@ $scope.switchStatus=function(obj){
 			        data: []
 			    }]
 			};
-		
 			$http({
 				method: 'GET',
 				url:"/member/timeLine/categories.json",
@@ -217,10 +201,9 @@ $scope.switchStatus=function(obj){
 				async:false
 			}).then(function(res){
 				option.yAxis.data=res.data;
-				option.yAxis.max=res.data.length;
+				option.yAxis.max=res.data.length-1;
 				myChart.hideLoading();
 				setSeriesData();
-				
 			})
 			
 			function setSeriesData(){
