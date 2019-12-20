@@ -70,16 +70,19 @@ public class IndexAdminController {
 	@ResponseBody
 	public Object datalist(HttpServletRequest request,HttpServletResponse response){
 		List<Machine> machines = bizMachine.findMachine();
-		List<MonitoringList> monitoringLists =new ArrayList<>();
+		List<Map<String,Object>> monitoringLists =new ArrayList<>();
 		for(Machine entity:machines){
-			MonitoringList monitoringlist=null;
-			if(entity.getIo()==1) {
-				monitoringlist=new MonitoringList();
-				monitoringlist.setMachineSignal(getStatus(entity.getmIp()));
-			}else {
-				monitoringlist=bizMonitoring.findByName(entity.getName());
+			Map<String,Object> monitoringlist= new HashMap<>();
+			if (entity.getIo() != null) {
+				if (entity.getIo() == 0) {
+					monitoringlist = bizMonitoring.findByName(entity.getCode());
+				} else if (entity.getIo() == 1) {
+					monitoringlist.put("machineName", entity.getName());
+					monitoringlist.put("machineSignal", getStatus(entity.getmIp()));
+				} else if (entity.getIo() == 2) {
+					monitoringlist = bizMonitoring.subscriberJsonFromMqttServer(entity);
+				}
 			}
-			monitoringlist.setMachineName(entity.getCode());
 			monitoringLists.add(monitoringlist);
 		}
 		Map<String, Object> map = new HashMap<>();

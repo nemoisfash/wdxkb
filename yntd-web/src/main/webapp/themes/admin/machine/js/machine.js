@@ -168,7 +168,7 @@ var uuid=$("#uuid").val();
 			area : ['800px','689px'],
 			content:$("#realTime"),
 			success:function(){
-				createGauge(name);
+				createGauge(id);
 				$interval(function(){
 					getMonitor($scope.crName);
 				},5000)
@@ -191,7 +191,7 @@ var uuid=$("#uuid").val();
 		})
 	}
 	
-	function createGauge(name){
+	function createGauge(id){
 		var gauges= [];
 		$.each($("#gauges").find("div"),function(){
 			var myGauges=echarts.init(this);
@@ -199,10 +199,9 @@ var uuid=$("#uuid").val();
 		})
 		$http({
 			method: 'GET',
-			url:"/admin/logging/gauge.json?machineName="+name,
+			url:"/admin/logging/gauge.json?machineId="+id,
 			cache:false,
 			async:false}).then(function(res){
-				console.info(res.data); 
 				for(var i=0;i<gauges.length;i++){
 					gaugeOption.series[0].data[0]=res.data[i];
 					gauges[i].setOption(gaugeOption);

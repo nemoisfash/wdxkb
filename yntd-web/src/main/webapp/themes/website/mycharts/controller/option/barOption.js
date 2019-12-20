@@ -70,7 +70,7 @@ var optionBar = {
 	                    }
 	                },
 	            },
-	            barWidth: 6,
+	            barWidth: 15,
 	            itemStyle: {
 	                normal: {
 	                    color: function(params) {

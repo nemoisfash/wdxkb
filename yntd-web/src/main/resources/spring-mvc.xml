@@ -7,7 +7,6 @@
                         http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd ">
 
 	<context:property-placeholder ignore-unresolvable="true" location="classpath:conf.properties" />
-
     <context:component-scan base-package="cn.hxz,org.tdds" use-default-filters="false">
         <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />
     </context:component-scan>
@@ -118,7 +117,6 @@
             </list>
         </property>
     </bean>
-	
     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
         <property name="maxUploadSize" value="${allowedUploadSize}" />
     </bean>
@@ -128,6 +126,8 @@
 </bean>
 <!-- 	<bean id="jobFactory" class="cn.hxz.device.sensor.JobFactory"></bean>
 	 <bean id="schedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean"> 
-	 <property name="jobFactory" ref="jobFactory"></property>
+	 <property name="jobFactory" ref="jobFactory">
+	 </property>
 	 </bean> -->
+	 <import resource="classpath:spring-mqtt.xml" />
 	</beans>

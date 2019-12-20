@@ -87,9 +87,9 @@ public class LoggingAdminController extends BaseWorkbenchController {
 	// 西部大森 running=manual
 	private static final String[] STATUS = { "RUNNING", "POWEROFF", "ALARM", "WAITING" ,"MANUAL"};
 	
-	private static final String[] TYPE = { "overrideRapid", "overrideSpindle", "overrideFeed"};
+	private static final String[] TYPE = { "overrideFeed", "cncSrate","cncSload"};
 	
-	private static final String[] TYPE_CN = { "进给倍率", "主轴倍率", "切削倍率"};
+	private static final String[] TYPE_CN = { "进给倍率", "主轴倍率", "主轴负载"};
 	 
 	private static final String uuid = HashUtils.MD5(LoggingAdminController.class.getName());
 
@@ -147,60 +147,41 @@ public class LoggingAdminController extends BaseWorkbenchController {
 		return map;
 	}
 
-	@ResponseBody
-	@RequestMapping(value = "/gauge", method = RequestMethod.GET)
-	public Object gauge(@RequestParam(value = "machineName") String machineName, HttpServletRequest request,
-			HttpServletResponse response) {
-		 List<Map<String, Object>> list = new ArrayList<Map<String,Object>>(); 
-		 MonitoringList entity = bizMonitoring.findByName(machineName);
-		for (String type : TYPE) {
-			Map<String, Object> map = new LinkedHashMap<>();
-			if (type.equalsIgnoreCase(TYPE[0])) {
-				if(entity!=null) {
-					map.put("value",Integer.parseInt(entity.getOverrideRapid()));
-				}else {
-					map.put("value",0);
-				}
-				map.put("name",TYPE_CN[0]);
-			}else if(type.equalsIgnoreCase(TYPE[1])){
-				if(entity!=null) {
-					map.put("value",Integer.parseInt(entity.getOverrideSpindle()));
-				}else {
-					map.put("value",0);
-				}
-				map.put("name",TYPE_CN[1]);
-			}else {
-				if(entity!=null) {
-					map.put("value",Integer.parseInt(entity.getOverrideFeed()));
-				}else {
-					map.put("value",0);
-				}
-				map.put("name",TYPE_CN[2]);
-			}
-			JSONObject jsonObj=new JSONObject(map);
-			list.add(jsonObj);
-		}
-		return list;
-	}
+	/*
+	 * @ResponseBody
+	 * 
+	 * @RequestMapping(value = "/gauge", method = RequestMethod.GET) public Object
+	 * gauge(@RequestParam(value = "machineId") Long machineId, HttpServletRequest
+	 * request, HttpServletResponse response) { List<Map<String, Object>> list = new
+	 * ArrayList<Map<String,Object>>(); Machine machine =bizMachine.load(machineId);
+	 * if(machine==null) { return null; } Map<String, Object> entity = new
+	 * HashMap<>(); Map<String,Object> monitoring = new HashMap<>();
+	 * switch(machine.getIo()) { case 0:
+	 * monitoring=bizMonitoring.findByName(machine.getName());
+	 * if(monitoring.get("overrideFeed").equals("0")) {
+	 * 
+	 * }
+	 * 
+	 * 
+	 * }
+	 * 
+	 * 
+	 * JSONObject jsonObj=new JSONObject(map); list.add(jsonObj); return list; }
+	 */
 	
-	@RequestMapping(value = "/monitor", method = RequestMethod.GET)
-	@ResponseBody
-	public Object monitor(@RequestParam(value = "name", required = false) String name, HttpServletRequest request,
-			HttpServletResponse response) {
-		Machine machine = bizMachine.findMachineByName(name);
-		MonitoringList montior =null;
-		//TODO
-		if(machine.getIo()==1) {
-			montior=bizMonitoring.findByName(name);
-			montior.setMachineSignal(StatusEnum.getValue(montior.getMachineSignal()));
-		}else {
-			montior =new MonitoringList();
-			String status=getStatus(machine.getmIp());
-			montior.setMachineStatus(StatusEnum.getValue(status));
-		}
-		return montior;
-	}
-	
+	/*
+	 * @RequestMapping(value = "/monitor", method = RequestMethod.GET)
+	 * 
+	 * @ResponseBody public Object monitor(@RequestParam(value = "name", required =
+	 * false) String name, HttpServletRequest request, HttpServletResponse response)
+	 * { Machine machine = bizMachine.findMachineByName(name); MonitoringList
+	 * montior =null; //TODO if(machine.getIo()==1) {
+	 * montior=bizMonitoring.findByName(name);
+	 * montior.setMachineSignal(StatusEnum.getValue(montior.getMachineSignal()));
+	 * }else { montior =new MonitoringList(); String
+	 * status=getStatus(machine.getmIp());
+	 * montior.setMachineStatus(StatusEnum.getValue(status)); } return montior; }
+	 */
 	@RequestMapping(value = "/{type}/sumTimeDiff", method = RequestMethod.GET)
 	@ResponseBody
 	public Object sumTimeDiff(@PathVariable String type, HttpServletRequest request,

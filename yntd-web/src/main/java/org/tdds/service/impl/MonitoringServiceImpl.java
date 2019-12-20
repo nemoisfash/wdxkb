@@ -1,12 +1,10 @@
 package org.tdds.service.impl;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +14,11 @@ import org.tdds.entity.MonitoringList;
 import org.tdds.mapper.MonitoringMapper;
 import org.tdds.service.MonitoringService;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.hxz.webapp.util.DateUtils;
-import cn.hxz.webapp.util.ExcelExportUtil;
-import cn.hxz.webapp.util.MyClient;
+import cn.hxz.webapp.util.MyMqttClient;
 import tk.mybatis.mapper.entity.Example;
 import tk.mybatis.mapper.entity.Example.Criteria;
 
@@ -34,11 +32,27 @@ public class MonitoringServiceImpl implements MonitoringService {
 	@Autowired
 	private MonitoringMapper daoMonitoring;
 
-	private static final String confgFile = "mqttconfig/mqttconfig.properties";
-
 	@Override
 	public Map<String, Object> findByName(String name) {
-
+		Map<String, Object> map = daoMonitoring.selectOneByName(name);
+		if (map != null && !map.isEmpty()) {
+			JSONObject json = new JSONObject();
+			json.put("currentTime", DateUtils.DateToString(new Date() , "HH:mm:ss"));
+			json.put("cncProducts", map.get("partscountResult"));
+			json.put("cncActfspeed",0);
+			json.put("cncActspeed", 0);
+			json.put("overrideFeed", map.get("overrideFeed"));
+			json.put("cncSrate", map.get("overrideSpindle"));
+			json.put("cncSload", 0);
+			json.put("cncToolnum", map.get("toolNo"));
+			json.put("cncSeq", map.get("mainprogramNo"));
+			json.put("cncCurrentPna", map.get("mainprogramComment"));
+			json.put("machineSignal",map.get("machineSignal"));
+			json.put("machineName",map.get("machineName"));
+			String clientId = Objects.toString(map.get("machineName"),null) ;
+			String topic = "iot/" + clientId;
+			MyMqttClient.publish(topic, clientId, json.toJSONString());
+		}
 		return daoMonitoring.selectOneByName(name);
 	}
 
@@ -55,37 +69,31 @@ public class MonitoringServiceImpl implements MonitoringService {
 		return daoMonitoring.selectCountByExample(example);
 	}
 
+	@SuppressWarnings("static-access")
 	@Override
 	public Map<String, Object> subscriberJsonFromMqttServer(Machine machine) {
-		String host = getValue("mqtt_host");
-		String userName = getValue("mqtt_username");
-		String pwd = getValue("mqtt_pwd");
-		MyClient.HOST = host;
-		MyClient.USERNAME = userName;
-		MyClient.PASSWORD = pwd;
 		String clientId = machine.getCode();
-		String TOPIC1 = "iot/" + clientId;
+		String topic = "iot/" + clientId;
 		String message = "";
 		Map<String, Object> mls = new HashMap();
 		try {
-			MyClient.start(TOPIC1, clientId);
-			Thread.sleep(1000);
-			message = MyClient.msg;
+			message = MyMqttClient.subscribe(topic, clientId);
 			mls.put("machineName", machine.getName());
 			if (!StringUtils.isEmpty(message)) {
+				JSONObject jsonObject = (JSONObject) new JSONObject().parse(message);
 				if (machine.getMqttSorce() == 0) {
-					JSONObject jsonObject = (JSONObject) new JSONObject().parse(message);
 					Date date = new Date(Long.parseLong(jsonObject.getString("ts")));
 					mls.put("currentTime", DateUtils.DateToString(date, "HH:mm:ss"));
 					mls.put("powerOnTime", jsonObject.getString("tk"));
-					mls.put("partscountResult", jsonObject.getString("nl"));
-					mls.put("spindleSpeed", jsonObject.getString("sjs"));
-					mls.put("overrideSpindle", jsonObject.getString("szs"));
+					mls.put("cncProducts", jsonObject.getString("nl"));
+					mls.put("cncActfspeed", jsonObject.getString("sjs"));
+					mls.put("cncActspeed", jsonObject.getString("szs"));
 					mls.put("overrideFeed", jsonObject.getString("os"));
-					mls.put("spindleMultiplying", jsonObject.getString("oz"));
-					mls.put("spindleLoad", jsonObject.getString("la"));
-					mls.put("currentPregramNo", jsonObject.getString("ph"));
-					mls.put("currentPregramName", jsonObject.getString("pm"));
+					mls.put("cncSrate", jsonObject.getString("oz"));
+					mls.put("cncSload", jsonObject.getString("la"));
+					mls.put("cncToolnum", jsonObject.getString("dp"));
+					mls.put("cncCurrentPno", jsonObject.getString("ph"));
+					mls.put("cncCurrentPna", jsonObject.getString("pm"));
 					mls.put("mxAxis", jsonObject.getString("mcx"));
 					mls.put("myAyis", jsonObject.getString("mcy"));
 					mls.put("xload", jsonObject.getString("lx"));
@@ -94,16 +102,15 @@ public class MonitoringServiceImpl implements MonitoringService {
 					mls.put("ayAyis", jsonObject.getString("acy"));
 					mls.put("rxAxis", jsonObject.getString("rcx"));
 					mls.put("ryAyis", jsonObject.getString("rcy"));
-					mls.put("currentToolNo", jsonObject.getString("dp"));
 					mls.put("currentToolOffset", jsonObject.getString("dz"));
-					mls.put("gModal", jsonObject.getString("gt"));
-					mls.put("alarmCount", jsonObject.getString("as"));
+					mls.put("cncGcode", jsonObject.getString("gt"));
+					mls.put("cncAlarm", jsonObject.getString("as"));
 					mls.put("alamType", jsonObject.getString("al"));
-					mls.put("currentProgramStatementNo", jsonObject.getString("py"));
+					mls.put("cncSeq", jsonObject.getString("py"));
 					mls.put("ramainCoordinatesX", jsonObject.getString("scx"));
 					mls.put("ramainCoordinatesY", jsonObject.getString("scy"));
-					mls.put("currentProgramContent", jsonObject.getString("pn"));
-					mls.put("currentProgramContent", jsonObject.getString("co2"));
+					mls.put("cncCurrentpro", jsonObject.getString("pn"));
+					mls.put("cncRunstatus", jsonObject.getString("co2"));
 					if (jsonObject.get("co1") != null && jsonObject.getString("co1").equals("1")) {
 						mls.put("processingStates", "快速移动状态");
 					}
@@ -131,24 +138,66 @@ public class MonitoringServiceImpl implements MonitoringService {
 					if (jsonObject.getString("az") != null && jsonObject.getString("az").equals("1")) {
 						mls.put("machineSignal", "ALARM");
 					}
+
+				} else if (machine.getMqttSorce() == 1) {
+					mls.put("currentTime", new Date());
+					if (!StringUtils.isEmpty(jsonObject.getString("cnc_products"))) {
+						mls.put("cncProducts", jsonObject.getString("cnc_products"));
+					}
+
+					if (!StringUtils.isEmpty(jsonObject.getString("cnc_actfspeed"))) {
+						mls.put("cncActfspeed", jsonObject.getString("cnc_actfspeed"));
+					}
+
+					if (!StringUtils.isEmpty(jsonObject.getString("cnc_actspeed"))) {
+						mls.put("cncActspeed", jsonObject.getString("cnc_actspeed"));
+					}
+
+					if (!StringUtils.isEmpty(jsonObject.getString("cnc_srate"))) {
+						mls.put("cncSrate", jsonObject.getString("cnc_srate"));
+					}
+
+					if (!StringUtils.isEmpty(jsonObject.getString("cnc_sload"))) {
+						mls.put("cncSload", jsonObject.getString("cnc_sload"));
+					}
+
+					if (!StringUtils.isEmpty(jsonObject.getString("cnc_seq"))) {
+						mls.put("cncSeq", jsonObject.getString("cnc_seq"));
+					}
+
+					if (!StringUtils.isEmpty(jsonObject.getString("cnc_tool_num"))) {
+						mls.put("cncToolNum", jsonObject.getString("cnc_tool_num"));
+					}
+
+					if (jsonObject.getJSONArray("cnc_alarm") != null) {
+						JSONArray ja = jsonObject.getJSONArray("cnc_alarm");
+						if (!ja.isEmpty()) {
+							mls.put("machineSignal", "ALARM");
+							mls.put("alarmCount", ja.size());
+						}
+					}
+					if (jsonObject.getJSONObject("device_state") != null) {
+						JSONObject jo = jsonObject.getJSONObject("device_state");
+						if (jo.getInteger("Online") == 1) {
+							if (jsonObject.getInteger("cncSload") == 0) {
+								mls.put("machineSignal", "WAITING");
+							} else {
+								mls.put("machineSignal", "RUNNING");
+							}
+						}
+						if (jo.getInteger("Offline") == 1) {
+							mls.put("machineSignal", "POWEROFF");
+						}
+					}
+
 				}
-			} 
+			} else {
+				mls.put("machineSignal", "POWEROFF");
+			}
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
 		return mls;
-	}
-
-	private static String getValue(String key) {
-		Properties prop = new Properties();
-		InputStream in = ExcelExportUtil.class.getClassLoader().getResourceAsStream(confgFile);
-		try {
-			prop.load(new InputStreamReader(in, "utf-8"));
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			return "";
-		}
-		return prop.getProperty(key);
 	}
 
 }

@@ -1,27 +1,23 @@
 var app = angular.module('myApp', []);
 app.controller('myCtrl', function($scope,$http,$interval) {
-	$http({
-		method: 'GET',
-		url:"/member/datalist.json",
-		cache:false,
-		async:false}).then(function(res){
-		$scope.items=res.data.resault;
-		console.info(res.data.resault);
-		$scope.switchStatus(res.data.resault);
-	})
-/*$interval(function(){
+ $interval(function(){
+		$http({
+			method: 'GET',
+			url:"/member/datalist.json",
+			cache:false,
+			async:false}).then(function(res){
+			$scope.items=res.data.resault;
+			console.info(res.data.resault);
+			$scope.switchStatus(res.data.resault);
+		})
+},10000)
+ 
 
-},10000)*/
-
-/*$interval(function(){
-	$http({
+$http({
 		method: 'GET',
-		url:"/member/reportList.json",
-		cache:false,
+		url:"/member/publishMessage.json",
 		async:false}).then(function(res){
-		$scope.reports=res.data;
 	})
-},48000)*/
 
 $scope.switchStatus=function(obj){
 	$.each(obj,function(){

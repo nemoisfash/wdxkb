@@ -79,14 +79,14 @@ public class MachineController extends BasePortalController {
 				if (machine.getIo() == 0) {
 					monitor = bizMonitoring.findByName(machine.getCode());
 				} else if (machine.getIo() == 1) {
-					monitor = new HashMap();
 					monitor.put("machineName", machine.getName());
 					monitor.put("machineSignal", getStatus(machine.getmIp()));
 				} else if (machine.getIo() == 2) {
 					monitor = bizMonitoring.subscriberJsonFromMqttServer(machine);
 				}
 			}
-			if(!monitor.isEmpty()) {
+			
+			if(monitor!=null && !monitor.isEmpty()) {
 				bizMachine.update(monitor, machine);
 				entities.add(monitor);
 			}

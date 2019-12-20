@@ -3,7 +3,18 @@
  */
 var app = angular.module('dashboradApp', []);
 app.controller('myCon', function($scope,$http,$interval) {
-	$interval(function(){
+	 $interval(function(){
+			$http({
+					method: 'GET',
+					url:"/admin/index/datalist.json",
+					cache:false,
+					async:false}).then(function(res){
+					$scope.switchStatus(res.data.resault);
+					$scope.getStatusData()
+			})
+	},10000)
+		 
+	$scope.getStatusData=function(){
 		$http({
 			method: 'GET',
 			url:"/admin/index/data.json",
@@ -14,25 +25,20 @@ app.controller('myCon', function($scope,$http,$interval) {
 			$scope.alarm=res.data.ALARM;
 			$scope.waiting=res.data.WAITING;
 		})
-	},2000)
+	},
 	
-	 $interval(function(){
-		$http({
-				method: 'GET',
-				url:"/admin/index/datalist.json",
-				cache:false,
-				async:false}).then(function(res){
-				$scope.switchStatus(res.data.resault);
-		})
-	 },1000)
-	 
 	$scope.switchStatus=function(obj){
-	$.each(obj,function(){
-		 var status=this.machineSignal;
-		 var machineName=this.machineName;
-		 $("#"+machineName+"_m").attr("class","")
-		 $("#"+machineName+"_m").text(machineName);
-		 $("#"+machineName+"_m").addClass("circle"+" "+"circle-"+status.toLowerCase()+" "+"headerBox");
+		$.each(obj,function(){
+			var status="";
+			 if(this.machineSignal==null||this.machineSignal==""){
+				 status="UNKNOW";
+			 }else{
+				 status=this.machineSignal;
+			 }
+			 var machineName=this.machineName;
+			 $("#"+machineName+"_m").attr("class","")
+			 $("#"+machineName+"_m").text(machineName);
+			 $("#"+machineName+"_m").addClass("circle"+" "+"circle-"+status.toLowerCase()+" "+"headerBox");
 		})
 	}
 	 
