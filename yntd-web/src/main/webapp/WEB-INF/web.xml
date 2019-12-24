@@ -6,7 +6,7 @@
     <param-value> 
 		classpath*:/spring-ctx-root.xml,
 		classpath*:/spring-ctx-shiro.xml,
-		classpath*:/spring-ctx-sqlmap.xml
+		classpath*:/spring-ctx-sqlmap.xml,
     </param-value>
   </context-param>
      <!-- 加入自定义监听器 -->
@@ -51,6 +51,7 @@
       <param-value>classpath*:/spring-mvc.xml</param-value>
     </init-param>
     <load-on-startup>1</load-on-startup>
+    <async-supported>true</async-supported>
   </servlet>
   <servlet-mapping>
     <servlet-name>dispatcherServlet</servlet-name>

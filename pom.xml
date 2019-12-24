@@ -224,6 +224,11 @@
 			    <groupId>org.springframework</groupId>
 			    <artifactId>spring-messaging</artifactId>
 			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-aop</artifactId>
+				<version>${spring-ver}</version>
+		   </dependency>
 		</dependencies>
 	</dependencyManagement>
 	<artifactId>yntd</artifactId>

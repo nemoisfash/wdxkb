@@ -4,11 +4,24 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+
+import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.integration.mqtt.core.DefaultMqttPahoClientFactory;
+import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
+import org.springframework.integration.mqtt.support.MqttHeaders;
+import org.springframework.integration.support.MessageBuilder;
+import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
+import org.springframework.web.socket.TextMessage;
 import org.tdds.entity.Machine;
 import org.tdds.entity.MonitoringList;
 import org.tdds.mapper.MonitoringMapper;
@@ -18,7 +31,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.hxz.webapp.util.DateUtils;
-import cn.hxz.webapp.util.MyMqttClient;
+import cn.hxz.webapp.util.PushCallback;
+import cn.hxz.webapp.util.websocket.MyWsHandler;
 import tk.mybatis.mapper.entity.Example;
 import tk.mybatis.mapper.entity.Example.Criteria;
 
@@ -28,32 +42,27 @@ public class MonitoringServiceImpl implements MonitoringService {
 	private static final String[] TYPE = { "overrideRapid", "overrideSpindle", "overrideFeed" };
 
 	private static final String[] STATUS = { "RUNNING", "POWEROFF", "ALARM", "WAITING", "MANUAL" };
+	
+	private static final String[] topics = {"dataList","pies","ranking","timeLineCategories","timeLineSeriesData"};
 
 	@Autowired
 	private MonitoringMapper daoMonitoring;
 
+	@Resource
+	private MqttPahoMessageHandler mqttHandler;
+
+	@Resource
+	private DefaultMqttPahoClientFactory clientFactory;
+
 	@Override
-	public Map<String, Object> findByName(String name) {
-		Map<String, Object> map = daoMonitoring.selectOneByName(name);
-		if (map != null && !map.isEmpty()) {
-			JSONObject json = new JSONObject();
-			json.put("currentTime", DateUtils.DateToString(new Date() , "HH:mm:ss"));
-			json.put("cncProducts", map.get("partscountResult"));
-			json.put("cncActfspeed",0);
-			json.put("cncActspeed", 0);
-			json.put("overrideFeed", map.get("overrideFeed"));
-			json.put("cncSrate", map.get("overrideSpindle"));
-			json.put("cncSload", 0);
-			json.put("cncToolnum", map.get("toolNo"));
-			json.put("cncSeq", map.get("mainprogramNo"));
-			json.put("cncCurrentPna", map.get("mainprogramComment"));
-			json.put("machineSignal",map.get("machineSignal"));
-			json.put("machineName",map.get("machineName"));
-			String clientId = Objects.toString(map.get("machineName"),null) ;
-			String topic = "iot/" + clientId;
-			MyMqttClient.publish(topic, clientId, json.toJSONString());
-		}
-		return daoMonitoring.selectOneByName(name);
+	public Map<String, Object> findByName(Machine machine) {
+		return daoMonitoring.selectOneByName(machine.getCode());
+	}
+
+	@SuppressWarnings("unused")
+	public void publishMonitoring(String topic, JSONObject content) {
+		Message<JSONObject> messages = MessageBuilder.withPayload(content).setHeader(MqttHeaders.TOPIC, topic).build();
+		mqttHandler.handleMessage(messages);
 	}
 
 	@Override
@@ -69,15 +78,25 @@ public class MonitoringServiceImpl implements MonitoringService {
 		return daoMonitoring.selectCountByExample(example);
 	}
 
+	
+	
 	@SuppressWarnings("static-access")
 	@Override
 	public Map<String, Object> subscriberJsonFromMqttServer(Machine machine) {
-		String clientId = machine.getCode();
-		String topic = "iot/" + clientId;
-		String message = "";
-		Map<String, Object> mls = new HashMap();
+		String message = null;
+		Map<String, Object> mls = new HashMap<>();
 		try {
-			message = MyMqttClient.subscribe(topic, clientId);
+			String host = clientFactory.getConnectionOptions().getServerURIs()[0];
+			MqttClient client = new MqttClient(host, machine.getMqttTopic(), new MemoryPersistence());
+			client.connect(clientFactory.getConnectionOptions());
+			client.subscribe(machine.getCode(), 2);
+			client.setCallback(new PushCallback());
+			message = PushCallback.MESSAGE;
+			System.out.println(message + "****************************");
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		try {
 			mls.put("machineName", machine.getName());
 			if (!StringUtils.isEmpty(message)) {
 				JSONObject jsonObject = (JSONObject) new JSONObject().parse(message);
@@ -200,4 +219,36 @@ public class MonitoringServiceImpl implements MonitoringService {
 		return mls;
 	}
 
+	@Override
+	public void subscriberClientMessage() {
+		String host = clientFactory.getConnectionOptions().getServerURIs()[0];
+		MqttClient client;
+		try {
+			client = clientFactory.getClientInstance(clientFactory.getConnectionOptions().getServerURIs()[0],"subscriberClientMessage");
+			client.connect(clientFactory.getConnectionOptions());
+			int qos[]= {2,2,2,2,2};
+			client.subscribe(topics, qos);
+			client.setCallback(new MqttCallback() {
+				@Override
+				public void connectionLost(Throwable cause) {
+					 
+				}
+
+				@Override
+				public void messageArrived(String topic, MqttMessage message) throws Exception {
+					byte[] data= message.getPayload();
+					TextMessage tMsg=new TextMessage(data);
+					MyWsHandler.sendMessageToClient(tMsg); 	 
+				}
+				
+				@Override
+				public void deliveryComplete(IMqttDeliveryToken token) {
+					
+				}
+				
+			});
+		} catch (MqttException e) {
+			e.printStackTrace();
+		}
+	}
 }

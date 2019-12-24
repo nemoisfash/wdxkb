@@ -38,10 +38,14 @@ import cn.hxz.webapp.syscore.support.BasePortalController;
 import cn.hxz.webapp.util.DateUtils;
 import cn.hxz.webapp.util.echarts.StatusEnum;
 import cn.hxz.webapp.util.modbus.Modbus4jUtil;
+import net.chenke.playweb.util.HashUtils;
 
 @Controller
 @RequestMapping("/member")
 public class MachineController extends BasePortalController {
+
+	private static final String uuid = HashUtils.MD5(MachineController.class.getName());
+
 	@Autowired
 	private MachineService bizMachine;
 
@@ -67,33 +71,58 @@ public class MachineController extends BasePortalController {
 
 	List<Map<String, Object>> statuslist = new ArrayList<>();
 
-	@ResponseBody
-	@RequestMapping(value = "datalist", method = RequestMethod.GET)
-	public Object loging(HttpServletRequest request, HttpServletResponse res) {
-		Boolean success = true;
+	private Map<String, Object> publishDataList() {
 		List<Machine> machines = bizMachine.findMachine();
 		List<Map<String, Object>> entities = new ArrayList<>();
-		for (Machine machine : machines) {
-			Map<String, Object> monitor = null;
-			if (machine.getIo() != null) {
-				if (machine.getIo() == 0) {
-					monitor = bizMonitoring.findByName(machine.getCode());
-				} else if (machine.getIo() == 1) {
-					monitor.put("machineName", machine.getName());
-					monitor.put("machineSignal", getStatus(machine.getmIp()));
-				} else if (machine.getIo() == 2) {
-					monitor = bizMonitoring.subscriberJsonFromMqttServer(machine);
+		Map<String, Object> result = new HashMap<>();
+		Boolean success = true;
+		String topic = "dataList";
+		try {
+			for (Machine machine : machines) {
+				Map<String, Object> monitor = null;
+				if (machine.getIo() != null) {
+					if (machine.getIo() == 0) {
+						monitor = bizMonitoring.findByName(machine);
+					} else if (machine.getIo() == 1) {
+						monitor.put("machineName", machine.getName());
+						monitor.put("machineSignal", getStatus(machine.getmIp()));
+					} else if (machine.getIo() == 2) {
+						monitor = bizMonitoring.subscriberJsonFromMqttServer(machine);
+					}
+				}
+				if (monitor != null && !monitor.isEmpty()) {
+					bizMachine.update(monitor, machine);
+					entities.add(monitor);
 				}
 			}
-			
-			if(monitor!=null && !monitor.isEmpty()) {
-				bizMachine.update(monitor, machine);
-				entities.add(monitor);
-			}
+			JSONObject jsonMap = new JSONObject();
+			jsonMap.put(topic, entities);
+			bizMonitoring.publishMonitoring(topic, jsonMap);
+			success = true;
+		} catch (Exception e) {
+			success = false;
+			JSONObject erroMessage = new JSONObject();
+			erroMessage.put("erroPublisTopic", topic);
+			erroMessage.put("Reason", e.getMessage());
+			result.put("Message", erroMessage);
+			success = false;
 		}
-		Map<String, Object> map = new HashMap<>();
-		map.put("resault", entities);
-		return map;
+		result.put("result", success);
+		return result;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/publicMonitoring", method = RequestMethod.GET)
+	public Map<String, Object> publicMonitoring() {
+		Map<String, Object> response = new HashMap<>();
+		List<Map<String, Object>> list = new ArrayList<>();
+		list.add(publishDataList());
+		list.add(publishPieData());
+		list.add(publishRanking());
+		list.add(publishTimeLineCategories());
+		list.add(publishTimeLineSeriesData());
+		response.put("result", list);
+		return response;
 	}
 
 	@RequestMapping(value = "/alermMessage", method = RequestMethod.GET)
@@ -119,12 +148,8 @@ public class MachineController extends BasePortalController {
 		List<String> times = new ArrayList<>();
 		List<Map<String, Object>> maps = new ArrayList<>();
 		List<Machine> machines = bizMachine.findMachine();
-		for (Machine entity : machines) {
-
-		}
 		map.put("xAxis", DateUtils.DateToString(new Date(), "yyyy-MM-dd HH:mm:ss"));
 		map.put("series", maps);
-
 		return map;
 	}
 
@@ -134,48 +159,74 @@ public class MachineController extends BasePortalController {
 	 * @param res
 	 * @return
 	 */
-	@RequestMapping(value = "pie", method = RequestMethod.GET)
-	@ResponseBody
-	public Object pie(HttpServletRequest request, HttpServletResponse res) {
+
+	private Map<String, Object> publishPieData() {
 		List<Machine> machines = bizMachine.findMachine();
 		List<Map<String, Object>> list = new ArrayList<>();
-		for (Machine machine : machines) {
-			List<Map<String, Object>> entities = new LinkedList<>();
-			for (String status : STATUS) {
-				if (!status.equalsIgnoreCase(STATUS[4])) {
-					Map<String, Object> entity = new HashMap<>();
-					Double num = bizLogRecord.findData(null, status, machine.getId());
-					entity.put("value", num);
-					entity.put("name", StatusEnum.getValue(status));
-					entities.add(new JSONObject(entity));
+		Map<String, Object> result = new HashMap<>();
+		Boolean success = true;
+		String topic = "pies";
+		try {
+			for (Machine machine : machines) {
+				List<Map<String, Object>> entities = new LinkedList<>();
+				for (String status : STATUS) {
+					if (!status.equalsIgnoreCase(STATUS[4])) {
+						Map<String, Object> entity = new HashMap<>();
+						Double num = bizLogRecord.findData(null, status, machine.getId());
+						entity.put("value", num);
+						entity.put("name", StatusEnum.getValue(status));
+						entities.add(entity);
+					}
 				}
+				Map<String, Object> map = new HashMap<>();
+				map.put("data", entities);
+				map.put("machineName", machine.getName());
+				list.add(map);
 			}
-			Map<String, Object> map = new HashMap<>();
-			map.put("data", entities);
-			map.put("machineName", machine.getName());
-			list.add(map);
+			JSONObject jsonMap = new JSONObject();
+			jsonMap.put(topic, list);
+			bizMonitoring.publishMonitoring(topic, jsonMap);
+		} catch (Exception e) {
+			success = false;
+			JSONObject erroMessage = new JSONObject();
+			erroMessage.put("erroPublisTopic", topic);
+			erroMessage.put("Reason", e.getMessage());
+			result.put("Message", erroMessage);
 		}
-		return list;
+		result.put("success", success);
+		return result;
 	}
 
 	/**
 	 * 
 	 * 设备运行排名
 	 * 
-	 * @param request
-	 * @param res
 	 * @return
 	 */
-	@ResponseBody
-	@RequestMapping(value = "ranking", method = RequestMethod.GET)
-	public Object ranking(HttpServletRequest request, HttpServletResponse res) {
+	private Map<String, Object> publishRanking() {
 		List<Machine> machines = bizMachine.findMachine();
 		Map<String, Double> sortMap = new HashMap<>();
-		for (Machine machine : machines) {
-			Double num = bizRunningRecord.findRankData(machine.getId());
-			sortMap.put(machine.getName(), num);
+		Boolean success = true;
+		String topic = "ranking";
+		Map<String, Object> result = new HashMap<>();
+		try {
+			for (Machine machine : machines) {
+				Double num = bizRunningRecord.findRankData(machine.getId());
+				sortMap.put(machine.getName(), num);
+			}
+			List<Map.Entry<String, Double>> content = sortMap(sortMap);
+			JSONObject jsonMap = new JSONObject();
+			jsonMap.put(topic, content);
+			bizMonitoring.publishMonitoring(topic, jsonMap);
+		} catch (Exception e) {
+			success = false;
+			JSONObject erroMessage = new JSONObject();
+			erroMessage.put("erroPublisTopic", topic);
+			erroMessage.put("Reason", e.getMessage());
+			result.put("Message", erroMessage);
 		}
-		return sortMap(sortMap);
+		result.put("success", success);
+		return result;
 	}
 
 	private List<Map.Entry<String, Double>> sortMap(Map<String, Double> map) {
@@ -189,15 +240,28 @@ public class MachineController extends BasePortalController {
 		return list;
 	}
 
-	@RequestMapping(value = "/timeLine/categories", method = RequestMethod.GET)
-	@ResponseBody
-	public Object categories(HttpServletRequest request, HttpServletResponse response) {
-		List<Machine> machines = bizMachine.findMachine();
-		List<String> names = new ArrayList<>();
-		for (Machine entity : machines) {
-			names.add(entity.getName());
+	private Map<String, Object> publishTimeLineCategories() {
+		Boolean success = true;
+		String topic = "timeLineCategories";
+		Map<String, Object> result = new HashMap<>();
+		try {
+			List<Machine> machines = bizMachine.findMachine();
+			List<String> names = new ArrayList<>();
+			for (Machine entity : machines) {
+				names.add(entity.getName());
+			}
+			JSONObject jsonMap = new JSONObject();
+			jsonMap.put(topic, names);
+			bizMonitoring.publishMonitoring(topic, jsonMap);
+		} catch (Exception e) {
+			success = false;
+			JSONObject erroMessage = new JSONObject();
+			erroMessage.put("erroPublisTopic", topic);
+			erroMessage.put("Reason", e.getMessage());
+			result.put("Message", erroMessage);
 		}
-		return names;
+		result.put("success", success);
+		return result;
 	}
 
 	@RequestMapping(value = "/reportList", method = RequestMethod.GET)
@@ -239,60 +303,70 @@ public class MachineController extends BasePortalController {
 
 	/**
 	 * 
-	 * @param request
-	 * @param response
 	 * @return
 	 * @throws ParseException
 	 */
-	@RequestMapping(value = "/timeLine/seriesData", method = RequestMethod.GET)
-	@ResponseBody
-	public Object timer(HttpServletRequest request, HttpServletResponse response) throws ParseException {
+
+	private Map<String, Object> publishTimeLineSeriesData() {
+		String topic = "timeLineSeriesData";
 		List<Machine> machines = bizMachine.findMachine();
-		int i = 0;
-		List<Map<String, Object>> list = new LinkedList<Map<String, Object>>();
-		for (Machine machine : machines) {
-			Map<String, Object> map2 = new HashMap<>();
-			List<Object> value = new ArrayList<>();
-			value.add(i);
-			if (machine.getStartTime() != null) {
-				value.add(DateUtils.DateToString(machine.getStartTime(), "yyyy-MM-dd HH:mm"));
-			} else {
-				value.add(DateUtils.DateToString(new Date(), "yyyy-MM-dd HH:mm"));
+		Map<String, Object> result = new HashMap<>();
+		Boolean success = true;
+		try {
+			int i = 0;
+			List<Map<String, Object>> list = new LinkedList<Map<String, Object>>();
+			for (Machine machine : machines) {
+				Map<String, Object> map2 = new HashMap<>();
+				List<Object> value = new ArrayList<>();
+				value.add(i);
+				if (machine.getStartTime() != null) {
+					value.add(DateUtils.DateToString(machine.getStartTime(), "yyyy-MM-dd HH:mm"));
+				} else {
+					value.add(DateUtils.DateToString(new Date(), "yyyy-MM-dd HH:mm"));
+				}
+				if (machine.getEndTime() != null) {
+					value.add(DateUtils.DateToString(machine.getEndTime(), "yyyy-MM-dd HH:mm"));
+				} else {
+					value.add(DateUtils.DateToString(new Date(), "yyyy-MM-dd HH:mm"));
+				}
+				String color = null;
+				if (machine.getStatus().equals(STATUS[0])) {
+					color = COLOR[0];
+				} else if (machine.getStatus().equals(STATUS[1])) {
+					color = COLOR[1];
+				} else if (machine.getStatus().equals(STATUS[2])) {
+					color = COLOR[2];
+				} else if (machine.getStatus().equals(STATUS[3])) {
+					color = COLOR[3];
+				} else {
+					color = COLOR[4];
+				}
+				Long timeDiff = null;
+				if (machine.getStartTime() != null && machine.getEndTime() != null) {
+					timeDiff = DateUtils.getDatePoor(machine.getStartTime(), machine.getEndTime(), "min");
+				} else {
+					timeDiff = 1L;
+				}
+				value.add(Math.abs(timeDiff));
+				map2.put("value", value);
+				Map<String, Object> normalMap = new HashMap<>();
+				normalMap.put("color", color);
+				map2.put("itemStyle", normalMap);
+				list.add(map2);
+				i++;
 			}
-			if (machine.getEndTime() != null) {
-				value.add(DateUtils.DateToString(machine.getEndTime(), "yyyy-MM-dd HH:mm"));
-			} else {
-				value.add(DateUtils.DateToString(new Date(), "yyyy-MM-dd HH:mm"));
-			}
-			String color = null;
-			if (machine.getStatus().equals(STATUS[0])) {
-				color = COLOR[0];
-			} else if (machine.getStatus().equals(STATUS[1])) {
-				color = COLOR[1];
-			} else if (machine.getStatus().equals(STATUS[2])) {
-				color = COLOR[2];
-			} else if (machine.getStatus().equals(STATUS[3])) {
-				color = COLOR[3];
-			} else {
-				color = COLOR[4];
-			}
-			Long timeDiff = null;
-			if (machine.getStartTime() != null && machine.getEndTime() != null) {
-				timeDiff = DateUtils.getDatePoor(machine.getStartTime(), machine.getEndTime(), "min");
-			} else {
-				timeDiff = 1L;
-			}
-
-			value.add(Math.abs(timeDiff));
-			map2.put("value", value);
-			Map<String, Object> normalMap = new HashMap<>();
-			normalMap.put("color", color);
-			map2.put("itemStyle", normalMap);
-			list.add(new JSONObject(map2));
-			i++;
+			JSONObject jsonMap = new JSONObject();
+			jsonMap.put(topic, list);
+			bizMonitoring.publishMonitoring(topic, jsonMap);
+		} catch (Exception e) {
+			success = false;
+			JSONObject erroMessage = new JSONObject();
+			erroMessage.put("erroPublisTopic", topic);
+			erroMessage.put("Reason", e.getMessage());
+			result.put("Message", erroMessage);
 		}
-
-		return list;
+		result.put("success", success);
+		return result;
 	}
 
 	/**
@@ -330,4 +404,8 @@ public class MachineController extends BasePortalController {
 		return status;
 	}
 
+	@RequestMapping(value = "/subscribe", method = RequestMethod.GET)
+	public void subscribeData() {
+		bizMonitoring.subscriberClientMessage();
+	}
 }

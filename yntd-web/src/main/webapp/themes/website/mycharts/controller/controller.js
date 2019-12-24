@@ -1,25 +1,63 @@
-var app = angular.module('myApp', []);
-app.controller('myCtrl', function($scope,$http,$interval) {
- $interval(function(){
-		$http({
-			method: 'GET',
-			url:"/member/datalist.json",
-			cache:false,
-			async:false}).then(function(res){
-			$scope.items=res.data.resault;
-			console.info(res.data.resault);
-			$scope.switchStatus(res.data.resault);
-		})
-},10000)
  
 
-$http({
+var app = angular.module('myApp', []);
+app.controller('myCtrl', function($scope,$http,$interval) {
+$interval(function(){
+	$http({
 		method: 'GET',
-		url:"/member/publishMessage.json",
+		url:"/member/publicMonitoring.json",
+		cache:false,
 		async:false}).then(function(res){
+	/*	$scope.items=res.data.resault;
+		console.info(res.data.resault);
+		$scope.switchStatus(res.data.resault);*/
 	})
+},3000)
+
+$scope.createWebSocket=function(){
+	websocket = null;
+    if ('WebSocket' in window) {
+        websocket = new WebSocket("ws://localhost:8080/ws.html");
+    }
+    else if ('MozWebSocket' in window) {
+        websocket = new MozWebSocket("ws://localhost:8080/ws.html");
+    }
+    else {
+        websocket = new SockJS("http://localhost:8080/ws/socketjs.html");
+    }
+    websocket.onopen = $scope.onOpen;
+    websocket.onmessage = $scope.onMessage;
+    websocket.onerror = $scope.onError;
+    websocket.onclose = $scope.onClose;
+    $scope.ws=websocket;
+}
+
+window.close=function(){
+	$scope.ws.onclose();
+}
+
+$scope.onOpen= function(openEvt) {
+	$.get("/member/subscribe.json");
+}
+
+$scope.onMessage=function(evt) {
+	  console.info(evt.data);
+	 
+	 //$scope.switchStatus(obj);
+	
+}
+
+$scope.onError=function(){
+	
+}
+
+$scope.onClose=function onClose() {
+}
+
+setTimeout($scope.createWebSocket,4000); 
 
 $scope.switchStatus=function(obj){
+	console.info(obj+"dataList");
 	$.each(obj,function(){
 		var status="";
 		 if(this.machineSignal==null||this.machineSignal==""){
@@ -32,7 +70,7 @@ $scope.switchStatus=function(obj){
 		 $("#"+machineName+"_m").text(machineName);
 		 $("#"+machineName+"_m").addClass("circle"+" "+"circle-"+status.toLowerCase()+" "+"headerBox");
 	})
-}
+} 
 
 }).directive('myClock',function($interval,$http){
 	return{

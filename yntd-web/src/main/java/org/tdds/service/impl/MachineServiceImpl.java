@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -12,10 +15,13 @@ import org.tdds.entity.Machine;
 import org.tdds.entity.MonitoringList;
 import org.tdds.mapper.MachineMapper;
 import org.tdds.service.MachineService;
+import org.tdds.service.MonitoringService;
 import org.tdds.service.PowerOffRecordService;
 import org.tdds.service.RunningRecordService;
 import org.tdds.service.WaitingRecordService;
 import org.tdds.service.WarningRecordService;
+
+import com.alibaba.fastjson.JSONObject;
 
 import cn.hxz.webapp.util.DateUtils;
 import net.chenke.playweb.QueryFilters;
@@ -44,6 +50,9 @@ public class MachineServiceImpl implements MachineService {
 	
 	@Autowired
 	private WaitingRecordService bizWaitingRecord;
+	
+	@Autowired
+	private  MonitoringService bizMonitoring;
 
 	@Override
 	public Long selectMidByName(String machineName) {
@@ -77,6 +86,9 @@ public class MachineServiceImpl implements MachineService {
 		 }else if(StringUtils.hasText(Objects.toString(filters.get("type"), null))){
 			 String type =Objects.toString(filters.get("type"));
 			 criteria.andEqualTo("type",Long.parseLong(type));
+		 }else if(StringUtils.hasText(Objects.toString(filters.get("io"), null))){
+			 String io =Objects.toString(filters.get("io"));
+			 criteria.andEqualTo("io",Integer.valueOf(io));
 		 }
 		 List<Machine> entities = machineDao.selectByExampleAndRowBounds(example, pageable);
 		 return new PageImpl<Machine>(entities, pageable);
@@ -175,4 +187,5 @@ public class MachineServiceImpl implements MachineService {
 		machine.setStatus(status);
 		return machineDao.selectCount(machine);
 	}
+	 
 }

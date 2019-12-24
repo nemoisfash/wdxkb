@@ -22,8 +22,8 @@ public class Machine {
 	@Column(name = "m_ip")
 	private String mIp;
 
-	@Column(name = "machine_no")
-	private String machineNo;
+	@Column(name = "mqtt_topic")
+	private String mqttTopic;
 
 	@Column(name = "code")
 	private String code;
@@ -104,12 +104,13 @@ public class Machine {
 		this.mIp = mIp;
 	}
 
-	public String getMachineNo() {
-		return machineNo;
+	
+	public String getMqttTopic() {
+		return mqttTopic;
 	}
 
-	public void setMachineNo(String machineNo) {
-		this.machineNo = machineNo;
+	public void setMqttTopic(String mqttTopic) {
+		this.mqttTopic = mqttTopic;
 	}
 
 	public String getCode() {
