@@ -18,12 +18,11 @@ public class MyWsHandler extends TextWebSocketHandler{
 		private static String clientId;
 	
 	    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-	        System.out.println("成功建立连接");
 	        Map<String,Object> map = session.getAttributes();
 	        clientId = Objects.toString(map.get("clientId"), null); 
 	        if (clientId != null) {
 	        	clients.put(clientId, session);
-	            session.sendMessage(new TextMessage("成功建立socket连接"));
+			/* session.sendMessage(new TextMessage("成功建立socket连接")); */
 	        }
 	    }
 	    

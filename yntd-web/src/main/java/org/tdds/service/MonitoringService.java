@@ -17,7 +17,7 @@ public interface MonitoringService {
 
 	Map<String, Object> subscriberJsonFromMqttServer(Machine machine);
 	
-	void publishMonitoring(String topic, JSONObject content);
+	void publishMonitoring(String topic, String content);
 
 	void subscriberClientMessage();
 }

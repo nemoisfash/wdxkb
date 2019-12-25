@@ -98,22 +98,6 @@ init:function(){
 		piesArray.push(e.init(this));
 	})
 	_this.pies=piesArray;
-	setInterval(function(){
-		_this.getData();
-	},3000)
-},getData:function(){
-	var _this=this;
-			$.ajax({
-				type :"GET",
-				url :"/member/pie.json",
-				async:true,
-				cache : false,
-				ifModified:true,
-				success : function(data) {
-					 _this.dataPieInit(data);
-				}
-			})
-		
 },dataPieInit:function(data){
 	var _this=this;
 	var pies = _this.pies;

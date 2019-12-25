@@ -69,60 +69,66 @@ public class MachineController extends BasePortalController {
 
 	private static final String[] COLOR = { "#12b07b", "#a6a5a5", "#e65a65", "#feb501", "#feb501" };
 
+	private static final String[] topics = { "dataList", "pies", "ranking", "timeLineCategories",
+			"timeLineSeriesData" };
+
 	List<Map<String, Object>> statuslist = new ArrayList<>();
+
+	@RequestMapping(value = "/publicMonitoring", method = RequestMethod.GET)
+	public void publicMonitoring() {
+		Map<String, Object> response = new HashMap<>();
+		Map<String, Object> dataList = publishDataList();
+		if (!dataList.isEmpty() && dataList.get("content") != null) {
+			response.put(topics[0], dataList);
+		}
+
+		Map<String, Object> pies = publishPieData();
+		if (!pies.isEmpty() && pies.get("content") != null) {
+			response.put(topics[1], pies);
+		}
+
+		Map<String, Object> ranking = publishRanking();
+		if (!ranking.isEmpty() && ranking.get("content") != null) {
+			response.put(topics[2], ranking);
+		}
+
+		Map<String, Object> timeLineCategories = publishTimeLineCategories();
+		if (!timeLineCategories.isEmpty() && timeLineCategories.get("content") != null) {
+			response.put(topics[3], timeLineCategories);
+		}
+		Map<String, Object> timeLineSeriesData = publishTimeLineSeriesData();
+		if (!timeLineSeriesData.isEmpty() && timeLineSeriesData.get("content") != null) {
+			response.put(topics[4], timeLineSeriesData);
+		}
+		String topic = "reportData";
+		bizMonitoring.publishMonitoring(topic, new JSONObject(response).toJSONString());
+	}
 
 	private Map<String, Object> publishDataList() {
 		List<Machine> machines = bizMachine.findMachine();
 		List<Map<String, Object>> entities = new ArrayList<>();
 		Map<String, Object> result = new HashMap<>();
 		Boolean success = true;
-		String topic = "dataList";
-		try {
 			for (Machine machine : machines) {
-				Map<String, Object> monitor = null;
+				Map<String, Object> monitor = new HashMap<>();
 				if (machine.getIo() != null) {
 					if (machine.getIo() == 0) {
 						monitor = bizMonitoring.findByName(machine);
 					} else if (machine.getIo() == 1) {
-						monitor.put("machineName", machine.getName());
+						monitor.put("machineName",machine.getName());
 						monitor.put("machineSignal", getStatus(machine.getmIp()));
 					} else if (machine.getIo() == 2) {
 						monitor = bizMonitoring.subscriberJsonFromMqttServer(machine);
 					}
 				}
-				if (monitor != null && !monitor.isEmpty()) {
-					bizMachine.update(monitor, machine);
-					entities.add(monitor);
-				}
+					if(monitor!=null && !monitor.isEmpty()) {
+						bizMachine.update(monitor, machine);
+						entities.add(monitor);
+					}
 			}
-			JSONObject jsonMap = new JSONObject();
-			jsonMap.put(topic, entities);
-			bizMonitoring.publishMonitoring(topic, jsonMap);
-			success = true;
-		} catch (Exception e) {
-			success = false;
-			JSONObject erroMessage = new JSONObject();
-			erroMessage.put("erroPublisTopic", topic);
-			erroMessage.put("Reason", e.getMessage());
-			result.put("Message", erroMessage);
-			success = false;
-		}
+			result.put("content", entities);
 		result.put("result", success);
 		return result;
-	}
-
-	@ResponseBody
-	@RequestMapping(value = "/publicMonitoring", method = RequestMethod.GET)
-	public Map<String, Object> publicMonitoring() {
-		Map<String, Object> response = new HashMap<>();
-		List<Map<String, Object>> list = new ArrayList<>();
-		list.add(publishDataList());
-		list.add(publishPieData());
-		list.add(publishRanking());
-		list.add(publishTimeLineCategories());
-		list.add(publishTimeLineSeriesData());
-		response.put("result", list);
-		return response;
 	}
 
 	@RequestMapping(value = "/alermMessage", method = RequestMethod.GET)
@@ -183,9 +189,7 @@ public class MachineController extends BasePortalController {
 				map.put("machineName", machine.getName());
 				list.add(map);
 			}
-			JSONObject jsonMap = new JSONObject();
-			jsonMap.put(topic, list);
-			bizMonitoring.publishMonitoring(topic, jsonMap);
+			result.put("content", list);
 		} catch (Exception e) {
 			success = false;
 			JSONObject erroMessage = new JSONObject();
@@ -215,9 +219,7 @@ public class MachineController extends BasePortalController {
 				sortMap.put(machine.getName(), num);
 			}
 			List<Map.Entry<String, Double>> content = sortMap(sortMap);
-			JSONObject jsonMap = new JSONObject();
-			jsonMap.put(topic, content);
-			bizMonitoring.publishMonitoring(topic, jsonMap);
+			result.put("content", content);
 		} catch (Exception e) {
 			success = false;
 			JSONObject erroMessage = new JSONObject();
@@ -250,9 +252,7 @@ public class MachineController extends BasePortalController {
 			for (Machine entity : machines) {
 				names.add(entity.getName());
 			}
-			JSONObject jsonMap = new JSONObject();
-			jsonMap.put(topic, names);
-			bizMonitoring.publishMonitoring(topic, jsonMap);
+			result.put("content", names);
 		} catch (Exception e) {
 			success = false;
 			JSONObject erroMessage = new JSONObject();
@@ -355,9 +355,7 @@ public class MachineController extends BasePortalController {
 				list.add(map2);
 				i++;
 			}
-			JSONObject jsonMap = new JSONObject();
-			jsonMap.put(topic, list);
-			bizMonitoring.publishMonitoring(topic, jsonMap);
+			result.put("content", list);
 		} catch (Exception e) {
 			success = false;
 			JSONObject erroMessage = new JSONObject();

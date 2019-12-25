@@ -143,22 +143,6 @@ var	_this = this;
 		},initCharts:function(){
 		 this.ranking=e.init($("[data-ranking='true']").get(0));
 		 this.ranking.showLoading('default', {text:'数据统计中...',maskColor: '#07112a61',textColor: '#36b0f3',});
-		 this.getData();
-		},getData:function(){
-			var _this = this;
-			setInterval(function(){
-				$.ajax({
-					type :"GET",
-					url :"/member/ranking.json",
-					async:true,
-					cache : false,
-					ifModified:true,
-					success : function(data) {
-						_this.dataRankingInit(data);
-					}
-				})
-			},2000)
-	
 		},dataRankingInit:function(data){
 			var _this = this;
 			var targetData= new Array;

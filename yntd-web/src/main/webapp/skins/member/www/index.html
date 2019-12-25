@@ -88,7 +88,7 @@
 					<div class="nav-tabs-custom" style="background-color:#081639a1;height:21.625rem;margin-top:20px;">
 						<span class="label label-default">设备运行分析</span>
 						<div style="width:100%;height:80%;margin-top:11px;overflow:hidden;" >
-							<ul class="pies">
+							<ul class="pies" my-Pies my-Scoller>
 								<li echarts-type="pie"></li>
 								<li echarts-type="pie"></li>
 								<li echarts-type="pie"></li>
@@ -115,14 +115,14 @@
 					</div>
 					<div class="nav-tabs-custom" style="background-color:#081639a1;height:39.625rem;margin-top:14px;">
 						<span class="label label-default">时间线</span>
-						<div style="width:100%;height:100%;overflow:hidden;" >
+						<div style="width:100%;height:100%;overflow:hidden;" time-Line>
 						</div>
 					</div>
 				</section>
 				<section class="col-lg-6 connectedSortable ui-sortable">
 					<div class="nav-tabs-custom" style="background-color:#081639a1;height:30.625rem;margin-top:8px;overflow:hidden;">
 						<span class="label label-default">设备运行排行</span>
-						  <div data-ranking='true' style="width:100%;height:100%;">
+						  <div data-ranking='true' style="width:100%;height:100%;" ranking-Running>
 						 </div>
 					 </div>
 					<!-- <div class="nav-tabs-custom" style="background-color:#081639a1;height:17.5rem;margin-top:16px;overflow:hidden;">
@@ -160,13 +160,12 @@
 								<th rowspan="1" colspan="1">主轴负载</th>
 								<th rowspan="1" colspan="1">当前程序语句</th>
 								<th rowspan="1" colspan="1">累计加工数量</th>
-								<th rowspan="1" colspan="1">总报警数</th>
 								<th rowspan="1" colspan="1">主轴实际转速</th>
 								<th rowspan="1" colspan="1">进给实际转速</th>
 							</tr>
 						</thead>
 						 <tbody>
-							<tr role="row" class="roll-up odd" ng-repeat="item in items" ng-Repeat-Finished>
+							<tr role="row" class="odd" ng-repeat="item in items" ng-Repeat-Finished>
 							 	<td>{{item.machineName}}</td>
 							 	<td>{{item.machineSignal}}</td>
 							 	<td>{{item.cncSrate}}</td>
@@ -174,7 +173,6 @@
 								<td>{{item.cncSload}}</td>
 							 	<td>{{item.cncSeq}}</td>
 							 	<td>{{item.cncProducts}}</td>
-							 	<td>{{item.alarmCount}}</td>
 							 	<td>{{item.cncActspeed}}</td>
 							 	<td>{{item.cncActfspeed}}</td>
 							</tr>
