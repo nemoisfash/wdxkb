@@ -64,7 +64,6 @@ public class MachineController extends BasePortalController {
 	@Autowired
 	private ReportService bizLogReport;
 
-	// 西部大森manual=running
 	private static final String[] STATUS = { "RUNNING", "POWEROFF", "ALARM", "WAITING", "MANUAL" };
 
 	private static final String[] COLOR = { "#12b07b", "#a6a5a5", "#e65a65", "#feb501", "#feb501" };

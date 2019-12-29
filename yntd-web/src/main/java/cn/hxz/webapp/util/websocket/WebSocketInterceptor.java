@@ -10,8 +10,8 @@ import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
-public class WebSocketInterceptor implements HandshakeInterceptor {
-
+public class WebSocketInterceptor implements HandshakeInterceptor { 
+	
 	@Override
 	public void afterHandshake(ServerHttpRequest arg0, ServerHttpResponse arg1, WebSocketHandler arg2, Exception arg3) {
 
