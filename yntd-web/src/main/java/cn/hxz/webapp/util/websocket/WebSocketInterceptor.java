@@ -12,6 +12,8 @@ import org.springframework.web.socket.server.HandshakeInterceptor;
 
 public class WebSocketInterceptor implements HandshakeInterceptor { 
 	
+	private static final String clientId = "1577669776000";
+	
 	@Override
 	public void afterHandshake(ServerHttpRequest arg0, ServerHttpResponse arg1, WebSocketHandler arg2, Exception arg3) {
 
@@ -24,7 +26,7 @@ public class WebSocketInterceptor implements HandshakeInterceptor {
 				ServletServerHttpRequest sreq = (ServletServerHttpRequest)req;
 				HttpSession session= sreq.getServletRequest().getSession();
 				if (session != null) {
-					attributes.put("clientId",session.getId());
+					attributes.put("clientId",clientId);
 	            }
 			}
 			return true;

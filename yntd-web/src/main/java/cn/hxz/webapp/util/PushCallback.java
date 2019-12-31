@@ -2,9 +2,10 @@ package cn.hxz.webapp.util;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
-public class PushCallback implements MqttCallback {
+public class PushCallback implements MqttCallbackExtended {
 	 
 	public static String MESSAGE;
 
@@ -20,5 +21,10 @@ public class PushCallback implements MqttCallback {
     public void messageArrived(String topic, MqttMessage message) throws Exception {
         MESSAGE=new String(message.getPayload());
     }
+	@Override
+	public void connectComplete(boolean reconnect, String serverURI) {
+		
+		
+	}
     
 }

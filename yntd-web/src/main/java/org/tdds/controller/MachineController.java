@@ -121,7 +121,7 @@ public class MachineController extends BasePortalController {
 					}
 				}
 					if(monitor!=null && !monitor.isEmpty()) {
-						bizMachine.update(monitor, machine);
+				/* bizMachine.update(monitor, machine); */
 						entities.add(monitor);
 					}
 			}
@@ -403,6 +403,6 @@ public class MachineController extends BasePortalController {
 
 	@RequestMapping(value = "/subscribe", method = RequestMethod.GET)
 	public void subscribeData() {
-		bizMonitoring.subscriberClientMessage();
+		 bizMonitoring.subscriberClientMessage();
 	}
 }

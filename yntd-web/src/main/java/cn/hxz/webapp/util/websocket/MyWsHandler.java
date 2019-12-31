@@ -22,7 +22,6 @@ public class MyWsHandler extends TextWebSocketHandler{
 	        clientId = Objects.toString(map.get("clientId"), null); 
 	        if (clientId != null) {
 	        	clients.put(clientId, session);
-			/* session.sendMessage(new TextMessage("成功建立socket连接")); */
 	        }
 	    }
 	    

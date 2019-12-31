@@ -1,18 +1,6 @@
 var app = angular.module('myApp', []);
-app.controller('myCtrl', function($scope,$http,$interval) {
- $interval(function(){
-	 $http({
-		method: 'GET',
-		url:"/member/publicMonitoring.json",
-		cache:false,
-		async:false}).then(function(res){
-			/*	$scope.items=res.data.resault;
-			console.info(res.data.resault);
-			$scope.switchStatus(res.data.resault); */
-		})
-},10000)
-	
-$scope.createWebSocket=function(){
+app.controller('myCtrl', function($scope,$http,$timeout,$interval) {
+$(function(){
 	websocket = null;
     if ('WebSocket' in window) {
         websocket = new WebSocket("ws://localhost:8080/ws.html");
@@ -27,29 +15,39 @@ $scope.createWebSocket=function(){
     websocket.onerror = $scope.onError;
     websocket.onclose = $scope.onClose;
     $scope.ws=websocket;
-}
+})
 
 window.close=function(){
 	$scope.ws.onclose();
 }
 
-$scope.onOpen= function(openEvt) {
+$scope.onOpen= function(event) {
 	$.get("/member/subscribe.json");
+	$timeout($scope.publicMonitoring,2000); 
+}
+
+$scope.publicMonitoring =function(){
+	$interval(function(){
+		$.get("/member/publicMonitoring.json");
+	},10000)
+}
+
+$scope.subMonitoring==function(){
+	
 }
 
 $scope.onMessage=function(evt) {
-	 var jsonObj =JSON.parse(evt.data);
-	 $scope.switchStatus(jsonObj["dataList"]);
+	console.info(evt.data);
+/*	 $scope.switchStatus(jsonObj["dataList"]); */
 }
 
-$scope.onError=function(){
-	
+$scope.onError=function(openEvt){
+
 }
 
 $scope.onClose=function onClose() {
 }
 
-setTimeout($scope.createWebSocket,4000); 
 
 $scope.switchStatus=function(obj){
 	$scope.items=obj["content"];
