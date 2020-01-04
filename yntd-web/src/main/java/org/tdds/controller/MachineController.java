@@ -20,6 +20,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.socket.TextMessage;
 import org.tdds.entity.Machine;
 import org.tdds.entity.Report;
 import org.tdds.service.LogRecordService;
@@ -38,6 +39,7 @@ import cn.hxz.webapp.syscore.support.BasePortalController;
 import cn.hxz.webapp.util.DateUtils;
 import cn.hxz.webapp.util.echarts.StatusEnum;
 import cn.hxz.webapp.util.modbus.Modbus4jUtil;
+import cn.hxz.webapp.util.websocket.MyWsHandler;
 import net.chenke.playweb.util.HashUtils;
 
 @Controller
@@ -68,12 +70,12 @@ public class MachineController extends BasePortalController {
 
 	private static final String[] COLOR = { "#12b07b", "#a6a5a5", "#e65a65", "#feb501", "#feb501" };
 
-	private static final String[] topics = { "dataList", "pies", "ranking", "timeLineCategories",
-			"timeLineSeriesData" };
+	private static final String[] topics = { "dataList", "pies", "ranking", "timeLineCategories","timeLineSeriesData" };
 
 	List<Map<String, Object>> statuslist = new ArrayList<>();
-
-	@RequestMapping(value = "/publicMonitoring", method = RequestMethod.GET)
+	
+	
+	@RequestMapping(value = "/callbackReportData", method = RequestMethod.GET)
 	public void publicMonitoring() {
 		Map<String, Object> response = new HashMap<>();
 		Map<String, Object> dataList = publishDataList();
@@ -99,8 +101,8 @@ public class MachineController extends BasePortalController {
 		if (!timeLineSeriesData.isEmpty() && timeLineSeriesData.get("content") != null) {
 			response.put(topics[4], timeLineSeriesData);
 		}
-		String topic = "reportData";
-		bizMonitoring.publishMonitoring(topic, new JSONObject(response).toJSONString());
+		TextMessage tMsg = new TextMessage(new JSONObject(response).toJSONString());
+		MyWsHandler.sendMessageToClient(tMsg);
 	}
 
 	private Map<String, Object> publishDataList() {
@@ -108,24 +110,24 @@ public class MachineController extends BasePortalController {
 		List<Map<String, Object>> entities = new ArrayList<>();
 		Map<String, Object> result = new HashMap<>();
 		Boolean success = true;
-			for (Machine machine : machines) {
-				Map<String, Object> monitor = new HashMap<>();
-				if (machine.getIo() != null) {
-					if (machine.getIo() == 0) {
-						monitor = bizMonitoring.findByName(machine);
-					} else if (machine.getIo() == 1) {
-						monitor.put("machineName",machine.getName());
-						monitor.put("machineSignal", getStatus(machine.getmIp()));
-					} else if (machine.getIo() == 2) {
-						monitor = bizMonitoring.subscriberJsonFromMqttServer(machine);
-					}
+		for (Machine machine : machines) {
+			Map<String, Object> monitor = new HashMap<>();
+			if (machine.getIo() != null) {
+				if (machine.getIo() == 0) {
+					monitor = bizMonitoring.findByName(machine);
+				} else if (machine.getIo() == 1) {
+					monitor.put("machineName", machine.getName());
+					monitor.put("machineSignal", getStatus(machine.getmIp()));
+				} else if (machine.getIo() == 2) {
+					monitor = bizMonitoring.subscriberJsonFromMqttServer(machine);
 				}
-					if(monitor!=null && !monitor.isEmpty()) {
-				/* bizMachine.update(monitor, machine); */
-						entities.add(monitor);
-					}
 			}
-			result.put("content", entities);
+			if (monitor != null && !monitor.isEmpty()) {
+				bizMachine.update(monitor, machine);
+				entities.add(monitor);
+			}
+		}
+		result.put("content", entities);
 		result.put("result", success);
 		return result;
 	}
@@ -164,7 +166,6 @@ public class MachineController extends BasePortalController {
 	 * @param res
 	 * @return
 	 */
-
 	private Map<String, Object> publishPieData() {
 		List<Machine> machines = bizMachine.findMachine();
 		List<Map<String, Object>> list = new ArrayList<>();
@@ -400,9 +401,5 @@ public class MachineController extends BasePortalController {
 
 		return status;
 	}
-
-	@RequestMapping(value = "/subscribe", method = RequestMethod.GET)
-	public void subscribeData() {
-		 bizMonitoring.subscriberClientMessage();
-	}
+	 
 }

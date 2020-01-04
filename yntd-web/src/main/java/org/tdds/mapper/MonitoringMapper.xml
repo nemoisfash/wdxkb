@@ -12,14 +12,14 @@
 			SELECT
 				Machine_Name as machineName,
 				Machine_Signal as machineSignal,
-				Machine_Mode as machineMode,
-				Machine_Status as machineStatus,
-				Maintenance_Signal as maintenanceSignal,
-				PartsCount_Target as partscountTarget,
-				PartsCount_Result as partscountResult,
-				ifnull(Override_Rapid,'0')as overrideRapid,
-				ifnull(Override_Spindle,'0')as overrideSpindle,
-				ifnull(Override_Feed,'0')as overrideFeed,
+				PartsCount_Result as cncProducts,
+				ifnull(Override_Rapid,'0')as cncRapidFeed,
+				ifnull(Override_Spindle,'0')as cncSrate,
+				(SELECT SYSDATE()) as currentTime,
+				Alarm_Message as cncAlarm,
+				Machine_Mode as cncMode,
+				MainProgram_No as cncMainProname,
+				Tool_No as cnc_toolnum,
 				Spindle_Mode as spindleMode
 			FROM
 				Monitoring_List

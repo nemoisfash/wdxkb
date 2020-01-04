@@ -37,7 +37,6 @@ import net.chenke.playweb.util.HashUtils;
 @RequestMapping("${adminPath}/index")
 public class IndexAdminController {
 	
-	//西部大森manual=running
 	private static final String[] STATUS = {"RUNNING", "POWEROFF", "ALARM", "WAITING"/*,"MANUAL"*/};
 	
 	@Autowired
@@ -75,7 +74,7 @@ public class IndexAdminController {
 			Map<String,Object> monitoringlist= new HashMap<>();
 			if (entity.getIo() != null) {
 				if (entity.getIo() == 0) {
-					monitoringlist = bizMonitoring.findByName(entity.getCode());
+					monitoringlist = bizMonitoring.findByName(entity);
 				} else if (entity.getIo() == 1) {
 					monitoringlist.put("machineName", entity.getName());
 					monitoringlist.put("machineSignal", getStatus(entity.getmIp()));

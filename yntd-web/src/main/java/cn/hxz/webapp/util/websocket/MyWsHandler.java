@@ -19,7 +19,7 @@ public class MyWsHandler extends TextWebSocketHandler{
 	
 	    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 	        Map<String,Object> map = session.getAttributes();
-	        clientId = Objects.toString(map.get("clientId"), null); 
+	        clientId = Objects.toString(map.get("clientId"), null);
 	        if (clientId != null) {
 	        	clients.put(clientId, session);
 	        }
@@ -36,7 +36,7 @@ public class MyWsHandler extends TextWebSocketHandler{
 	    }
 	    
 	    /**
-	     * 发送信息给客户端
+	            * 发送信息给客户端
 	     * @param clientId
 	     * @param message
 	     * @return
@@ -59,13 +59,13 @@ public class MyWsHandler extends TextWebSocketHandler{
 	        if (session.isOpen()) {
 	            session.close();
 	        }
-	        System.out.println("连接出错");
+	        System.out.println("[websocket]连接出错");
 	        clients.remove(clientId);
 	    }
 	    
 	    @Override
 	    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-	        System.out.println("连接已关闭：" + status);
+	        System.out.println("[websocket]连接已关闭：" + status);
 	        clients.remove(clientId);
 	    }
 

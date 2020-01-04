@@ -5,8 +5,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.integration.mqtt.core.DefaultMqttPahoClientFactory;
+import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
+import org.springframework.integration.mqtt.support.MqttHeaders;
+import org.springframework.integration.support.MessageBuilder;
+import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
 import org.tdds.entity.Machine;
 import org.tdds.entity.MonitoringList;
@@ -16,7 +29,6 @@ import org.tdds.service.MonitoringService;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
-import cn.hxz.webapp.util.mqtt.MyMqttClient;
 import tk.mybatis.mapper.entity.Example;
 import tk.mybatis.mapper.entity.Example.Criteria;
 
@@ -26,21 +38,23 @@ public class MonitoringServiceImpl implements MonitoringService {
 	@Autowired
 	private MonitoringMapper daoMonitoring;
 
+	@Resource
+	private MqttPahoMessageHandler mh;
+
+	@Resource
+	private DefaultMqttPahoClientFactory df;
+
+	private String mqttMsg;
+
 	@Override
 	public Map<String, Object> findByName(Machine machine) {
-		return daoMonitoring.selectOneByName(machine.getName());
-	}
-
-	@SuppressWarnings("unused")
-	public void publishMonitoring(String topic, String content) {
-		Long time = new Date().getTime();
-		MyMqttClient mc = new MyMqttClient(time.toString(), false);
-		try {
-			mc.pub(topic, content, 1, false);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
+		Map<String, Object> map = daoMonitoring.selectOneByName(machine.getName());
+		/*
+		 * Message<String> message = MessageBuilder.withPayload(new
+		 * JSONObject(map).toJSONString()) .setHeader(MqttHeaders.TOPIC,
+		 * machine.getMqttSorce()).build(); mh.handleMessage(message);
+		 */
+		return map;
 	}
 
 	@Override
@@ -56,18 +70,54 @@ public class MonitoringServiceImpl implements MonitoringService {
 		return daoMonitoring.selectCountByExample(example);
 	}
 
+	@SuppressWarnings("unused")
+	private void subMessage(String topic, int qos) {
+		try {
+			String clientId = mh.getClientId();
+			MqttConnectOptions optioins = df.getConnectionOptions();
+			optioins.setCleanSession(true);
+			MqttClient mac = df.getClientInstance(optioins.getServerURIs()[0], clientId);
+			mac.connect(df.getConnectionOptions());
+			mac.subscribe(topic, qos);
+			mac.setCallback(new MqttCallback() {
+				@Override
+				public void messageArrived(String topic, MqttMessage message) throws Exception {
+					mqttMsg = new String(message.getPayload());
+				}
+
+				@Override
+				public void deliveryComplete(IMqttDeliveryToken token) {
+
+				}
+
+				@Override
+				public void connectionLost(Throwable cause) {
+					MqttClient mac;
+					try {
+						mac = df.getClientInstance(df.getConnectionOptions().getServerURIs()[0],  mh.getClientId());
+						mac.reconnect();
+					} catch (MqttException e) {
+						e.printStackTrace();
+					}
+				}
+			});
+			Thread.sleep(1000);
+			System.out.print(mqttMsg);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
 	@SuppressWarnings("static-access")
 	@Override
 	public Map<String, Object> subscriberJsonFromMqttServer(Machine machine) {
 		Map<String, Object> mls = new HashMap<>();
 		mls.put("machineName", machine.getName());
 		mls.put("currentTime", new Date());
-		Long time = new Date().getTime();
-		MyMqttClient mc = new MyMqttClient(time.toString(), false);
-		mc.sub(machine.getMqttTopic(), 0);
-		String message = mc.content;
-		if (!StringUtils.isEmpty(message) && new JSONObject().isValid(message)) {
-			JSONObject jsonObject = (JSONObject) new JSONObject().parse(message);
+		subMessage(machine.getMqttTopic(), 0);
+		if (!StringUtils.isEmpty(mqttMsg) && new JSONObject().isValid(mqttMsg)) {
+			JSONObject jsonObject = (JSONObject) new JSONObject().parse(mqttMsg);
 			if (machine.getMqttSorce() == 0) {
 				mls.put("powerOnTime", jsonObject.getString("tk"));
 				mls.put("cncProducts", jsonObject.getString("nl"));
@@ -159,7 +209,7 @@ public class MonitoringServiceImpl implements MonitoringService {
 						mls.put("alarmCount", ja.size());
 					}
 				}
-				if (jsonObject.getJSONObject("device_state") != null) {
+				if (new JSONObject().isValid("device_state")&&  jsonObject.getJSONObject("device_state") != null) {
 					JSONObject jo = jsonObject.getJSONObject("device_state");
 					if (jo.getInteger("Online") == 1) {
 						if (jsonObject.getInteger("cncSload") == 0) {
@@ -180,10 +230,4 @@ public class MonitoringServiceImpl implements MonitoringService {
 		return mls;
 	}
 
-	@Override
-	public void subscriberClientMessage() {
-		Long time = new Date().getTime();
-		MyMqttClient mc = new MyMqttClient(time.toString(), true);
-		mc.sub("reportData", 0);
-	}
 }

@@ -37,23 +37,17 @@
 		<property name="completionTimeout" value="${mqtt.completionTimeout}" />
 	</bean>
 	
-	<!--   <bean id="mqttClient" class="cn.hxz.webapp.util.MqttSubscribe">
-		<property name="mqttHandler" ref="myMqttHandler" />
-	 	<property name="clientFactory" ref="myClientFactory" />
-	</bean>
-	
-	<int-mqtt:message-driven-channel-adapter 
+<!-- 	<int-mqtt:message-driven-channel-adapter 
  		id="mqttInbound" 
  		client-id="CID_20191220" 
  		url="${mqtt.url}"
-		topics="${mqtt.topic}" 
+		topics="${mqtt.topics}"
 		qos="${mqtt.defaultQos}" 
-		client-factory="clientFactory"  
+		client-factory="myClientFactory"
 		auto-startup="true"
 		send-timeout="${mqtt.completionTimeout}" 
 		channel="startCase" />
 	<int:channel id="startCase" />
 	<int:service-activator id="startCaseService" input-channel="startCase" ref="mqttCaseService" method="startCase" />
-    这里是指向消息监听到后对消息处理的类
     <bean id="mqttCaseService" class="cn.hxz.webapp.util.mqtt.MqttService" /> -->
 </beans>

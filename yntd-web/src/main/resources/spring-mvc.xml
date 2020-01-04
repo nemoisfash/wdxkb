@@ -123,10 +123,10 @@
 	<bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" depends-on="lifecycleBeanPostProcessor">
 	<property name="proxyTargetClass" value="true" />
 </bean>
-<!-- 	<bean id="jobFactory" class="cn.hxz.device.sensor.JobFactory"></bean>
+<!-- <bean id="jobFactory" class="cn.hxz.device.sensor.JobFactory"></bean>
 	 <bean id="schedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean"> 
 	 <property name="jobFactory" ref="jobFactory">
 	 </property>
-	 </bean> -->
+</bean> -->
 	 <import resource="classpath*:spring-ctx-websocket.xml" />
 	</beans>

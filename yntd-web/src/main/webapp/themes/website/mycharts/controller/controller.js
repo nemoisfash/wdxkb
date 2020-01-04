@@ -1,7 +1,11 @@
 var app = angular.module('myApp', []);
 app.controller('myCtrl', function($scope,$http,$timeout,$interval) {
 $(function(){
-	websocket = null;
+	connection()
+});
+
+function connection(){
+	var websocket;
     if ('WebSocket' in window) {
         websocket = new WebSocket("ws://localhost:8080/ws.html");
     }else if ('MozWebSocket' in window) {
@@ -10,44 +14,45 @@ $(function(){
     else {
         websocket = new SockJS("http://localhost:8080/ws/socketjs.html");
     }
-    websocket.onopen = $scope.onOpen;
-    websocket.onmessage = $scope.onMessage;
-    websocket.onerror = $scope.onError;
-    websocket.onclose = $scope.onClose;
-    $scope.ws=websocket;
-})
+    websocket.onError=$scope.onError;
+    websocket.onClose=$scope.onClose;
+    websocket.onopen=$scope.onopen;
+    websocket.onmessage=$scope.onmessage;
+}
+
+$scope.onError=function(openEvt){
+	connection();
+}
+
+$scope.onClose=function onClose() {
+	console.info("链接已关闭");
+}
+
+$scope.onopen= function(event) {
+	console.info("链接已建立");
+	$scope.callbackReportData();
+}
+
+var pies = new MyPies();
+var ranking = new Ranking();
+var myTimeLine =new MyTimeLine();
+$scope.onmessage=function(evt) {
+	var JsonObject = JSON.parse(evt.data);
+	$scope.switchStatus(JsonObject["dataList"]);
+	pies.dataPieInit(JsonObject["pies"]["content"]); 
+	ranking.dataRankingInit(JsonObject["ranking"]["content"]);
+	myTimeLine.dataTimeLineInit(JsonObject["timeLineCategories"]["content"],JsonObject["timeLineSeriesData"]["content"]);
+}
 
 window.close=function(){
 	$scope.ws.onclose();
 }
 
-$scope.onOpen= function(event) {
-	$.get("/member/subscribe.json");
-	$timeout($scope.publicMonitoring,2000); 
-}
-
-$scope.publicMonitoring =function(){
+$scope.callbackReportData =function(){
 	$interval(function(){
-		$.get("/member/publicMonitoring.json");
-	},10000)
+		$.get("/member/callbackReportData.json");
+	},8000)
 }
-
-$scope.subMonitoring==function(){
-	
-}
-
-$scope.onMessage=function(evt) {
-	console.info(evt.data);
-/*	 $scope.switchStatus(jsonObj["dataList"]); */
-}
-
-$scope.onError=function(openEvt){
-
-}
-
-$scope.onClose=function onClose() {
-}
-
 
 $scope.switchStatus=function(obj){
 	$scope.items=obj["content"];
@@ -112,144 +117,6 @@ $scope.switchStatus=function(obj){
 				 	elem.append(childFr.clone(true));
 				},6000)
 			})
-		}
-	}
-}).directive('myPies',function(){
-	return function($scope, ele, attrs){
-		var pies = new MyPies();
-		$scope.onMessage=function(event){
-			var jsonObj =JSON.parse(event.data);
-			pies.dataPieInit(jsonObj["pies"]["content"]); 
-		}
-	}
-}).directive('timeLine',function($interval,$http,$timeout){
-	return function($scope, ele, attrs){
-		var myChart = echarts.init(ele.get(0));
-		myChart.showLoading('default', {text:'数据统计中...',maskColor: '#07112a61',textColor: '#36b0f3',});
-		function renderItem(params, api) {
-		    var categoryIndex = api.value(0);
-		    var start = api.coord([api.value(1), categoryIndex]);
-		    var end = api.coord([api.value(2), categoryIndex]);
-		    var height = api.size([0, 1])[1] * 0.6;
-		    var rectShape = echarts.graphic.clipRectByRect({
-		        x: start[0],
-		        y: start[1] - height / 2,
-		        width: end[0] - start[0],
-		        height: height
-		    }, {
-		        x: params.coordSys.x,
-		        y: params.coordSys.y,
-		        width: params.coordSys.width,
-		        height: params.coordSys.height
-		    });
-		
-		    return rectShape && {
-		        type: 'rect',
-		        shape: rectShape,
-		        style: api.style()
-		    };
-		}
-		var	option = {
-			    tooltip: {
-			        formatter: function (params) {
-			            return params.marker + params.name + ':' + params.value[3] + '分钟';
-			        }
-			    },
-			    grid: {
-			        left: '10%',
-			        top: '12%',
-			        right: '2%',
-			        bottom: '8%',
-			        containLabel: false
-			    },
-		        xAxis:{
-			            type: 'time',
-			            position: 'top',
-			            splitLine: {
-			                lineStyle: {
-			                    color: ['#34a9eb']
-			                }
-			            },
-			            axisLine: {
-			                show: false,
-			                lineStyle: {
-			                    color: '#34a9eb'
-			                }
-			            },
-			            axisTick: {
-			                lineStyle: {
-			                    color: '#34a9eb'
-			                }
-			            },
-			            axisLabel: {
-			                color: '#34a9eb',
-			                inside: false,
-			                align: 'center'
-			            }
-			    },
-			    yAxis: {
-			    	type:"category",
-			    	boundaryGap: ['20%', '20%'],
-		            position:'left',
-			    	axisLine: {
-		                show:true,
-		                lineStyle: {
-		                    color: '#929ABA'
-		                }
-			        },
-			        axisTick:{
-			        	show:true,
-			        	interval:0,
-			        	length:2
-			        },
-			        axisLabel: {
-			        	interval:0,
-			        	margin:10,
-			            textStyle: {
-			                color: '#34a9eb',
-			                fontSize: '8',
-			            }
-			        },
-			        data:[],
-			    },
-			    series: [{
-			        type: 'custom',
-			        renderItem: renderItem,
-			        itemStyle: {
-			            normal: {
-			                opacity: 0.8
-			            }
-			        },
-			        encode: {
-			            x: [1, 2],
-			            y: 0
-			        },
-			        data: []
-			    }]
-			};
-		
-		$scope.onMessage=function(event){
-			var jsonObj =JSON.parse(event.data);
-			var categories=option.jsonObj["timeLineCategories"]["content"]; 
-			var seriesData=option.jsonObj["timeLineSeriesData"]["content"];
-			option.yAxis.data=categories.data;
-			option.yAxis.max=categories.data.length-1;
-			var c=option.series[0].data.concat(seriesData);
-			option.series[0].data=c;
-			myChart.setOption(option,{
-			    notMerge:true,
-			    lazyUpdate:false,
-			    silent:false
-			});
-		}
-		myChart.hideLoading();
-	}
-}).directive('rankingRunning',function(){
-	return function($scope, ele, attrs){
-		var ranking = new Ranking();
-		$scope.onMessage=function(event){
-			var jsonObj =JSON.parse(event.data);
-			ranking.dataRankingInit(jsonObj["ranking"]["content"]);
 		}
 	}
 }).directive('ngRepeatFinished',function($timeout){

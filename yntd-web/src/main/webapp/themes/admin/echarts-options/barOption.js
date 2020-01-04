@@ -41,7 +41,6 @@
     xAxis: {
         type: 'category',
         min:0,
-        max:25,
         splitLine: {
             show: false
         },

@@ -13,7 +13,15 @@
 	
 	Mywebsocket.prototype={
 		init:function(){
-			var ws = new WebSocket(option._url);
+			var ws;
+		    if ('WebSocket' in window) {
+		    	ws = new WebSocket("ws://localhost:8080/ws.html");
+		    }else if ('MozWebSocket' in window) {
+		    	ws = new MozWebSocket("ws://localhost:8080/ws.html");
+		    }
+		    else {
+		    	ws = new SockJS("http://localhost:8080/ws/socketjs.html");
+		    }
 			this.ws=ws;
 			this.event();
 		},event:function(){
@@ -75,7 +83,7 @@
 			var lockReconnect= false;
 			if(lockReconnect) return;
 		    lockReconnect = true;
-		    setTimeout(function () {//没连接上会一直重连，设置延迟避免请求过多
+		    setTimeout(function () {
 		    	_this.init();
 		        lockReconnect = false;
 		    }, 5000);
