@@ -14,11 +14,29 @@
 	    height: 357px;
 	    margin: 10px;
 	}
+	.machineStatus-running{
+	    background-color:#12b07b;
+	    color: white;
+	}
+	.machineStatus-poweroff{
+	    background-color:#a6a5a5;
+	    color: white;
+	}
+	
+	.machineStatus-waiting{
+	    background-color:#feb501;
+	    color: white;
+	}
+	
+	.machineStatus-alarm{
+	    background-color:#e65a65;
+	    color: white;
+	}
 </style>
-<div class="row">
-<input type="hidden" id="uuid" ng-model="uuid" value="${(filters.uuid)!}">
-<div class="col-xs-12" ng-app="myApp" ng-controller="myCtrl">
-<div class="box box-success">
+<div class="row" ng-app="myApp" ng-controller="myCtrl">
+			<input type="hidden" id="uuid" ng-model="uuid" value="${(filters.uuid)!}">
+			<div class="col-xs-12">
+			<div class="box box-success">
             <div class="box-header">
               <h3 class="box-title">设备管理</h3>
             </div>
@@ -81,7 +99,7 @@
 									</a>
 							   </td>
 							   <td style="text-align:right;">
-								   <a class="btn btn-default btn-xs" ng-click="realTimeData(item.id,item.name)" title="实时数据">
+								   <a class="btn btn-default btn-xs" ng-click="machineData(item.id,item.name,item.imgUrl,item.status)" title="实时数据">
 								   	<i class="fa fa-info-circle" aria-hidden="true"></i>
 									</a>
 							   </td>
@@ -115,174 +133,65 @@
 				</div>
 			</div>
 			 <!--图片预览 end-->
-			<!--设备运行状态 start-->
-		<div id="logging" style="display:none;text-align: center;">
-	 		<div class="col-md-6" style="width:350px;height:300px;padding:5px">
-	          <div class="box box-primary">
-	            <div class="box-header with-border">
-	              <h3 class="box-title">设备当日运行状态时长占比(单位:分钟)</h3>
-	              <div class="box-tools pull-right">
-	                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-	                </button>
-	                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-	              </div>
-	            </div>
-	            <div class="box-body" style="padding:0px">
-	              <div id="piechart" class="chart" style="height:250px; width:90%;">
-	                
-	              </div>
-	            </div>
-	          </div>
-	        </div>
-	         <div class="col-md-6" style="width:350px;height:300px;padding:5px">
-				<div class="box box-info" style="margin:0px">
-           		 <div class="box-header with-border">
-              	<h3 class="box-title">设备信息</h3>
-             	 <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                </button>
-                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-              </div>
-            </div>
-            <div class="box-body" style="height:100px">
-              	<img width="70%" height="100%" src="{{loggingImage}}" />
-            </div>
-            <div class="box-body" style="height:150px;">
-            	 <ul class="list-group">
-				    <li class="list-group-item" style="text-align: left;border:none">
-				    	设备名称:<span style="margin-left:20px">{{loggingName}}</span>
-			    	</li>
-				    <li class="list-group-item" style="text-align: left;border:none">
-				    	设备编号:<span style="margin-left:20px">{{loggingCode}}</span>
-				    </li>
-				    <li class="list-group-item" style="text-align: left;border:none">
-				    	设备ip:<span style="margin-left:20px">{{loggingIp}}</span>
-			    	</li>
-				</ul>
-            </div>
-          </div>
-	         </div>
-	        <div class="col-md-6" style="width:700px;height:300px;padding:3px">
- 			<div class="box box-info">
-            <div class="box-header with-border">
-              <h3 class="box-title">设备运行状态每日趋势(单位：分钟)</h3>
-              <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                </button>
-                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-              </div>
-            </div>
-            <div class="box-body" style="pdding:0">
-              <div id="lineCharts" class="chart" style="height:250px;width:100%;">
-              </div>
-            </div>
-          </div>
-	        </div>
-        </div>
-        <!--设备运行状态 end-->
+		</div>
         <!--设备实时数据start  -->
-        	<div id="realTime" style="display:none">
-	        	<div class="box box-primary" style="width:100%;height:240px">
-        		  <div id="gauges" class="box-body" style="pdding:0;">
-	        		   <div style="width:33%;height:240px;float:left;">
-	        		   </div>
-	        		   <div style="width:33%;height:240px;float:left;">
-	        		   </div>
-	        		   <div style="width:33%;height:240px;float:left;">
-	        		   </div>
-       		     </div>
-	        	</div>
-				<div class="box box-primary">
-				   <div class="box-body">
-				     <div class="form-group">
-				       	<div class="input-group">
-							<div class="input-group-addon">
-								<label>设备状态:</label>
+	      	<div id="realTime">
+					<div class="box box-primary" style="width:88%;height:400px;margin-left:14px;">
+					<div id="machineStatus-header" class="box-header machineStatus-running">
+						<h3 class="box-title">设备 {{machineName}}</h3>
+					</div>
+					<div class="box-body">
+					<div class="media" style="width:600px;">
+						  <div class="media-left">
+						     <img width="200px" class="thumbnail" src="/themes/website/images/default.jpg" alt="通用的占位符缩略图">
+						  </div>
+						  <div class="media-body">
+						  	<div class="form-group">
+		    					<div class="input-group">
+		    						<table class="table">
+									  <tbody>
+									    <tr>
+									      <th>主轴倍率:</th>
+									      <td>Bangalore</td>
+									      <th>进给倍率:</th>
+									      <td>Bangalore</td>
+									    </tr>
+									    <tr>
+									      <th>主轴负载:</th>
+									      <td>Bangalore</td>
+									      <th>当前程序语句:</th>
+									      <td>Bangalore</td>
+									    </tr>
+									    <tr>
+									      <th>累计加工数量:</th>
+									      <td>Bangalore</td>
+									      <th>主轴实际转速:</th>
+									      <td>Bangalore</td>
+									    </tr>
+									    <tr>
+									      <th>当前刀具编号:</th>
+									      <td>Bangalore</td>
+									      <th>累计生产件数:</th>
+									      <td>Bangalore</td>
+									    </tr>
+									  </tbody>
+									</table>
+		    					</div>
+						  	</div>
+						  </div>
+						</div>
+						<div class="panel panel-default">
+							<div class="panel-heading">
+							      <h3 class="panel-title">
+							         	状态时间线
+							      </h3>
 							</div>
-			         		<input type="text" class="form-control" ng-model="monitor.machineSignal" disabled="disabled">
-					         <div class="input-group-addon">
-			            		 <label>运转模式:</label>
-					         </div>
-				         	<input type="text" class="form-control" ng-model="monitor.machineMode" disabled="disabled">
-				       </div>
-				     </div>
-				     <div class="form-group">
-				       	<div class="input-group">
-							<div class="input-group-addon">
-								<label>报警代码:</label>
-							</div>
-			         		<input type="text" class="form-control" ng-model="monitor.alarmNo" disabled="disabled">
-					         <div class="input-group-addon">
-			            		 <label>报警信息:</label>
-					         </div>
-				         	<input type="text" class="form-control" ng-model="monitor.alarmMessage" disabled="disabled">
-				       </div>
-				     </div>
-				     <div class="form-group">
-				       	<div class="input-group">
-							<div class="input-group-addon">
-								<label>主程序编号:</label>
-							</div>
-			         		<input type="text" class="form-control" ng-model="monitor.mainprogramNo" disabled="disabled">
-					         <div class="input-group-addon">
-			            		 <label>子程序编号:</label>
-					         </div>
-				         	<input type="text" class="form-control" ng-model="monitor.subprogramNo" disabled="disabled">
-				       </div>
-				     </div>
-				     <div class="form-group">
-				       	<div class="input-group">
-							<div class="input-group-addon">
-								<label>主轴刀具号:</label>
-							</div>
-			         		<input type="text" class="form-control" ng-model="monitor.toolNo" disabled="disabled">
-					         <div class="input-group-addon">
-			            		 <label>主轴刀具类型:</label>
-					         </div>
-				         	<input type="text" class="form-control" ng-model="monitor.toolName" disabled="disabled">
-				       </div>
-				     </div>
-				     <div class="form-group">
-				       	<div class="input-group">
-							<div class="input-group-addon">
-								<label>加工计数目标值:</label>
-							</div>
-			         		<input type="text" class="form-control" ng-model="monitor.partscountTarget" disabled="disabled">
-					         <div class="input-group-addon">
-			            		 <label>加工计数实际值:</label>
-					         </div>
-				         	<input type="text" class="form-control" ng-model="monitor.partscountResult" disabled="disabled">
-				       </div>
-				     </div>
-				     <div class="form-group">
-				       	<div class="input-group">
-							<div class="input-group-addon">
-								<label>快进倍率:</label>
-							</div>
-			         		<input type="text" class="form-control" ng-model="monitor.overrideRapid" disabled="disabled">
-					         <div class="input-group-addon">
-			            		 <label>主轴倍率:</label>
-					         </div>
-				         	<input type="text" class="form-control" ng-model="monitor.overrideSpindle" disabled="disabled">
-				       </div>
-				     </div>
-				          <div class="form-group">
-				       	<div class="input-group">
-							<div class="input-group-addon">
-								<label>切削倍率:</label>
-							</div>
-			         		<input type="text" class="form-control" ng-model="monitor.overrideFeed" disabled="disabled">
-					         <div class="input-group-addon">
-			            		 <label>主轴模式:</label>
-					         </div>
-				         	<input type="text" class="form-control" ng-model="monitor.spindleMode" disabled="disabled" >
-				       </div>
-				     </div>
+						    <div class="panel-body">
+						    </div>
+						</div>
+					</div>
 				</div>
-				</div>
-				
           </div>
-	</div>
 	</div>
 </@layout.override>
 <@layout.override name="js">

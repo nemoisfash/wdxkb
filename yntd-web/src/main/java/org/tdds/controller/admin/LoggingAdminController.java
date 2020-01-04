@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -83,14 +82,14 @@ public class LoggingAdminController extends BaseWorkbenchController {
 
 	@Autowired
 	private MachineService bizMachine;
-	
+
 	// 西部大森 running=manual
-	private static final String[] STATUS = { "RUNNING", "POWEROFF", "ALARM", "WAITING" ,"MANUAL"};
-	
-	private static final String[] TYPE = { "overrideFeed", "cncSrate","cncSload"};
-	
-	private static final String[] TYPE_CN = { "进给倍率", "主轴倍率", "主轴负载"};
-	 
+	private static final String[] STATUS = { "RUNNING", "POWEROFF", "ALARM", "WAITING", "MANUAL" };
+
+	private static final String[] TYPE = { "overrideFeed", "cncSrate", "cncSload" };
+
+	private static final String[] TYPE_CN = { "进给倍率", "主轴倍率", "主轴负载" };
+
 	private static final String uuid = HashUtils.MD5(LoggingAdminController.class.getName());
 
 	@RequestMapping(value = "/{type}/list", method = RequestMethod.GET)
@@ -147,58 +146,58 @@ public class LoggingAdminController extends BaseWorkbenchController {
 		return map;
 	}
 
-	/*
-	 * @ResponseBody
-	 * 
-	 * @RequestMapping(value = "/gauge", method = RequestMethod.GET) public Object
-	 * gauge(@RequestParam(value = "machineId") Long machineId, HttpServletRequest
-	 * request, HttpServletResponse response) { List<Map<String, Object>> list = new
-	 * ArrayList<Map<String,Object>>(); Machine machine =bizMachine.load(machineId);
-	 * if(machine==null) { return null; } Map<String, Object> entity = new
-	 * HashMap<>(); Map<String,Object> monitoring = new HashMap<>();
-	 * switch(machine.getIo()) { case 0:
-	 * monitoring=bizMonitoring.findByName(machine.getName());
-	 * if(monitoring.get("overrideFeed").equals("0")) {
-	 * 
-	 * }
-	 * 
-	 * 
-	 * }
-	 * 
-	 * 
-	 * JSONObject jsonObj=new JSONObject(map); list.add(jsonObj); return list; }
-	 */
-	
-	/*
-	 * @RequestMapping(value = "/monitor", method = RequestMethod.GET)
-	 * 
-	 * @ResponseBody public Object monitor(@RequestParam(value = "name", required =
-	 * false) String name, HttpServletRequest request, HttpServletResponse response)
-	 * { Machine machine = bizMachine.findMachineByName(name); MonitoringList
-	 * montior =null; //TODO if(machine.getIo()==1) {
-	 * montior=bizMonitoring.findByName(name);
-	 * montior.setMachineSignal(StatusEnum.getValue(montior.getMachineSignal()));
-	 * }else { montior =new MonitoringList(); String
-	 * status=getStatus(machine.getmIp());
-	 * montior.setMachineStatus(StatusEnum.getValue(status)); } return montior; }
-	 */
+	@ResponseBody
+	@RequestMapping(value = "/gauge", method = RequestMethod.GET)
+	public Object gauge(@RequestParam(value = "machineId") Long machineId, HttpServletRequest request,
+			HttpServletResponse response) {
+		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+		Machine machine = bizMachine.load(machineId);
+		if (machine == null) {
+			return null;
+		}
+		Map<String, Object> entity = new HashMap<>();
+		Map<String, Object> monitoring = new HashMap<>();
+		switch (machine.getIo()) {
+		case 0:
+			monitoring = bizMonitoring.findByName(machine);
+		}
+		JSONObject jsonObj = new JSONObject(monitoring);
+		list.add(jsonObj);
+		return list;
+	}
+
+	@RequestMapping(value = "/monitor", method = RequestMethod.GET)
+	@ResponseBody
+	public Object monitor(@RequestParam(value = "name", required = false) String name, HttpServletRequest request,
+			HttpServletResponse response) {
+		Machine machine = bizMachine.findMachineByName(name);
+		Map<String, Object> montior = new HashMap<>();
+		if (machine.getIo() == 1) {
+			montior = bizMonitoring.findByName(machine);
+			montior.setMachineSignal(StatusEnum.getValue(montior.getMachineSignal()));
+		} else {
+			String status = getStatus(machine.getmIp());
+			montior.setMachineStatus(StatusEnum.getValue(status));
+		}
+		return montior;
+	}
+
 	@RequestMapping(value = "/{type}/sumTimeDiff", method = RequestMethod.GET)
 	@ResponseBody
-	public Object sumTimeDiff(@PathVariable String type, HttpServletRequest request,
-			HttpServletResponse response) {
+	public Object sumTimeDiff(@PathVariable String type, HttpServletRequest request, HttpServletResponse response) {
 		QueryFilters filters = FiltersUtils.getQueryFilters(request, response, uuid + type);
-		Double num =0.0;
-		if(type.equalsIgnoreCase(STATUS[0])) {
-			num=bizRunning.findTimeDiffByFilters(filters);
-		}else if(type.equalsIgnoreCase(STATUS[1])) {
-			num=bizPowerOff.findTimeDiffByFilters(filters);
-		}else if(type.equalsIgnoreCase(STATUS[2])) {
-			num=bizWarning.findTimeDiffByFilters(filters);
-		}else{
-			num=bizWaiting.findTimeDiffByFilters(filters);
+		Double num = 0.0;
+		if (type.equalsIgnoreCase(STATUS[0])) {
+			num = bizRunning.findTimeDiffByFilters(filters);
+		} else if (type.equalsIgnoreCase(STATUS[1])) {
+			num = bizPowerOff.findTimeDiffByFilters(filters);
+		} else if (type.equalsIgnoreCase(STATUS[2])) {
+			num = bizWarning.findTimeDiffByFilters(filters);
+		} else {
+			num = bizWaiting.findTimeDiffByFilters(filters);
 		}
-		 Map<String, Object> map = new HashMap<String, Object>();
-		 map.put("timediff", num);
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("timediff", num);
 		return map;
 	}
 
@@ -211,7 +210,7 @@ public class LoggingAdminController extends BaseWorkbenchController {
 		String time = sdf.format(new Date());
 		List<String> days = getMonthDate(time);
 		List<Map<String, Object>> maps = new ArrayList<>();
-		Machine machine=bizMachine.load(id);
+		Machine machine = bizMachine.load(id);
 		for (String status : STATUS) {
 			Map<String, Object> entity = new HashMap<>();
 			List<Object> value = new LinkedList<>();
@@ -268,13 +267,13 @@ public class LoggingAdminController extends BaseWorkbenchController {
 			filename = "设备手动日志";
 			entities = bizManual.exportData(filters);
 		}
-		int i=0;
-		Map<String, Object> lastMap=new HashMap<String, Object>();
-		for(Map<String, Object> map:entities) {
-			String timediffString=Objects.toString(map.get("timediff"),null);
-			i+=Integer.valueOf(timediffString);
+		int i = 0;
+		Map<String, Object> lastMap = new HashMap<String, Object>();
+		for (Map<String, Object> map : entities) {
+			String timediffString = Objects.toString(map.get("timediff"), null);
+			i += Integer.valueOf(timediffString);
 		}
-		lastMap.put("sumtimediff",i);
+		lastMap.put("sumtimediff", i);
 		entities.add(lastMap);
 		byte[] bytes = ExcelExportUtils.createExcel(type + "_", null, entities);
 		response.setContentType("application/vnd.ms-excel;charset=utf-8");
@@ -287,7 +286,7 @@ public class LoggingAdminController extends BaseWorkbenchController {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private String getStatus(String ip) {
 		String status = STATUS[0];
 		Boolean running = true;
@@ -297,9 +296,8 @@ public class LoggingAdminController extends BaseWorkbenchController {
 			running = Modbus4jUtil.readInputStatus(ip, 502, 1, 0);
 			waitting = Modbus4jUtil.readInputStatus(ip, 502, 1, 1);
 			warning = Modbus4jUtil.readInputStatus(ip, 502, 1, 2);
-		} catch (ModbusTransportException | ErrorResponseException
-				| ModbusInitException e) {
-			status=STATUS[1];
+		} catch (ModbusTransportException | ErrorResponseException | ModbusInitException e) {
+			status = STATUS[1];
 		}
 		if (running) {
 			if (!waitting) {
@@ -315,5 +313,5 @@ public class LoggingAdminController extends BaseWorkbenchController {
 
 		return status;
 	}
-	
+
 }

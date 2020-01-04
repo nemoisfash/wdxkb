@@ -1,5 +1,21 @@
 var app = angular.module('myApp', []);
 app.controller('myCtrl', function($scope,$http,$interval) {
+$(function(){
+	$('#realTime').slideReveal({
+		width: '100%',
+		push: false,
+		position: 'top',
+		show: function (obj) {
+		},
+		hide: function (obj) {
+		},
+		hidden: function (obj) {
+		},
+		overlay: true,
+		overlayClick: false
+	});
+})
+
 var uuid=$("#uuid").val();
 		$http({
 				method: 'GET',
@@ -115,10 +131,6 @@ var uuid=$("#uuid").val();
 				area : ['750px','689px'],
 				content:$("#logging"),
 				success:function(){
-					$scope.loggingName=name;
-					$scope.loggingCode=code;
-					$scope.loggingIp=ip;
-					$scope.loggingImage=image;
 					createPie(id,name);
 					createLine(id,name);
 				}
@@ -158,9 +170,19 @@ var uuid=$("#uuid").val();
 		})
 	}
 	
-	$scope.realTimeData=function(id,name){
+	$scope.machineData=function(id,name,image,status){
+		$('#realTime').slideReveal('show');
+		/*$("#machineStatus-header").css("display","block");*/
+		$("#machineStatus-header").addClass("box-header"+" "+"machineStatus-"+status.toLowerCase());
+		$('#realTime').addClass(' show');
 		$scope.crName=name;
-		layer.open({
+		
+		$scope.machineId=id;
+		$scope.machineName=name;
+		$scope.machineImage=image;
+		
+		
+/*		layer.open({
 			type: 1,
 			title:name+"运行实时数据",
 			offset : 'auto',
@@ -175,7 +197,9 @@ var uuid=$("#uuid").val();
 			},cancel:function(){
 				window.location.reload();
 			}
-		})
+		})*/
+		
+		
 	}
 	
 	function getMonitor(name){
