@@ -21,6 +21,7 @@
 		<property name="userName" value="${mqtt.username}" />
 		<property name="password" value="${mqtt.password}" />
 		<property name="keepAliveInterval" value="${mqtt.keepAliveInterval}" />
+		<property name="connectionTimeout" value="${mqtt.connectionTimeout}" />
 		<property name="cleanSession" value="${mqtt.cleanSession}" />
 		<property name="serverURIs">
 			<array>

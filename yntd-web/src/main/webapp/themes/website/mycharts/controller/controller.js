@@ -49,9 +49,7 @@ window.close=function(){
 }
 
 $scope.callbackReportData =function(){
-	$interval(function(){
-		$.get("/member/callbackReportData.json");
-	},8000)
+  $.get("/member/callbackReportData.json");
 }
 
 $scope.switchStatus=function(obj){

@@ -77,32 +77,34 @@ public class MachineController extends BasePortalController {
 	
 	@RequestMapping(value = "/callbackReportData", method = RequestMethod.GET)
 	public void publicMonitoring() {
-		Map<String, Object> response = new HashMap<>();
-		Map<String, Object> dataList = publishDataList();
-		if (!dataList.isEmpty() && dataList.get("content") != null) {
-			response.put(topics[0], dataList);
+		while (true) {
+			Map<String, Object> response = new HashMap<>();
+			Map<String, Object> dataList = publishDataList();
+			if (!dataList.isEmpty() && dataList.get("content") != null) {
+				response.put(topics[0], dataList);
+			}
+	
+			Map<String, Object> pies = publishPieData();
+			if (!pies.isEmpty() && pies.get("content") != null) {
+				response.put(topics[1], pies);
+			}
+	
+			Map<String, Object> ranking = publishRanking();
+			if (!ranking.isEmpty() && ranking.get("content") != null) {
+				response.put(topics[2], ranking);
+			}
+	
+			Map<String, Object> timeLineCategories = publishTimeLineCategories();
+			if (!timeLineCategories.isEmpty() && timeLineCategories.get("content") != null) {
+				response.put(topics[3], timeLineCategories);
+			}
+			Map<String, Object> timeLineSeriesData = publishTimeLineSeriesData();
+			if (!timeLineSeriesData.isEmpty() && timeLineSeriesData.get("content") != null) {
+				response.put(topics[4], timeLineSeriesData);
+			}
+			TextMessage tMsg = new TextMessage(new JSONObject(response).toJSONString());
+			MyWsHandler.sendMessageToClient(tMsg);
 		}
-
-		Map<String, Object> pies = publishPieData();
-		if (!pies.isEmpty() && pies.get("content") != null) {
-			response.put(topics[1], pies);
-		}
-
-		Map<String, Object> ranking = publishRanking();
-		if (!ranking.isEmpty() && ranking.get("content") != null) {
-			response.put(topics[2], ranking);
-		}
-
-		Map<String, Object> timeLineCategories = publishTimeLineCategories();
-		if (!timeLineCategories.isEmpty() && timeLineCategories.get("content") != null) {
-			response.put(topics[3], timeLineCategories);
-		}
-		Map<String, Object> timeLineSeriesData = publishTimeLineSeriesData();
-		if (!timeLineSeriesData.isEmpty() && timeLineSeriesData.get("content") != null) {
-			response.put(topics[4], timeLineSeriesData);
-		}
-		TextMessage tMsg = new TextMessage(new JSONObject(response).toJSONString());
-		MyWsHandler.sendMessageToClient(tMsg);
 	}
 
 	private Map<String, Object> publishDataList() {

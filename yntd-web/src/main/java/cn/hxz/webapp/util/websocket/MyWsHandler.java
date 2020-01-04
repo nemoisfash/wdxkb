@@ -25,9 +25,11 @@ public class MyWsHandler extends TextWebSocketHandler{
 	        }
 	    }
 	    
-	    @Override
+	    
+	    @SuppressWarnings("rawtypes")
+		@Override
 	    public void handleTextMessage(WebSocketSession session, TextMessage message) {
-	        WebSocketMessage msg = new TextMessage("server:"+message);
+	        WebSocketMessage msg = new TextMessage(message.getPayload());
 	        try {
 	            session.sendMessage(msg);
 	        } catch (IOException e) {

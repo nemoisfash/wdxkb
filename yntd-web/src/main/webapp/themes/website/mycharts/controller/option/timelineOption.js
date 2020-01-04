@@ -119,7 +119,7 @@ MyTimeLine.prototype={
 				
 			},dataTimeLineInit:function(timeLineCategories,timeLineSeriesData){
 				var _this=this;
-				option.yAxis.data=timeLineCategories.data;
+				option.yAxis.data=timeLineCategories
 				var c=option.series[0].data.concat(timeLineSeriesData);
 				option.series[0].data=c;
 				_this.timeLine.setOption(option,{

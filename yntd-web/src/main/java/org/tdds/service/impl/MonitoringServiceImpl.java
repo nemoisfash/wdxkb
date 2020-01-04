@@ -14,6 +14,7 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.quartz.simpl.SystemPropertyInstanceIdGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.integration.mqtt.core.DefaultMqttPahoClientFactory;
 import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
@@ -80,9 +81,19 @@ public class MonitoringServiceImpl implements MonitoringService {
 			mac.connect(df.getConnectionOptions());
 			mac.subscribe(topic, qos);
 			mac.setCallback(new MqttCallback() {
+				@SuppressWarnings("static-access")
 				@Override
 				public void messageArrived(String topic, MqttMessage message) throws Exception {
-					mqttMsg = new String(message.getPayload());
+					if(message.getPayload()!=null) {
+						String msg = new String(message.getPayload());
+						if(!new JSONObject().isValid(msg)) {
+							mqttMsg=new String(message.getPayload());
+						}else {
+							mqttMsg="";
+						}
+					}else {
+						mqttMsg="";
+					}
 				}
 
 				@Override
@@ -101,10 +112,11 @@ public class MonitoringServiceImpl implements MonitoringService {
 					}
 				}
 			});
-			Thread.sleep(1000);
+			
 			System.out.print(mqttMsg);
 		} catch (Exception e) {
-			e.printStackTrace();
+			mqttMsg="";
+			System.out.println(e.getMessage().toString());
 		}
 
 	}
@@ -173,6 +185,7 @@ public class MonitoringServiceImpl implements MonitoringService {
 				if (jsonObject.getString("az") != null && jsonObject.getString("az").equals("1")) {
 					mls.put("machineSignal", "ALARM");
 				}
+			 
 			} else if (machine.getMqttSorce() == 1) {
 				if (!StringUtils.isEmpty(jsonObject.getString("cnc_products"))) {
 					mls.put("cncProducts", jsonObject.getString("cnc_products"));

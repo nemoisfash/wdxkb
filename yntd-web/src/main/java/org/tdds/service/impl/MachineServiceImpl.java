@@ -11,6 +11,7 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.util.TagUtils;
 import org.tdds.entity.Machine;
 import org.tdds.entity.MonitoringList;
 import org.tdds.mapper.MachineMapper;
@@ -114,6 +115,10 @@ public class MachineServiceImpl implements MachineService {
 		Date date = new Date();
 		String status=entity.getStatus();
 		String mstatus= Objects.toString(monitoringList.get("machineSignal"),null) ;
+		if(StringUtils.isEmpty(mstatus)){
+			mstatus=STATUS[2];
+			monitoringList.put("machineSignal", mstatus);
+		}
 		if(!status.equals(mstatus)){
 			 if(status.equals(STATUS[0])){
 				 bizRunningRecord.insert(monitoringList, entity);
