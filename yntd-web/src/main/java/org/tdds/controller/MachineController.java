@@ -74,9 +74,8 @@ public class MachineController extends BasePortalController {
 
 	List<Map<String, Object>> statuslist = new ArrayList<>();
 	
-	
 	@RequestMapping(value = "/callbackReportData", method = RequestMethod.GET)
-	public void publicMonitoring() {
+	public String publicMonitoring() {
 		while (true) {
 			Map<String, Object> response = new HashMap<>();
 			Map<String, Object> dataList = publishDataList();
@@ -102,8 +101,8 @@ public class MachineController extends BasePortalController {
 			if (!timeLineSeriesData.isEmpty() && timeLineSeriesData.get("content") != null) {
 				response.put(topics[4], timeLineSeriesData);
 			}
-			TextMessage tMsg = new TextMessage(new JSONObject(response).toJSONString());
-			MyWsHandler.sendMessageToClient(tMsg);
+			
+			return new JSONObject(response).toJSONString();
 		}
 	}
 

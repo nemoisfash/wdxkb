@@ -50,11 +50,13 @@ public class MonitoringServiceImpl implements MonitoringService {
 	@Override
 	public Map<String, Object> findByName(Machine machine) {
 		Map<String, Object> map = daoMonitoring.selectOneByName(machine.getName());
-		/*
-		 * Message<String> message = MessageBuilder.withPayload(new
-		 * JSONObject(map).toJSONString()) .setHeader(MqttHeaders.TOPIC,
-		 * machine.getMqttSorce()).build(); mh.handleMessage(message);
-		 */
+		try {
+			 Message<String> message = MessageBuilder.withPayload(new JSONObject(map).toJSONString()) .setHeader(MqttHeaders.TOPIC, machine.getMqttSorce()).build();
+			 mh.handleMessage(message);
+		} catch (Exception e) {
+			System.out.println(e.getMessage().toString());
+		}
+		
 		return map;
 	}
 

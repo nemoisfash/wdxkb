@@ -44,35 +44,35 @@
 						<span class="label label-default">车间设备分布</span>
 						<div style="background-color:#07132d00;width:100%;height:80%;margin-top:20px">
 							<img width="100%" height="100%" src="/themes/website/images/aoshen/aoshen.png"></img>
-							<span id="T005_m" class="circle circle-running headerBox" style="top:5%;left:91%;">
+							<span id="T005_m" class="circle circle-running headerBox" style="top:5%;left:89%;">
 							</span>
-							<span id="MC009_m" class="circle circle-running headerBox" style="top:5%;left:80%;">
+							<span id="MC009_m" class="circle circle-running headerBox" style="top:5%;left:78%;">
 							</span>
-							<span id="MC008_m" class="circle circle-running headerBox" style="top:5%;left:71%;">
+							<span id="MC008_m" class="circle circle-running headerBox" style="top:5%;left:69%;">
 							</span>
-							<span id="MC007_m" class="circle circle-running headerBox" style="top:5%;left:62%;">
+							<span id="MC007_m" class="circle circle-running headerBox" style="top:5%;left:60%;">
 							</span>
-							<span id="MC005_m" class="circle circle-running headerBox" style="top:5%;left:53%;">
+							<span id="MC005_m" class="circle circle-running headerBox" style="top:5%;left:51%;">
 							</span>
-							<span id="MC006_m" class="circle circle-running headerBox" style="top:5%;left:45%;">
+							<span id="MC006_m" class="circle circle-running headerBox" style="top:5%;left:41%;">
 							</span>
-							<span id="T005_m" class="circle circle-running headerBox" style="top:5%;left:32%;">
+							<span id="T005_m" class="circle circle-running headerBox" style="top:5%;left:29%;">
 							</span>
-							<span id="MC004_m" class="circle circle-running headerBox" style="top:11%;left:34%;">
+							<span id="MC004_m" class="circle circle-running headerBox" style="top:11%;left:31%;">
 							</span>
-							<span id="D9332_m" class="circle circle-running headerBox" style="top:11%;left:41%;">
+							<span id="D9332_m" class="circle circle-running headerBox" style="top:11%;left:39%;">
 							</span>
-							<span id="MC002_m" class="circle circle-running headerBox" style="top:11%;left:49%;">
+							<span id="MC002_m" class="circle circle-running headerBox" style="top:11%;left:47%;">
 							</span>
-							<span id="D9332_m" class="circle circle-running headerBox" style="top:11%;left:57%;">
+							<span id="D9332_m" class="circle circle-running headerBox" style="top:11%;left:55%;">
 							</span>
-							<span id="D9332_m" class="circle circle-running headerBox" style="top:16%;left:25%;">
+							<span id="D9332_m" class="circle circle-running headerBox" style="top:16%;left:23%;">
 							</span>
-							<span id="T003_m" class="circle circle-running headerBox" style="top:16%;left:34%;">
+							<span id="T003_m" class="circle circle-running headerBox" style="top:16%;left:32%;">
 							</span>
-							<span id="T002_m" class="circle circle-running headerBox" style="top:16%;left:44%;">
+							<span id="T002_m" class="circle circle-running headerBox" style="top:16%;left:42%;">
 							</span>
-							<span id="T004_m" class="circle circle-running headerBox" style="top:16%;left:53%;">
+							<span id="T004_m" class="circle circle-running headerBox" style="top:16%;left:51%;">
 							</span>
 						</div>
 						<div style="width:100%;height:2.25rem;text-align:center;line-height:2.25rem;">
@@ -148,7 +148,7 @@
 				          </div>
 						</div>
 					</div> -->
-					<div class="nav-tabs-custom" style="background-color:#081639a1;height:57rem;margin-top:14px;overflow: hidden;">
+					<div class="nav-tabs-custom" style="background-color:#081639a1;height:28rem;margin-top:14px;overflow: hidden;">
 						<span class="label label-default">设备实时数据</span>
 						<div style="width:100%;height:100%;margin-top:0;overflow:hidden;">
 						<table class="table table-bordered" style="margin-top:10px">
@@ -166,7 +166,7 @@
 							</tr>
 						</thead>
 						 <tbody>
-							<tr role="row" class="odd" ng-repeat="item in items" ng-Repeat-Finished>
+							<tr role="row" class="odd roll-up" ng-repeat="item in items" ng-Repeat-Finished>
 							 	<td>{{item.machineName}}</td>
 							 	<td>{{item.machineSignal}}</td>
 							 	<td>{{item.cncSrate}}</td>
@@ -179,6 +179,32 @@
 							</tr>
 						</tbody>
 					</table>
+						</div>
+					</div>
+					<div class="nav-tabs-custom" style="background-color:#081639a1;height:27.7rem;margin-top:14px;overflow: hidden;">
+						<span class="label label-default">设备报警列表</span>
+						<div style="width:100%;height:100%;margin-top:0;overflow:hidden;">
+							<table class="table table-bordered" style="margin-top:10px" ng-if="alarmList.length>0">
+								<thead>
+									<tr role="row">
+										<th rowspan="1" colspan="1">设备名称</th>
+										<th rowspan="1" colspan="1">报警时间</th>
+										<th rowspan="1" colspan="1">报警代码</th>
+										<th rowspan="1" colspan="1">报警名称</th>
+									</tr>
+								</thead>
+								 <tbody>
+									<tr role="row" class="odd" ng-repeat="item in alarmList" ng-Repeat-Finished>
+									 	<td>{{item.machineName}}</td>
+									 	<td>{{item.machineName}}</td>
+									 	<td>{{item.currentTime|date:"yyyy-MM-dd HH:mm:ss"}}</td>
+									 	<td>{{item.alamType}}</td>
+									</tr>
+								</tbody>
+							</table>
+							<div ng-if="alarmList.length==0" style="text-align:center;line-height:50%;color:#38b0f3;height:100%;padding:70px">
+								<h3>暂无无报警记录</h3>
+							</div>
 						</div>
 					</div>
 				</section>

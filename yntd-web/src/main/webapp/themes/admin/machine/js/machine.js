@@ -16,6 +16,53 @@ $(function(){
 	});
 })
 
+/*****************websocket************************/
+function connection(){
+	var websocket;
+    if ('WebSocket' in window) {
+        websocket = new WebSocket("ws://localhost:8080/ws.html");
+    }else if ('MozWebSocket' in window) {
+        websocket = new MozWebSocket("ws://localhost:8080/ws.html");
+    }
+    else {
+        websocket = new SockJS("http://localhost:8080/ws/socketjs.html");
+    }
+    websocket.onError=$scope.onError;
+    websocket.onClose=$scope.onClose;
+    websocket.onopen=$scope.onopen;
+    websocket.onmessage=$scope.onmessage;
+}
+
+
+$scope.onError=function(openEvt){
+	connection();
+}
+
+$scope.onClose=function onClose() {
+	console.info("链接已关闭");
+}
+
+$scope.onopen= function(event) {
+	console.info("链接已建立");
+	ws.send("clientId","machinelist");
+	$scope.callbackTimeLineData();
+}
+
+$scope.callbackTimeLineData =function(){
+  $.get("/admin/logging/callbackTimeLineData.json");
+}
+ 
+var myTimeLine =new MyTimeLine();
+$scope.onmessage=function(evt) {
+	myTimeLine.dataTimeLineInit(JsonObject["timeLineCategories"]["content"],JsonObject["timeLineSeriesData"]["content"]);
+}
+/*****************websocket************************/
+window.close=function(){
+	$scope.ws.onclose();
+}
+
+
+
 var uuid=$("#uuid").val();
 		$http({
 				method: 'GET',

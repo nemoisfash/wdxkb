@@ -166,7 +166,7 @@ public class LoggingAdminController extends BaseWorkbenchController {
 		return list;
 	}
 
-	@RequestMapping(value = "/monitor", method = RequestMethod.GET)
+	/*@RequestMapping(value = "/monitor", method = RequestMethod.GET)
 	@ResponseBody
 	public Object monitor(@RequestParam(value = "name", required = false) String name, HttpServletRequest request,
 			HttpServletResponse response) {
@@ -180,6 +180,13 @@ public class LoggingAdminController extends BaseWorkbenchController {
 			montior.setMachineStatus(StatusEnum.getValue(status));
 		}
 		return montior;
+	}*/
+	@RequestMapping(value = "/callbackTimeLineData", method = RequestMethod.GET)	
+	public Object monitor(@RequestParam(value = "name", required = false) String name, HttpServletRequest request,
+			HttpServletResponse response) {
+		Map<String, Object> reultMap = new HashMap<String, Object>();
+		return reultMap;
+		
 	}
 
 	@RequestMapping(value = "/{type}/sumTimeDiff", method = RequestMethod.GET)

@@ -48,7 +48,7 @@ var optionBar = {
 	        	margin:10,
 	            textStyle: {
 	                color: '#34a9eb',
-	                fontSize: '8',
+	                fontSize: '15',
 	            }
 	        },
 	        data: []

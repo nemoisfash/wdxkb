@@ -22,7 +22,7 @@
 				Tool_No as cnc_toolnum,
 				Spindle_Mode as spindleMode
 			FROM
-				Monitoring_List
+				monitoring_list
 			WHERE 
 				Machine_Name=#{name}
 			]]>

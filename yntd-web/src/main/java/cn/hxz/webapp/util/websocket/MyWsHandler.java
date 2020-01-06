@@ -5,11 +5,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
+
+import com.alibaba.fastjson.JSONObject;
 
 public class MyWsHandler extends TextWebSocketHandler{
 	
@@ -25,16 +27,18 @@ public class MyWsHandler extends TextWebSocketHandler{
 	        }
 	    }
 	    
-	    
-	    @SuppressWarnings("rawtypes")
+	    @SuppressWarnings({ "rawtypes", "unchecked" })
 		@Override
 	    public void handleTextMessage(WebSocketSession session, TextMessage message) {
-	        WebSocketMessage msg = new TextMessage(message.getPayload());
-	        try {
-	            session.sendMessage(msg);
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	        }
+	    	 String payload = message.getPayload();
+	         Map<String, String> map = JSONObject.parseObject(payload, HashMap.class);
+	         EchartsSupport eSupport = new EchartsSupport();
+	         String dataString= eSupport.callBackRepoortData(map.get("sources"));
+	         TextMessage tms = new TextMessage(dataString);
+	         sendMessageToClient(tms);
+	         
+		/* EchartsSupport.callBackRepoortData(); */
+	         
 	    }
 	    
 	    /**

@@ -4,8 +4,8 @@ $(function(){
 	connection()
 });
 
+var websocket;
 function connection(){
-	var websocket;
     if ('WebSocket' in window) {
         websocket = new WebSocket("ws://localhost:8080/ws.html");
     }else if ('MozWebSocket' in window) {
@@ -30,6 +30,8 @@ $scope.onClose=function onClose() {
 
 $scope.onopen= function(event) {
 	console.info("链接已建立");
+	var data={"sources":"MEMBER"};
+	websocket.send(JSON.stringify(data));
 	$scope.callbackReportData();
 }
 
@@ -49,11 +51,12 @@ window.close=function(){
 }
 
 $scope.callbackReportData =function(){
-  $.get("/member/callbackReportData.json");
+ /* $.get("/member/callbackReportData.json");*/
 }
 
 $scope.switchStatus=function(obj){
 	$scope.items=obj["content"];
+	$scope.creatAlarmList(obj["content"]);
 	$.each(obj["content"],function(){
 		var status="";
 		 if(this.machineSignal==null||this.machineSignal==""){
@@ -67,6 +70,17 @@ $scope.switchStatus=function(obj){
 		 $("#"+machineName+"_m").addClass("circle"+" "+"circle-"+status.toLowerCase()+" "+"headerBox");
 	})
 } 
+
+$scope.creatAlarmList=function(data){
+	$scope.alarmList=[];
+	$.each(data,function(){
+		if(this.machineSignal!=null && this.machineSignal.toLowerCase=="alarm"){
+			console.info(machineSignal);
+			$scope.alarmList.push(this);
+		}
+	})
+	
+}
 
 }).directive('myClock',function($interval,$http){
 	return{

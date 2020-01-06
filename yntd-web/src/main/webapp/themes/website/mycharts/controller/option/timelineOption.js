@@ -84,7 +84,7 @@
 		        	margin:10,
 		            textStyle: {
 		                color: '#34a9eb',
-		                fontSize: '8',
+		                fontSize: '15',
 		            }
 		        },
 		        data:[],
@@ -115,13 +115,13 @@ MyTimeLine.prototype={
 				 this.initCharts();
 			},initCharts:function(){
 				var _this=this;
-				_this.timeLine=e.init($("#timeLine").get(0));
-				
+				_this.timeLine=e.init($("#timeLine").get(0));/*.showLoading('default', {text:'数据统计中...',maskColor: '#07112a61',textColor: '#36b0f3',});*/
 			},dataTimeLineInit:function(timeLineCategories,timeLineSeriesData){
 				var _this=this;
 				option.yAxis.data=timeLineCategories
 				var c=option.series[0].data.concat(timeLineSeriesData);
 				option.series[0].data=c;
+				/*_this.timeLine.hideLoading();*/
 				_this.timeLine.setOption(option,{
 				    notMerge:true,
 				    lazyUpdate:false,
