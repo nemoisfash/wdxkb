@@ -33,10 +33,7 @@ public class MyWsHandler extends TextWebSocketHandler{
 	    	 String payload = message.getPayload();
 	         Map<String, String> map = JSONObject.parseObject(payload, HashMap.class);
 	         EchartsSupport eSupport = new EchartsSupport();
-	         String dataString= eSupport.callBackRepoortData(map.get("sources"));
-	         TextMessage tms = new TextMessage(dataString);
-	         sendMessageToClient(tms);
-	         
+	         eSupport.callBackRepoortData(map.get("sources"));
 		/* EchartsSupport.callBackRepoortData(); */
 	         
 	    }

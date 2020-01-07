@@ -47,8 +47,8 @@ public class EchartsSupport {
 	private static final String[] topics = { "dataList", "pies", "ranking", "timeLineCategories","timeLineSeriesData" };
 	
  	private static String[] sorces = {"MEMBER","MECHINELIST"};
-
-	public String callBackRepoortData(String flag) {
+ 	
+	public void callBackRepoortData(String flag) {
 		while (true) {
 			Map<String, Object> response = new HashMap<>();
 			Map<String, Object> dataList = dataList();
@@ -212,7 +212,7 @@ public class EchartsSupport {
 		return result;
 	};
 	
-	private Map<String, Object> ranking() {
+	public Map<String, Object> ranking() {
 		List<Machine> machines = bizMachine.findMachine();
 		Map<String, Double> sortMap = new HashMap<>();
 		Boolean success = true;

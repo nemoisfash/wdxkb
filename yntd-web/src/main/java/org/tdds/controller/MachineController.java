@@ -20,7 +20,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.socket.TextMessage;
 import org.tdds.entity.Machine;
 import org.tdds.entity.Report;
 import org.tdds.service.LogRecordService;
@@ -39,7 +38,6 @@ import cn.hxz.webapp.syscore.support.BasePortalController;
 import cn.hxz.webapp.util.DateUtils;
 import cn.hxz.webapp.util.echarts.StatusEnum;
 import cn.hxz.webapp.util.modbus.Modbus4jUtil;
-import cn.hxz.webapp.util.websocket.MyWsHandler;
 import net.chenke.playweb.util.HashUtils;
 
 @Controller
@@ -399,7 +397,6 @@ public class MachineController extends BasePortalController {
 		} else if (running == null) {
 			status = STATUS[1];
 		}
-
 		return status;
 	}
 	 
