@@ -29,7 +29,7 @@
 	var option={
 		    tooltip: {
 		        formatter: function (params) {
-		            return params.marker + params.name + ':' + params.value[3] + '分钟';
+		            return params.marker + params.name + ':' + params.value[3] + '秒';
 		        }
 		    },
 		    grid: {

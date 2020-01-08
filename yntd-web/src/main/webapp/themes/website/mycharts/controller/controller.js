@@ -30,8 +30,6 @@ $scope.onClose=function onClose() {
 
 $scope.onopen= function(event) {
 	console.info("链接已建立");
-	var data={"sources":"MEMBER"};
-	websocket.send(JSON.stringify(data));
 	$scope.callbackReportData();
 }
 
@@ -40,9 +38,11 @@ var ranking = new Ranking();
 var myTimeLine =new MyTimeLine();
 $scope.onmessage=function(evt) {
 	var JsonObject = JSON.parse(evt.data);
+	console.info(JsonObject);
 	$scope.switchStatus(JsonObject["dataList"]);
 	pies.dataPieInit(JsonObject["pies"]["content"]); 
 	ranking.dataRankingInit(JsonObject["ranking"]["content"]);
+	console.info(JsonObject["timeLineSeriesData"]["content"]);
 	myTimeLine.dataTimeLineInit(JsonObject["timeLineCategories"]["content"],JsonObject["timeLineSeriesData"]["content"]);
 }
 
@@ -51,12 +51,12 @@ window.close=function(){
 }
 
 $scope.callbackReportData =function(){
- /* $.get("/member/callbackReportData.json");*/
+	 $.get("/member/callbackReportData.json");
 }
 
 $scope.switchStatus=function(obj){
 	$scope.items=obj["content"];
-	$scope.creatAlarmList(obj["content"]);
+	$scope.creatList(obj["content"]);
 	$.each(obj["content"],function(){
 		var status="";
 		 if(this.machineSignal==null||this.machineSignal==""){
@@ -71,15 +71,18 @@ $scope.switchStatus=function(obj){
 	})
 } 
 
-$scope.creatAlarmList=function(data){
+$scope.creatList=function(data){
 	$scope.alarmList=[];
+	$scope.runningList=[];
 	$.each(data,function(){
-		if(this.machineSignal!=null && this.machineSignal.toLowerCase=="alarm"){
-			console.info(machineSignal);
+		console.info(this.machineSignal);
+		if(this.machineSignal=="ALARM"){
 			$scope.alarmList.push(this);
 		}
+		if(this.machineSignal=="RUNNING"){
+			$scope.runningList.push(this);
+		}
 	})
-	
 }
 
 }).directive('myClock',function($interval,$http){

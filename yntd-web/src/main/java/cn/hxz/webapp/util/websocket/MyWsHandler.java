@@ -32,12 +32,13 @@ public class MyWsHandler extends TextWebSocketHandler{
 	    public void handleTextMessage(WebSocketSession session, TextMessage message) {
 	    	 String payload = message.getPayload();
 	         Map<String, String> map = JSONObject.parseObject(payload, HashMap.class);
-	         EchartsSupport eSupport = new EchartsSupport();
-	         eSupport.callBackRepoortData(map.get("sources"));
+		/*
+		 * EchartsSupport eSupport = new EchartsSupport();
+		 * eSupport.callBackRepoortData(map.get("sources"));
+		 */
 		/* EchartsSupport.callBackRepoortData(); */
 	         
 	    }
-	    
 	    /**
 	            * 发送信息给客户端
 	     * @param clientId

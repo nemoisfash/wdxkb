@@ -136,7 +136,7 @@ public class MachineServiceImpl implements MachineService {
 				entity.setEndTime(date);
 		}else{
 			long timediff=DateUtils.getDatePoor(entity.getStartTime(),entity.getEndTime(), "min");
-			if(timediff >10L) {
+			if(timediff >5L) {
 					if(status.equals(STATUS[0])){
 						 bizRunningRecord.insert(monitoringList, entity);
 					}else if(status.equals(STATUS[1])){

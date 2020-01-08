@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.jms.Session;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -39,6 +41,9 @@ public class MonitoringServiceImpl implements MonitoringService {
 	@Autowired
 	private MonitoringMapper daoMonitoring;
 
+	@Autowired
+	private Map<String, String> lostMap=new HashMap<String, String>();
+	
 	@Resource
 	private MqttPahoMessageHandler mh;
 
@@ -88,8 +93,9 @@ public class MonitoringServiceImpl implements MonitoringService {
 				public void messageArrived(String topic, MqttMessage message) throws Exception {
 					if(message.getPayload()!=null) {
 						String msg = new String(message.getPayload());
-						if(!new JSONObject().isValid(msg)) {
+						if(new JSONObject().isValid(msg)) {
 							mqttMsg=new String(message.getPayload());
+							lostMap.put(topic, mqttMsg);
 						}else {
 							mqttMsg="";
 						}
@@ -114,10 +120,11 @@ public class MonitoringServiceImpl implements MonitoringService {
 					}
 				}
 			});
-			
 			System.out.print(mqttMsg);
 		} catch (Exception e) {
-			mqttMsg="";
+			if(!lostMap.isEmpty() && lostMap.containsKey(topic)) {
+				mqttMsg=lostMap.get(topic);
+			}
 			System.out.println(e.getMessage().toString());
 		}
 
@@ -129,9 +136,22 @@ public class MonitoringServiceImpl implements MonitoringService {
 		Map<String, Object> mls = new HashMap<>();
 		mls.put("machineName", machine.getName());
 		mls.put("currentTime", new Date());
-		subMessage(machine.getMqttTopic(), 0);
+		subMessage(machine.getMqttTopic(),1);
 		if (!StringUtils.isEmpty(mqttMsg) && new JSONObject().isValid(mqttMsg)) {
 			JSONObject jsonObject = (JSONObject) new JSONObject().parse(mqttMsg);
+		if(jsonObject==null) {
+			mls.put("machineSignal", "POWEROFF");
+			return mls;
+		}
+			if(jsonObject.containsKey("limo")) {
+				if(jsonObject.getInteger("limo")==0) {
+					mls.put("machineSignal", "POWEROFF");
+				}
+				if(jsonObject.getInteger("limo")==1){
+					mls.put("machineSignal", "RUNNING");
+				}
+				return mls;
+			}
 			if (machine.getMqttSorce() == 0) {
 				mls.put("powerOnTime", jsonObject.getString("tk"));
 				mls.put("cncProducts", jsonObject.getString("nl"));
@@ -224,17 +244,42 @@ public class MonitoringServiceImpl implements MonitoringService {
 						mls.put("alarmCount", ja.size());
 					}
 				}
-				if (new JSONObject().isValid("device_state")&&  jsonObject.getJSONObject("device_state") != null) {
-					JSONObject jo = jsonObject.getJSONObject("device_state");
-					if (jo.getInteger("Online") == 1) {
-						if (jsonObject.getInteger("cncSload") == 0) {
-							mls.put("machineSignal", "WAITING");
-						} else {
-							mls.put("machineSignal", "RUNNING");
+				if (jsonObject.getString("device_state")!=null) {
+					String deviceState =jsonObject.getString("device_state");
+					if(deviceState.equalsIgnoreCase("0")) {
+						mls.put("machineSignal", "RUNNING");
+						if(jsonObject.getString("cnc_runstatus")!=null) {
+							String cncRunstatus=jsonObject.getString("cnc_runstatus");
+							if(cncRunstatus.equals("0")) {
+								mls.put("cncRunstatus", "RESET");
+							}
+							if(cncRunstatus.equals("1")) {
+								mls.put("cncRunstatus", "STOP");
+							}
+							
+							if(cncRunstatus.equals("2")) {
+								mls.put("cncRunstatus", "HOLD");
+							}
+							
+							if(cncRunstatus.equals("3")) {
+								mls.put("cncRunstatus", "START");
+							}
+							
+							if(cncRunstatus.equals("4")) {
+								mls.put("cncRunstatus", "MSTR");
+							}
+							
+							if(cncRunstatus.equals("5")) {
+								mls.put("cncRunstatus", "Other");
+							}
 						}
 					}
-					if (jo.getInteger("Offline") == 1) {
+					if(deviceState.equalsIgnoreCase("1")) {
 						mls.put("machineSignal", "POWEROFF");
+					}
+				}else {
+					if(jsonObject.getString("cnc_runstatus")!=null) {
+						mls.put("machineSignal", "RUNNING");
 					}
 				}
 

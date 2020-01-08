@@ -11,6 +11,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.socket.TextMessage;
 import org.tdds.entity.Machine;
 import org.tdds.entity.Report;
 import org.tdds.service.LogRecordService;
@@ -29,6 +32,7 @@ import org.tdds.service.ReportService;
 import org.tdds.service.RunningRecordService;
 import org.tdds.service.WarningRecordService;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.serotonin.modbus4j.exception.ErrorResponseException;
 import com.serotonin.modbus4j.exception.ModbusInitException;
@@ -38,6 +42,7 @@ import cn.hxz.webapp.syscore.support.BasePortalController;
 import cn.hxz.webapp.util.DateUtils;
 import cn.hxz.webapp.util.echarts.StatusEnum;
 import cn.hxz.webapp.util.modbus.Modbus4jUtil;
+import cn.hxz.webapp.util.websocket.MyWsHandler;
 import net.chenke.playweb.util.HashUtils;
 
 @Controller
@@ -73,37 +78,40 @@ public class MachineController extends BasePortalController {
 	List<Map<String, Object>> statuslist = new ArrayList<>();
 	
 	@RequestMapping(value = "/callbackReportData", method = RequestMethod.GET)
-	public String publicMonitoring() {
-		while (true) {
-			Map<String, Object> response = new HashMap<>();
-			Map<String, Object> dataList = publishDataList();
-			if (!dataList.isEmpty() && dataList.get("content") != null) {
-				response.put(topics[0], dataList);
-			}
-	
-			Map<String, Object> pies = publishPieData();
-			if (!pies.isEmpty() && pies.get("content") != null) {
-				response.put(topics[1], pies);
-			}
-	
-			Map<String, Object> ranking = publishRanking();
-			if (!ranking.isEmpty() && ranking.get("content") != null) {
-				response.put(topics[2], ranking);
-			}
-	
-			Map<String, Object> timeLineCategories = publishTimeLineCategories();
-			if (!timeLineCategories.isEmpty() && timeLineCategories.get("content") != null) {
-				response.put(topics[3], timeLineCategories);
-			}
-			Map<String, Object> timeLineSeriesData = publishTimeLineSeriesData();
-			if (!timeLineSeriesData.isEmpty() && timeLineSeriesData.get("content") != null) {
-				response.put(topics[4], timeLineSeriesData);
-			}
-			
-			return new JSONObject(response).toJSONString();
-		}
+	public void publicMonitoring() {
+		Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+	        public void run() {
+				Map<String, Object> response = new HashMap<>();
+				Map<String, Object> dataList = publishDataList();
+				if (!dataList.isEmpty() && dataList.get("content") != null) {
+					response.put(topics[0], dataList);
+				}
+		
+				Map<String, Object> pies = publishPieData();
+				if (!pies.isEmpty() && pies.get("content") != null) {
+					response.put(topics[1], pies);
+				}
+		
+				Map<String, Object> ranking = publishRanking();
+				if (!ranking.isEmpty() && ranking.get("content") != null) {
+					response.put(topics[2], ranking);
+				}
+		
+				Map<String, Object> timeLineCategories = publishTimeLineCategories();
+				if (!timeLineCategories.isEmpty() && timeLineCategories.get("content") != null) {
+					response.put(topics[3], timeLineCategories);
+				}
+				Map<String, Object> timeLineSeriesData = publishTimeLineSeriesData();
+				if (!timeLineSeriesData.isEmpty() && timeLineSeriesData.get("content") != null) {
+					response.put(topics[4], timeLineSeriesData);
+				}
+				TextMessage textMessage = new TextMessage(new JSONObject(response).toJSONString());
+				MyWsHandler.sendMessageToClient(textMessage);
+            }
+        }, 1000,3000);
 	}
-
+ 
 	private Map<String, Object> publishDataList() {
 		List<Machine> machines = bizMachine.findMachine();
 		List<Map<String, Object>> entities = new ArrayList<>();
@@ -118,12 +126,15 @@ public class MachineController extends BasePortalController {
 					monitor.put("machineName", machine.getName());
 					monitor.put("machineSignal", getStatus(machine.getmIp()));
 				} else if (machine.getIo() == 2) {
-					monitor = bizMonitoring.subscriberJsonFromMqttServer(machine);
+						monitor = bizMonitoring.subscriberJsonFromMqttServer(machine);
 				}
 			}
 			if (monitor != null && !monitor.isEmpty()) {
-				bizMachine.update(monitor, machine);
 				entities.add(monitor);
+				synchronized (this) {
+					bizMachine.update(monitor, machine);
+				}
+			
 			}
 		}
 		result.put("content", entities);
@@ -311,6 +322,7 @@ public class MachineController extends BasePortalController {
 		List<Machine> machines = bizMachine.findMachine();
 		Map<String, Object> result = new HashMap<>();
 		Boolean success = true;
+		String df = "yyyy-MM-dd HH:mm:ss";
 		try {
 			int i = 0;
 			List<Map<String, Object>> list = new LinkedList<Map<String, Object>>();
@@ -319,14 +331,14 @@ public class MachineController extends BasePortalController {
 				List<Object> value = new ArrayList<>();
 				value.add(i);
 				if (machine.getStartTime() != null) {
-					value.add(DateUtils.DateToString(machine.getStartTime(), "yyyy-MM-dd HH:mm"));
+					value.add(DateUtils.DateToString(machine.getStartTime(), df));
 				} else {
-					value.add(DateUtils.DateToString(new Date(), "yyyy-MM-dd HH:mm"));
+					value.add(DateUtils.DateToString(new Date(),df));
 				}
 				if (machine.getEndTime() != null) {
-					value.add(DateUtils.DateToString(machine.getEndTime(), "yyyy-MM-dd HH:mm"));
+					value.add(DateUtils.DateToString(machine.getEndTime(),df));
 				} else {
-					value.add(DateUtils.DateToString(new Date(), "yyyy-MM-dd HH:mm"));
+					value.add(DateUtils.DateToString(new Date(),df));
 				}
 				String color = null;
 				if (machine.getStatus().equals(STATUS[0])) {
@@ -342,7 +354,10 @@ public class MachineController extends BasePortalController {
 				}
 				Long timeDiff = null;
 				if (machine.getStartTime() != null && machine.getEndTime() != null) {
-					timeDiff = DateUtils.getDatePoor(machine.getStartTime(), machine.getEndTime(), "min");
+					timeDiff = DateUtils.getDatePoor(machine.getStartTime(), machine.getEndTime(), "ss");
+					if(timeDiff==0) {
+						timeDiff=1L;
+					}
 				} else {
 					timeDiff = 1L;
 				}

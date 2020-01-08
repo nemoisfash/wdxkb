@@ -49,7 +49,6 @@ public class EchartsSupport {
  	private static String[] sorces = {"MEMBER","MECHINELIST"};
  	
 	public void callBackRepoortData(String flag) {
-		while (true) {
 			Map<String, Object> response = new HashMap<>();
 			Map<String, Object> dataList = dataList();
 			if (!dataList.isEmpty() && dataList.get("content") != null) {
@@ -76,8 +75,7 @@ public class EchartsSupport {
 			}
 			TextMessage tMsg = new TextMessage(new JSONObject(response).toJSONString());
 			MyWsHandler.sendMessageToClient(tMsg);
-		}
-	};
+		};
 
 	@SuppressWarnings("unused")
 	private Map<String, Object> line() {

@@ -130,6 +130,7 @@ public class DateUtils {
 	    long nd = 1000 * 24 * 60 * 60;
 	    long nh = 1000 * 60 * 60;
 	    long nm = 1000 * 60;
+	    long ns = 1000 * 1000;
 	    long diff = startTime.getTime() - endTime.getTime();
 	    long num=0;
 	    if(type.equalsIgnoreCase("day")){
@@ -138,6 +139,8 @@ public class DateUtils {
 	    	num = diff/ nh;
 	    }else if(type.equalsIgnoreCase("min")){
 	    	num = diff/ nm;
+	    }else if(type.equalsIgnoreCase("ss")){
+	    	num = diff/1000;
 	    }
 	    return Math.abs(num);
 	}
