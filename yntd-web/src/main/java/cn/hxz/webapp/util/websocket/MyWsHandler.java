@@ -4,14 +4,20 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-
-import org.apache.commons.lang3.StringUtils;
+ 
+ 
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
+ 
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+
+import cn.hxz.webapp.util.mqtt.MqttAutoConfiguration;
+
+
 
 public class MyWsHandler extends TextWebSocketHandler{
 	
@@ -27,20 +33,24 @@ public class MyWsHandler extends TextWebSocketHandler{
 	        }
 	    }
 	    
-	    @SuppressWarnings({ "rawtypes", "unchecked" })
 		@Override
 	    public void handleTextMessage(WebSocketSession session, TextMessage message) {
 	    	 String payload = message.getPayload();
-	         Map<String, String> map = JSONObject.parseObject(payload, HashMap.class);
-		/*
-		 * EchartsSupport eSupport = new EchartsSupport();
-		 * eSupport.callBackRepoortData(map.get("sources"));
-		 */
-		/* EchartsSupport.callBackRepoortData(); */
-	         
-	    }
+    		if(JSONObject.isValid(payload)) {
+    			JSONObject jsonObject =new JSONObject().parseObject(payload);
+    			if(jsonObject.containsKey("status") && jsonObject.getInteger("status")==0) {
+					MqttAutoConfiguration clientFactory =new MqttAutoConfiguration();
+					JSONArray jsonArray = jsonObject.getJSONArray("topices");
+					clientFactory.mqttMessageSubClient().subMessage(jsonArray.toJavaList(String.class));
+				}
+    		}
+ 	    }
+		
+		
+		 
+	    
 	    /**
-	            * 发送信息给客户端
+	     * 发送信息给客户端
 	     * @param clientId
 	     * @param message
 	     * @return

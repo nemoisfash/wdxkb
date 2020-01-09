@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.jms.Session;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -16,7 +14,6 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.quartz.simpl.SystemPropertyInstanceIdGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.integration.mqtt.core.DefaultMqttPahoClientFactory;
 import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
@@ -44,11 +41,11 @@ public class MonitoringServiceImpl implements MonitoringService {
 	@Autowired
 	private Map<String, String> lostMap=new HashMap<String, String>();
 	
-	@Resource
-	private MqttPahoMessageHandler mh;
-
-	@Resource
-	private DefaultMqttPahoClientFactory df;
+	/*
+	 * @Resource private MqttPahoMessageHandler mh;
+	 * 
+	 * @Resource private DefaultMqttPahoClientFactory df;
+	 */
 
 	private String mqttMsg;
 
@@ -57,7 +54,7 @@ public class MonitoringServiceImpl implements MonitoringService {
 		Map<String, Object> map = daoMonitoring.selectOneByName(machine.getName());
 		try {
 			 Message<String> message = MessageBuilder.withPayload(new JSONObject(map).toJSONString()) .setHeader(MqttHeaders.TOPIC, machine.getMqttSorce()).build();
-			 mh.handleMessage(message);
+			/* mh.handleMessage(message); */
 		} catch (Exception e) {
 			System.out.println(e.getMessage().toString());
 		}
@@ -78,57 +75,36 @@ public class MonitoringServiceImpl implements MonitoringService {
 		return daoMonitoring.selectCountByExample(example);
 	}
 
-	@SuppressWarnings("unused")
-	private void subMessage(String topic, int qos) {
-		try {
-			String clientId = mh.getClientId();
-			MqttConnectOptions optioins = df.getConnectionOptions();
-			optioins.setCleanSession(true);
-			MqttClient mac = df.getClientInstance(optioins.getServerURIs()[0], clientId);
-			mac.connect(df.getConnectionOptions());
-			mac.subscribe(topic, qos);
-			mac.setCallback(new MqttCallback() {
-				@SuppressWarnings("static-access")
-				@Override
-				public void messageArrived(String topic, MqttMessage message) throws Exception {
-					if(message.getPayload()!=null) {
-						String msg = new String(message.getPayload());
-						if(new JSONObject().isValid(msg)) {
-							mqttMsg=new String(message.getPayload());
-							lostMap.put(topic, mqttMsg);
-						}else {
-							mqttMsg="";
-						}
-					}else {
-						mqttMsg="";
-					}
-				}
-
-				@Override
-				public void deliveryComplete(IMqttDeliveryToken token) {
-
-				}
-
-				@Override
-				public void connectionLost(Throwable cause) {
-					MqttClient mac;
-					try {
-						mac = df.getClientInstance(df.getConnectionOptions().getServerURIs()[0],  mh.getClientId());
-						mac.reconnect();
-					} catch (MqttException e) {
-						e.printStackTrace();
-					}
-				}
-			});
-			System.out.print(mqttMsg);
-		} catch (Exception e) {
-			if(!lostMap.isEmpty() && lostMap.containsKey(topic)) {
-				mqttMsg=lostMap.get(topic);
-			}
-			System.out.println(e.getMessage().toString());
-		}
-
-	}
+	/*
+	 * @SuppressWarnings("unused") private void subMessage(String topic, int qos) {
+	 * try { String clientId = mh.getClientId(); MqttConnectOptions optioins =
+	 * df.getConnectionOptions(); optioins.setCleanSession(true); MqttClient mac =
+	 * df.getClientInstance(optioins.getServerURIs()[0], clientId);
+	 * mac.connect(df.getConnectionOptions()); mac.subscribe(topic, qos);
+	 * mac.setCallback(new MqttCallback() {
+	 * 
+	 * @SuppressWarnings("static-access")
+	 * 
+	 * @Override public void messageArrived(String topic, MqttMessage message)
+	 * throws Exception { if(message.getPayload()!=null) { String msg = new
+	 * String(message.getPayload()); if(new JSONObject().isValid(msg)) { mqttMsg=new
+	 * String(message.getPayload()); lostMap.put(topic, mqttMsg); }else {
+	 * mqttMsg=""; } }else { mqttMsg=""; } }
+	 * 
+	 * @Override public void deliveryComplete(IMqttDeliveryToken token) {
+	 * 
+	 * }
+	 * 
+	 * @Override public void connectionLost(Throwable cause) { MqttClient mac; try {
+	 * mac = df.getClientInstance(df.getConnectionOptions().getServerURIs()[0],
+	 * mh.getClientId()); mac.reconnect(); } catch (MqttException e) {
+	 * e.printStackTrace(); } } }); System.out.print(mqttMsg); } catch (Exception e)
+	 * { if(!lostMap.isEmpty() && lostMap.containsKey(topic)) {
+	 * mqttMsg=lostMap.get(topic); } System.out.println(e.getMessage().toString());
+	 * }
+	 * 
+	 * }
+	 */
 
 	@SuppressWarnings("static-access")
 	@Override
@@ -136,7 +112,7 @@ public class MonitoringServiceImpl implements MonitoringService {
 		Map<String, Object> mls = new HashMap<>();
 		mls.put("machineName", machine.getName());
 		mls.put("currentTime", new Date());
-		subMessage(machine.getMqttTopic(),1);
+		/* subMessage(machine.getMqttTopic(),1); */
 		if (!StringUtils.isEmpty(mqttMsg) && new JSONObject().isValid(mqttMsg)) {
 			JSONObject jsonObject = (JSONObject) new JSONObject().parse(mqttMsg);
 		if(jsonObject==null) {

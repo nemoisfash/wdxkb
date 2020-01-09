@@ -1,54 +1,65 @@
-var app = angular.module('myApp', []);
-app.controller('myCtrl', function($scope,$http,$timeout,$interval) {
-$(function(){
-	connection()
-});
+$.ajaxSetup({
+  async: false
+ });
 
-var websocket;
+$.get("/member/getAllTopics.json",function(data){
+	if(data.success){
+		var others = ["pies", "ranking", "timeLineCategories","timeLineSeriesData"];
+		var topices=data.data.concat(others);
+		localStorage.setItem("topices",topices);
+		connection()
+	}
+})
+
 function connection(){
+	var websocket;
+	var host = window.location.host;
     if ('WebSocket' in window) {
-        websocket = new WebSocket("ws://localhost:8080/ws.html");
+        websocket = new WebSocket("ws://"+host+"/ws.html");
     }else if ('MozWebSocket' in window) {
-        websocket = new MozWebSocket("ws://localhost:8080/ws.html");
+        websocket = new MozWebSocket("ws://"+host+"/ws.html");
     }
     else {
-        websocket = new SockJS("http://localhost:8080/ws/socketjs.html");
+        websocket = new SockJS("http://"+host+"/ws/socketjs.html");
     }
-    websocket.onError=$scope.onError;
-    websocket.onClose=$scope.onClose;
-    websocket.onopen=$scope.onopen;
-    websocket.onmessage=$scope.onmessage;
+    websocket.onError=function(){
+    	connection();
+    };
+    websocket.onClose=function(){
+    	console.info("链接已关闭");
+    };
+    websocket.onmessage=function(evn){
+    	console.info(evn.data);
+    };
+    
+    websocket.onopen= function(event) {
+    	console.info("通道已建立");
+    	var topices = localStorage.getItem("topices");
+    	websocket.send(JSON.stringify({"status":0,"isFinished":false,"topices":topices.split(",")}));
+    }
 }
 
-$scope.onError=function(openEvt){
-	connection();
-}
+var app = angular.module('myApp', []);
+app.controller('myCtrl', function($scope,$http,$timeout,$interval) {
 
-$scope.onClose=function onClose() {
-	console.info("链接已关闭");
-}
+//0,1,2,3,4,5
 
-$scope.onopen= function(event) {
-	console.info("链接已建立");
-	$scope.callbackReportData();
-}
-
-var pies = new MyPies();
+/*var pies = new MyPies();
 var ranking = new Ranking();
 var myTimeLine =new MyTimeLine();
 $scope.onmessage=function(evt) {
-	var JsonObject = JSON.parse(evt.data);
+	console.info(evt.data);
+/*	var JsonObject = JSON.parse(evt.data);
 	console.info(JsonObject);
 	$scope.switchStatus(JsonObject["dataList"]);
 	pies.dataPieInit(JsonObject["pies"]["content"]); 
 	ranking.dataRankingInit(JsonObject["ranking"]["content"]);
 	console.info(JsonObject["timeLineSeriesData"]["content"]);
-	myTimeLine.dataTimeLineInit(JsonObject["timeLineCategories"]["content"],JsonObject["timeLineSeriesData"]["content"]);
-}
+	myTimeLine.dataTimeLineInit(JsonObject["timeLineCategories"]["content"],JsonObject["timeLineSeriesData"]["content"]);*/
 
-window.close=function(){
+/*window.close=function(){
 	$scope.ws.onclose();
-}
+}*/
 
 $scope.callbackReportData =function(){
 	 $.get("/member/callbackReportData.json");

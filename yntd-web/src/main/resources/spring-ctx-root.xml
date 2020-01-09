@@ -49,6 +49,6 @@
 	<bean class="cn.hxz.webapp.support.spring.EnvironmentBean" />
 	<bean class="net.chenke.playweb.support.spring.MessageSourceBean" />
 	<bean class="net.chenke.playweb.support.spring.ApplicationContextBean" />
-	<import resource="classpath*:spring-ctx-mqtt.xml" />
+	<!-- <import resource="classpath*:spring-ctx-mqtt.xml" /> -->
 </beans>
 

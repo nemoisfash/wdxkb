@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -32,7 +33,6 @@ import org.tdds.service.ReportService;
 import org.tdds.service.RunningRecordService;
 import org.tdds.service.WarningRecordService;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.serotonin.modbus4j.exception.ErrorResponseException;
 import com.serotonin.modbus4j.exception.ModbusInitException;
@@ -76,6 +76,23 @@ public class MachineController extends BasePortalController {
 	private static final String[] topics = { "dataList", "pies", "ranking", "timeLineCategories","timeLineSeriesData" };
 
 	List<Map<String, Object>> statuslist = new ArrayList<>();
+	
+	
+	@RequestMapping(value = "/getAllTopics", method = RequestMethod.GET)
+	@ResponseBody
+	public Object getAllPices() {
+		Map<String, Object> map = new HashMap<String, Object>();
+		List<Machine> machines = bizMachine.findMachine();
+		List<String> topices = new ArrayList<String>();
+		for (Machine machine:machines) {
+			topices.add(machine.getMqttTopic());
+		}
+		if(!CollectionUtils.isEmpty(topices)) {
+			map.put("success", true);
+			map.put("data", topices);
+		}
+		return map;
+	}
 	
 	@RequestMapping(value = "/callbackReportData", method = RequestMethod.GET)
 	public void publicMonitoring() {
