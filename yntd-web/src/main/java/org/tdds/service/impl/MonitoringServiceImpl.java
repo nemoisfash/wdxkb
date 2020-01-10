@@ -5,18 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.MqttCallback;
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.integration.mqtt.core.DefaultMqttPahoClientFactory;
-import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
 import org.springframework.integration.mqtt.support.MqttHeaders;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.messaging.Message;
@@ -39,8 +29,8 @@ public class MonitoringServiceImpl implements MonitoringService {
 	private MonitoringMapper daoMonitoring;
 
 	@Autowired
-	private Map<String, String> lostMap=new HashMap<String, String>();
-	
+	private Map<String, String> lostMap = new HashMap<String, String>();
+
 	/*
 	 * @Resource private MqttPahoMessageHandler mh;
 	 * 
@@ -53,12 +43,13 @@ public class MonitoringServiceImpl implements MonitoringService {
 	public Map<String, Object> findByName(Machine machine) {
 		Map<String, Object> map = daoMonitoring.selectOneByName(machine.getName());
 		try {
-			 Message<String> message = MessageBuilder.withPayload(new JSONObject(map).toJSONString()) .setHeader(MqttHeaders.TOPIC, machine.getMqttSorce()).build();
+			Message<String> message = MessageBuilder.withPayload(new JSONObject(map).toJSONString())
+					.setHeader(MqttHeaders.TOPIC, machine.getMqttSorce()).build();
 			/* mh.handleMessage(message); */
 		} catch (Exception e) {
 			System.out.println(e.getMessage().toString());
 		}
-		
+
 		return map;
 	}
 
@@ -115,15 +106,15 @@ public class MonitoringServiceImpl implements MonitoringService {
 		/* subMessage(machine.getMqttTopic(),1); */
 		if (!StringUtils.isEmpty(mqttMsg) && new JSONObject().isValid(mqttMsg)) {
 			JSONObject jsonObject = (JSONObject) new JSONObject().parse(mqttMsg);
-		if(jsonObject==null) {
-			mls.put("machineSignal", "POWEROFF");
-			return mls;
-		}
-			if(jsonObject.containsKey("limo")) {
-				if(jsonObject.getInteger("limo")==0) {
+			if (jsonObject == null) {
+				mls.put("machineSignal", "POWEROFF");
+				return mls;
+			}
+			if (jsonObject.containsKey("limo")) {
+				if (jsonObject.getInteger("limo") == 0) {
 					mls.put("machineSignal", "POWEROFF");
 				}
-				if(jsonObject.getInteger("limo")==1){
+				if (jsonObject.getInteger("limo") == 1) {
 					mls.put("machineSignal", "RUNNING");
 				}
 				return mls;
@@ -183,7 +174,7 @@ public class MonitoringServiceImpl implements MonitoringService {
 				if (jsonObject.getString("az") != null && jsonObject.getString("az").equals("1")) {
 					mls.put("machineSignal", "ALARM");
 				}
-			 
+
 			} else if (machine.getMqttSorce() == 1) {
 				if (!StringUtils.isEmpty(jsonObject.getString("cnc_products"))) {
 					mls.put("cncProducts", jsonObject.getString("cnc_products"));
@@ -220,41 +211,41 @@ public class MonitoringServiceImpl implements MonitoringService {
 						mls.put("alarmCount", ja.size());
 					}
 				}
-				if (jsonObject.getString("device_state")!=null) {
-					String deviceState =jsonObject.getString("device_state");
-					if(deviceState.equalsIgnoreCase("0")) {
+				if (jsonObject.getString("device_state") != null) {
+					String deviceState = jsonObject.getString("device_state");
+					if (deviceState.equalsIgnoreCase("0")) {
 						mls.put("machineSignal", "RUNNING");
-						if(jsonObject.getString("cnc_runstatus")!=null) {
-							String cncRunstatus=jsonObject.getString("cnc_runstatus");
-							if(cncRunstatus.equals("0")) {
+						if (jsonObject.getString("cnc_runstatus") != null) {
+							String cncRunstatus = jsonObject.getString("cnc_runstatus");
+							if (cncRunstatus.equals("0")) {
 								mls.put("cncRunstatus", "RESET");
 							}
-							if(cncRunstatus.equals("1")) {
+							if (cncRunstatus.equals("1")) {
 								mls.put("cncRunstatus", "STOP");
 							}
-							
-							if(cncRunstatus.equals("2")) {
+
+							if (cncRunstatus.equals("2")) {
 								mls.put("cncRunstatus", "HOLD");
 							}
-							
-							if(cncRunstatus.equals("3")) {
+
+							if (cncRunstatus.equals("3")) {
 								mls.put("cncRunstatus", "START");
 							}
-							
-							if(cncRunstatus.equals("4")) {
+
+							if (cncRunstatus.equals("4")) {
 								mls.put("cncRunstatus", "MSTR");
 							}
-							
-							if(cncRunstatus.equals("5")) {
+
+							if (cncRunstatus.equals("5")) {
 								mls.put("cncRunstatus", "Other");
 							}
 						}
 					}
-					if(deviceState.equalsIgnoreCase("1")) {
+					if (deviceState.equalsIgnoreCase("1")) {
 						mls.put("machineSignal", "POWEROFF");
 					}
-				}else {
-					if(jsonObject.getString("cnc_runstatus")!=null) {
+				} else {
+					if (jsonObject.getString("cnc_runstatus") != null) {
 						mls.put("machineSignal", "RUNNING");
 					}
 				}

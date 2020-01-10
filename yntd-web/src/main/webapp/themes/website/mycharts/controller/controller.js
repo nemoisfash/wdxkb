@@ -1,17 +1,21 @@
+var app = angular.module('myApp', []);
+app.controller('myCtrl', function($scope,$http,$timeout,$interval) {
 $.ajaxSetup({
-  async: false
- });
+	  async: false
+});
 
 $.get("/member/getAllTopics.json",function(data){
 	if(data.success){
 		var others = ["pies", "ranking", "timeLineCategories","timeLineSeriesData"];
 		var topices=data.data.concat(others);
 		localStorage.setItem("topices",topices);
-		connection()
+		$timeout(function(){
+			connection(topices)
+		},1000)
 	}
 })
 
-function connection(){
+function connection(topices){
 	var websocket;
 	var host = window.location.host;
     if ('WebSocket' in window) {
@@ -28,20 +32,31 @@ function connection(){
     websocket.onClose=function(){
     	console.info("链接已关闭");
     };
+    
     websocket.onmessage=function(evn){
-    	console.info(evn.data);
+    	var jsonData= JSON.parse(evn.data);
+    	replaceMachineName(jsonData)
     };
+    
     
     websocket.onopen= function(event) {
     	console.info("通道已建立");
-    	var topices = localStorage.getItem("topices");
-    	websocket.send(JSON.stringify({"status":0,"isFinished":false,"topices":topices.split(",")}));
+    	websocket.send(JSON.stringify({"status":0,"isFinished":false,"topices":topices}));
     }
 }
-
-var app = angular.module('myApp', []);
-app.controller('myCtrl', function($scope,$http,$timeout,$interval) {
-
+	
+function replaceMachineName(jo){
+	jo["machineName"]=deviceName[jo["machineName"]];
+	for(var key in deviceParameters){
+		if(jo[key]){
+			deviceParameters[key]=jo[key];
+		}else{
+			deviceParameters[key]="";
+		}
+	}
+	$scope.switchStatus(deviceParameters);
+}
+ 
 //0,1,2,3,4,5
 
 /*var pies = new MyPies();
@@ -66,34 +81,28 @@ $scope.callbackReportData =function(){
 }
 
 $scope.switchStatus=function(obj){
-	$scope.items=obj["content"];
-	$scope.creatList(obj["content"]);
-	$.each(obj["content"],function(){
-		var status="";
-		 if(this.machineSignal==null||this.machineSignal==""){
-			 status="UNKNOW";
-		 }else{
-			 status=this.machineSignal;
-		 }
-		 var machineName=this.machineName;
-		 $("#"+machineName+"_m").attr("class","")
-		 $("#"+machineName+"_m").text(machineName);
-		 $("#"+machineName+"_m").addClass("circle"+" "+"circle-"+status.toLowerCase()+" "+"headerBox");
-	})
+	var status="";
+	 if(obj.machineSignal==null||obj.machineSignal==""){
+		 status="UNKNOW";
+	 }else{
+		 status=obj.machineSignal;
+	 }
+	 var machineName=obj.machineName;
+	 $("#"+machineName+"_m").attr("class","")
+	 $("#"+machineName+"_m").text(machineName);
+	 $("#"+machineName+"_m").addClass("circle"+" "+"circle-"+status.toLowerCase()+" "+"headerBox");
+	 $scope.creatList(obj);
 } 
 
 $scope.creatList=function(data){
 	$scope.alarmList=[];
 	$scope.runningList=[];
-	$.each(data,function(){
-		console.info(this.machineSignal);
-		if(this.machineSignal=="ALARM"){
-			$scope.alarmList.push(this);
-		}
-		if(this.machineSignal=="RUNNING"){
-			$scope.runningList.push(this);
-		}
-	})
+	if(data.machineSignal=="ALARM"){
+		$scope.alarmList.push(data);
+	}
+	if(data.machineSignal=="POWEROFF"){
+		$scope.runningList.push(data);
+	}
 }
 
 }).directive('myClock',function($interval,$http){

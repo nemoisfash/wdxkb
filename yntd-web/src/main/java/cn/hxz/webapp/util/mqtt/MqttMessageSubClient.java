@@ -2,10 +2,7 @@ package cn.hxz.webapp.util.mqtt;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
-import org.apache.commons.lang3.StringUtils;
 import org.eclipse.paho.client.mqttv3.IMqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
@@ -14,7 +11,6 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.integration.mqtt.core.MqttPahoClientFactory;
 import org.springframework.messaging.MessagingException;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.socket.TextMessage;
 
 import com.alibaba.fastjson.JSONObject;
