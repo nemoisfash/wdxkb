@@ -1,9 +1,5 @@
 var app = angular.module('myApp', []);
 app.controller('myCtrl', function($scope,$http,$timeout,$interval) {
-$.ajaxSetup({
-	  async: false
-});
-
 $.get("/member/getAllTopics.json",function(data){
 	if(data.success){
 		var others = ["pies", "ranking", "timeLineCategories","timeLineSeriesData"];
@@ -35,9 +31,10 @@ function connection(topices){
     
     websocket.onmessage=function(evn){
     	var jsonData= JSON.parse(evn.data);
-    	replaceMachineName(jsonData)
+    	$timeout(function(){
+    		clearData(jsonData)
+    	},1000)
     };
-    
     
     websocket.onopen= function(event) {
     	console.info("通道已建立");
@@ -45,20 +42,149 @@ function connection(topices){
     }
 }
 	
-function replaceMachineName(jo){
-	jo["machineName"]=deviceName[jo["machineName"]];
-	for(var key in deviceParameters){
-		if(jo[key]){
-			deviceParameters[key]=jo[key];
-		}else{
-			deviceParameters[key]="";
+function clearData(jo){
+		jo["machineName"]=deviceName[jo["machineName"]];
+		if (jo["co1"] && jo["co1"]=="1") {
+			jo["cnc_mode"]="快速移动状态";
+		}
+	
+		if (jo["co2"] && jo["co2"]=="1") {
+			jo["cnc_mode"]="直线切削状态";
+		}
+	
+		if (jo["co3"] && jo["co3"]=="1") {
+			jo["cnc_mode"]="顺时针圆弧状态";
+		}
+		
+		if (jo["co4"] && jo["co4"]=="1") {
+			jo["cnc_mode"]="逆时针圆弧状态";
+		}
+		
+		if (jo["rz"] && jo["rz"]=="1") {
+			jo["machineSignal"]="RUNNING";
+		}
+		
+		if (jo["wz"] && jo["wz"]=="1") {
+			jo["machineSignal"]="WAITING";
+		}
+		
+		if (jo["az"] && jo["az"]=="1") {
+			jo["machineSignal"]="ALARM";
+		}
+		if(jo["device_state"]) {
+			if (jo["device_state"]=="0") {
+				jo["machineSignal"]="RUNNING";
+					if (jo["cnc_runstatus"]) {
+						if (jo["cnc_runstatus"]=="0") {
+							jo["cnc_runstatus"]= "RESET";
+						}
+						if (jo["cnc_runstatus"]=="1") {
+							jo["cnc_runstatus"]="STOP";
+						}
+						if (jo["cnc_runstatus"]=="2") {
+							jo["cnc_runstatus"]="HOLD";
+						}
+						if (jo["cnc_runstatus"]=="3") {
+							jo["cnc_runstatus"]="START";
+						}
+						if (jo["cnc_runstatus"]=="4") {
+							jo["cnc_runstatus"]="MSTR";
+						}
+						if(jo["cnc_runstatus"]=="5") {
+							jo["cnc_runstatus"]="Other";
+						}
+					}
+			}
+			if(jo["device_state"]=="1") {
+				jo["machineSignal"]="POWEROFF";
+			}
+		}
+		if (jo["cnc_alarm"]) {
+			if(jo["cnc_alarm"]!="[]"){
+				jo["machineSignal"]="ALARM";
+				jo["cnc_alarm_message"]=jo["cnc_alarm"];
+			}
+		}
+		
+		if(jo["cnc_mecpos"]){
+			var jsonData= JSON.parse(jo["cnc_mecpos"]);
+			$.each(jsonData,function(){
+				jo["cnc_mc"+this["axis"]]=this["value"]
+			}) 
+		}
+		
+		if(jo["cnc_relpos"]){
+			var jsonData= JSON.parse(jo["cnc_mecpos"]);
+			$.each(jsonData,function(){
+				jo["cnc_rc"+this["axis"]]=this["value"]
+			}) 
+		}
+		
+		if(jo["mcx"]){
+			jo["cnc_mcX"]=jo["mcx"];
+		}
+		if(jo["mcy"]){
+			jo["cnc_mcY"]=jo["mcy"];
+		}
+		if(jo["mcz"]){
+			jo["cnc_mcZ"]=jo["mcz"];
+		}
+		if(jo["mca"]){
+			jo["cnc_mcA"]=jo["mca"];
+		}
+		
+		if(jo["rcx"]){
+			jo["cnc_rcX"]=jo["rcx"];
+		}
+		if(jo["rcy"]){
+			jo["cnc_rcY"]=jo["rcy"];
+		}
+		if(jo["rcz"]){
+			jo["cnc_rcZ"]=jo["rcz"];
+		}
+		if(jo["rca"]){
+			jo["cnc_rcA"]=jo["rca"];
+		}
+		
+		if(jo["cnc_fload"]){
+			var jsonData= JSON.parse(jo["cnc_fload"]);
+			$.each(jsonData,function(){
+				jo["cnc_l"+this["axis"]]=this["value"]
+			}) 
+		}
+		
+		if(jo["lx"]){
+			jo["cnc_lX"]=jo["lx"];
+		}
+		if(jo["ly"]){
+			jo["cnc_lY"]=jo["ly"];
+		}
+		if(jo["lz"]){
+			jo["cnc_lZ"]=jo["lz"];
+		}
+		
+	$timeout(function(){
+		replaceKey(jo)
+	},1000)
+}	
+
+$scope.devices={
+}
+function replaceKey(jo){
+	if(jo.success){
+		for(var key in deviceParameters){
+			if(jo[key]){
+				deviceParameters[key]=jo[key];
+			}
 		}
 	}
-	$scope.switchStatus(deviceParameters);
+	localStorage.setItem(deviceParameters["machineName"], JSON.stringify(deviceParameters));
+	$timeout(function(){
+		$scope.switchStatus(deviceParameters);
+	},1000)
 }
- 
-//0,1,2,3,4,5
 
+//0,1,2,3,4,5
 /*var pies = new MyPies();
 var ranking = new Ranking();
 var myTimeLine =new MyTimeLine();
@@ -67,10 +193,10 @@ $scope.onmessage=function(evt) {
 /*	var JsonObject = JSON.parse(evt.data);
 	console.info(JsonObject);
 	$scope.switchStatus(JsonObject["dataList"]);
-	pies.dataPieInit(JsonObject["pies"]["content"]); 
-	ranking.dataRankingInit(JsonObject["ranking"]["content"]);
-	console.info(JsonObject["timeLineSeriesData"]["content"]);
-	myTimeLine.dataTimeLineInit(JsonObject["timeLineCategories"]["content"],JsonObject["timeLineSeriesData"]["content"]);*/
+	pies.dataPieInit(JsonObject["pies"]); 
+	ranking.dataRankingInit(JsonObject["ranking"]);
+	console.info(JsonObject["timeLineSeriesData"]);
+	myTimeLine.dataTimeLineInit(JsonObject["timeLineCategories"],JsonObject["timeLineSeriesData"]);*/
 
 /*window.close=function(){
 	$scope.ws.onclose();
@@ -91,19 +217,21 @@ $scope.switchStatus=function(obj){
 	 $("#"+machineName+"_m").attr("class","")
 	 $("#"+machineName+"_m").text(machineName);
 	 $("#"+machineName+"_m").addClass("circle"+" "+"circle-"+status.toLowerCase()+" "+"headerBox");
-	 $scope.creatList(obj);
-} 
-
-$scope.creatList=function(data){
-	$scope.alarmList=[];
-	$scope.runningList=[];
-	if(data.machineSignal=="ALARM"){
-		$scope.alarmList.push(data);
-	}
-	if(data.machineSignal=="POWEROFF"){
-		$scope.runningList.push(data);
-	}
+	 $timeout(function(){
+		 $scope.createList();
+	 },1000)
 }
+
+$scope.createList=function(){
+	$scope.devices = []
+	for(var key in deviceName){
+		if(localStorage.getItem(deviceName[key])!=null){
+			$scope.devices.push(JSON.parse(localStorage.getItem(deviceName[key])))
+		}
+	}
+	console.info($scope.devices);
+}
+
 
 }).directive('myClock',function($interval,$http){
 	return{
