@@ -31,6 +31,7 @@ function connection(topices){
     
     websocket.onmessage=function(evn){
     	var jsonData= JSON.parse(evn.data);
+    	
     	$timeout(function(){
     		clearData(jsonData)
     	},1000)
@@ -44,36 +45,41 @@ function connection(topices){
 	
 function clearData(jo){
 		jo["machineName"]=deviceName[jo["machineName"]];
-		if (jo["co1"] && jo["co1"]=="1") {
-			jo["cnc_mode"]="快速移动状态";
-		}
-	
-		if (jo["co2"] && jo["co2"]=="1") {
-			jo["cnc_mode"]="直线切削状态";
-		}
-	
-		if (jo["co3"] && jo["co3"]=="1") {
-			jo["cnc_mode"]="顺时针圆弧状态";
-		}
+		if(jo["success"]){
+			if (jo["co1"] && jo["co1"]=="1") {
+				jo["cnc_mode"]="快速移动状态";
+			}
 		
-		if (jo["co4"] && jo["co4"]=="1") {
-			jo["cnc_mode"]="逆时针圆弧状态";
-		}
+			if (jo["co2"] && jo["co2"]=="1") {
+				jo["cnc_mode"]="直线切削状态";
+			}
 		
-		if (jo["rz"] && jo["rz"]=="1") {
-			jo["machineSignal"]="RUNNING";
-		}
+			if (jo["co3"] && jo["co3"]=="1") {
+				jo["cnc_mode"]="顺时针圆弧状态";
+			}
+			
+			if (jo["co4"] && jo["co4"]=="1") {
+				jo["cnc_mode"]="逆时针圆弧状态";
+			}
+			
+			if (jo["rz"] && jo["rz"]=="1") {
+				jo["machineSignal"]="RUNNING";
+				jo["machineSignalZH"]="运行";
+			}
 		
-		if (jo["wz"] && jo["wz"]=="1") {
-			jo["machineSignal"]="WAITING";
-		}
+			if (jo["wz"] && jo["wz"]=="1") {
+				jo["machineSignal"]="WAITING";
+				jo["machineSignalZH"]="等待";
+			}
 		
 		if (jo["az"] && jo["az"]=="1") {
 			jo["machineSignal"]="ALARM";
+			jo["machineSignalZH"]="报警";
 		}
 		if(jo["device_state"]) {
 			if (jo["device_state"]=="0") {
 				jo["machineSignal"]="RUNNING";
+				jo["machineSignal"]="运行";
 					if (jo["cnc_runstatus"]) {
 						if (jo["cnc_runstatus"]=="0") {
 							jo["cnc_runstatus"]= "RESET";
@@ -97,11 +103,13 @@ function clearData(jo){
 			}
 			if(jo["device_state"]=="1") {
 				jo["machineSignal"]="POWEROFF";
+				jo["machineSignalZH"]="关机";
 			}
 		}
 		if (jo["cnc_alarm"]) {
 			if(jo["cnc_alarm"]!="[]"){
 				jo["machineSignal"]="ALARM";
+				jo["machineSignalZH"]="报警";
 				jo["cnc_alarm_message"]=jo["cnc_alarm"];
 			}
 		}
@@ -162,14 +170,16 @@ function clearData(jo){
 		if(jo["lz"]){
 			jo["cnc_lZ"]=jo["lz"];
 		}
-		
+	}else{
+		jo["machineSignal"]="POWEROFF";
+		jo["machineSignalZH"]="关机";
+	}
 	$timeout(function(){
 		replaceKey(jo)
 	},1000)
+	
 }	
 
-$scope.devices={
-}
 function replaceKey(jo){
 	if(jo.success){
 		for(var key in deviceParameters){
@@ -177,11 +187,14 @@ function replaceKey(jo){
 				deviceParameters[key]=jo[key];
 			}
 		}
+	}else{
+		deviceParameters["machineName"]=jo["machineName"];
+		deviceParameters["machineSignal"]=jo["machineSignal"];
+		deviceParameters["machineSignalZH"]=jo["machineSignalZH"];
 	}
+	console.info(deviceParameters);
 	localStorage.setItem(deviceParameters["machineName"], JSON.stringify(deviceParameters));
-	$timeout(function(){
-		$scope.switchStatus(deviceParameters);
-	},1000)
+	$scope.switchStatus(deviceParameters);
 }
 
 //0,1,2,3,4,5
@@ -206,32 +219,54 @@ $scope.callbackReportData =function(){
 	 $.get("/member/callbackReportData.json");
 }
 
-$scope.switchStatus=function(obj){
-	var status="";
-	 if(obj.machineSignal==null||obj.machineSignal==""){
-		 status="UNKNOW";
-	 }else{
-		 status=obj.machineSignal;
+$scope.switchStatus=function(){
+		for(var key in deviceName){
+			var obj;
+  			if(localStorage.getItem(deviceName[key])!=null){
+				 obj= JSON.parse(localStorage.getItem(deviceName[key]));
+			}else{
+				 obj={};
+				 obj.machineName=deviceName[key];
+				 obj.machineSignal="POWEROFF";
+				 obj.machineSignalZH="关机";
+			}
+			var status="";
+			if(obj.machineSignal==null||obj.machineSignal==""){
+				status="UNKNOW";
+			}else{
+				status=obj.machineSignal;
+			}
+			var machineName=obj.machineName;
+			$("#"+machineName+"_m").attr("class","")
+			$("#"+machineName+"_m").text(machineName);
+			$("#"+machineName+"_m").addClass("circle"+" "+"circle-"+status.toLowerCase()+" "+"headerBox");
 	 }
-	 var machineName=obj.machineName;
-	 $("#"+machineName+"_m").attr("class","")
-	 $("#"+machineName+"_m").text(machineName);
-	 $("#"+machineName+"_m").addClass("circle"+" "+"circle-"+status.toLowerCase()+" "+"headerBox");
-	 $timeout(function(){
+		
+	$timeout(function(){
 		 $scope.createList();
-	 },1000)
+	},1000)
 }
 
 $scope.createList=function(){
-	$scope.devices = []
+	$scope.devices = [];
+	$scope.alarmList=[];
 	for(var key in deviceName){
 		if(localStorage.getItem(deviceName[key])!=null){
-			$scope.devices.push(JSON.parse(localStorage.getItem(deviceName[key])))
+			var obj = JSON.parse(localStorage.getItem(deviceName[key]));
+			$scope.devices.push(obj);
+			if(obj["machineSignal"]=="ALARM"){
+				$scope.alarmList.push(obj);
+			}
 		}
+		insertMontoring(localStorage.getItem(deviceName[key]));
 	}
-	console.info($scope.devices);
 }
 
+function insertMontoring(){
+	$.ajax({
+		method:post
+	}) 
+}
 
 }).directive('myClock',function($interval,$http){
 	return{

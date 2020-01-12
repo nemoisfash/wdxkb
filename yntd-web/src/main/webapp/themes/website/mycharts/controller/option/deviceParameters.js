@@ -1,6 +1,7 @@
 var deviceParameters={
 	"machineName":"machineName",
 	"machineSignal":"machineSignal",
+	"machineSignalZH":"machineSignalZH",
 	"cnc_systemtime":"ts",
 	"code":"code",
 	"cnc_products":"nl",

@@ -47,28 +47,8 @@ public class MqttMessageSubClient implements MqttCallback{
 				@Override
 				public void messageArrived(String topic, MqttMessage message) throws Exception {
 					String msg = new String(message.getPayload());
-					JSONObject jsonObject = new JSONObject();
-					Map<String, Object> map =new HashMap<String, Object>();
-					String messageJson =null;
-					if(jsonObject.isValid(msg)) {
-						jsonObject = (JSONObject) new JSONObject().parse(msg);
-						if(jsonObject.containsKey("limo")) {
-							jsonObject.put("success", false);
-							jsonObject.put("machineSignal", "POWEROFF");
-						}else {
-							jsonObject.put("success", true);
-						}
-						jsonObject.put("machineName", topic);
-						messageJson=jsonObject.toJSONString();
-					}else {
-						map.put("success", false);
-						map.put("message", msg);
-						map.put("machineSignal", "POWEROFF");
-						map.put("machineName", topic);
-						messageJson = new JSONObject(map).toJSONString();
-					}
-					preRecord.put(topic, messageJson);
-					TextMessage textMessage = new TextMessage(messageJson);
+					preRecord.put(topic, msg);
+					TextMessage textMessage = new TextMessage(new JSONObject(preRecord).toJSONString());
 					MyWsHandler.sendMessageToClient(textMessage);
 				}
 				@Override
