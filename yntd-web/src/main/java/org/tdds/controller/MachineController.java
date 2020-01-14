@@ -11,17 +11,20 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Timer;
-import java.util.TimerTask;
 
+import javax.enterprise.inject.New;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.socket.TextMessage;
 import org.tdds.entity.Machine;
@@ -80,94 +83,41 @@ public class MachineController extends BasePortalController {
 	
 	@RequestMapping(value = "/getAllTopics", method = RequestMethod.GET)
 	@ResponseBody
-	public Object getAllPices() {
+	private Object getAllPices() {
 		Map<String, Object> map = new HashMap<String, Object>();
 		List<Machine> machines = bizMachine.findMachine();
 		List<String> topices = new ArrayList<String>();
+		List<String> machineNames = new ArrayList<String>();
 		for (Machine machine:machines) {
 			topices.add(machine.getMqttTopic());
+			machineNames.add(machine.getName());
 		}
 		if(!CollectionUtils.isEmpty(topices)) {
 			map.put("success", true);
-			map.put("data", topices);
+			map.put("topices", topices);
+			map.put("machineNames",machineNames);
 		}
 		return map;
 	}
 	
-	@RequestMapping(value = "/callbackReportData", method = RequestMethod.GET)
-	public void publicMonitoring() {
-		Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
-	        public void run() {
-				Map<String, Object> response = new HashMap<>();
-				Map<String, Object> dataList = publishDataList();
-				if (!dataList.isEmpty() && dataList.get("content") != null) {
-					response.put(topics[0], dataList);
-				}
-		
-				Map<String, Object> pies = publishPieData();
-				if (!pies.isEmpty() && pies.get("content") != null) {
-					response.put(topics[1], pies);
-				}
-		
-				Map<String, Object> ranking = publishRanking();
-				if (!ranking.isEmpty() && ranking.get("content") != null) {
-					response.put(topics[2], ranking);
-				}
-		
-				Map<String, Object> timeLineCategories = publishTimeLineCategories();
-				if (!timeLineCategories.isEmpty() && timeLineCategories.get("content") != null) {
-					response.put(topics[3], timeLineCategories);
-				}
-				Map<String, Object> timeLineSeriesData = publishTimeLineSeriesData();
-				if (!timeLineSeriesData.isEmpty() && timeLineSeriesData.get("content") != null) {
-					response.put(topics[4], timeLineSeriesData);
-				}
-				TextMessage textMessage = new TextMessage(new JSONObject(response).toJSONString());
-				MyWsHandler.sendMessageToClient(textMessage);
-            }
-        }, 1000,3000);
-	}
- 
-	private Map<String, Object> publishDataList() {
-		List<Machine> machines = bizMachine.findMachine();
-		List<Map<String, Object>> entities = new ArrayList<>();
-		Map<String, Object> result = new HashMap<>();
-		Boolean success = true;
-		for (Machine machine : machines) {
-			Map<String, Object> monitor = new HashMap<>();
-			if (machine.getIo() != null) {
-				if (machine.getIo() == 0) {
-					monitor = bizMonitoring.findByName(machine);
-				} else if (machine.getIo() == 1) {
-					monitor.put("machineName", machine.getName());
-					monitor.put("machineSignal", getStatus(machine.getmIp()));
-				} else if (machine.getIo() == 2) {
-						monitor = bizMonitoring.subscriberJsonFromMqttServer(machine);
-				}
-			}
-			if (monitor != null && !monitor.isEmpty()) {
-				entities.add(monitor);
-				synchronized (this) {
-					bizMachine.update(monitor, machine);
-				}
-			
-			}
-		}
-		result.put("content", entities);
-		result.put("result", success);
-		return result;
-	}
-
-	@RequestMapping(value = "/alermMessage", method = RequestMethod.GET)
+	@RequestMapping(value = "/insertMonitor", method = RequestMethod.POST)
 	@ResponseBody
-	private Object alermMessage() {
-		Map<String, Object> map = new HashMap<>();
-		List<Map<String, Object>> entities = bizWarningRecord.findAll();
-		map.put("resault", entities);
-		return map;
-	}
-
+    private Object insertMonitoring(@RequestBody JSONObject jsonObject,HttpServletRequest req,HttpServletResponse res)throws Exception{
+		Map<String, Object> result =new HashMap<String, Object>();
+		try {
+			if(!jsonObject.isEmpty()) {
+				bizMachine.update(jsonObject);
+			}
+			result.put("success",true);
+		} catch (Exception e) {
+			// TODO: handle exception
+			result.put("success",false);
+		}
+		return result;
+	 }
+			
+	
+	
 	/**
 	 * 每天每小时设备运行状况 一天24*60分钟
 	 * 
@@ -177,7 +127,7 @@ public class MachineController extends BasePortalController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "line", method = RequestMethod.GET)
-	public Object line(HttpServletRequest request, HttpServletResponse res) {
+	private Object line(HttpServletRequest request, HttpServletResponse res) {
 		Map<String, Object> map = new HashMap<>();
 		List<String> times = new ArrayList<>();
 		List<Map<String, Object>> maps = new ArrayList<>();
@@ -188,18 +138,17 @@ public class MachineController extends BasePortalController {
 	}
 
 	/**
-	 * 
 	 * @param request
 	 * @param res
 	 * @return
 	 */
-	private Map<String, Object> publishPieData() {
+	@ResponseBody
+	@RequestMapping(value = "/publishPieData", method = RequestMethod.GET)
+	private Object publishPieData(HttpServletRequest request, HttpServletResponse response) {
 		List<Machine> machines = bizMachine.findMachine();
 		List<Map<String, Object>> list = new ArrayList<>();
 		Map<String, Object> result = new HashMap<>();
-		Boolean success = true;
 		String topic = "pies";
-		try {
 			for (Machine machine : machines) {
 				List<Map<String, Object>> entities = new LinkedList<>();
 				for (String status : STATUS) {
@@ -216,48 +165,41 @@ public class MachineController extends BasePortalController {
 				map.put("machineName", machine.getName());
 				list.add(map);
 			}
-			result.put("content", list);
-		} catch (Exception e) {
-			success = false;
-			JSONObject erroMessage = new JSONObject();
-			erroMessage.put("erroPublisTopic", topic);
-			erroMessage.put("Reason", e.getMessage());
-			result.put("Message", erroMessage);
-		}
-		result.put("success", success);
-		return result;
+				result.put("content", list);
+				result.put("code", topic);
+				try {
+					TextMessage textMessage = new TextMessage(new JSONObject(result).toJSONString());
+					MyWsHandler.sendMessageToClient(textMessage);
+				} catch (Exception e) {
+					System.out.println(e.getMessage());
+					result.put("success", false);
+				}
+				return result;
 	}
-
+	
 	/**
-	 * 
 	 * 设备运行排名
-	 * 
 	 * @return
 	 */
-	private Map<String, Object> publishRanking() {
+	@RequestMapping(value = "/publishRanking", method = RequestMethod.GET)
+	@ResponseBody
+	private Object publishRanking() {
 		List<Machine> machines = bizMachine.findMachine();
 		Map<String, Double> sortMap = new HashMap<>();
-		Boolean success = true;
 		String topic = "ranking";
 		Map<String, Object> result = new HashMap<>();
-		try {
 			for (Machine machine : machines) {
 				Double num = bizRunningRecord.findRankData(machine.getId());
 				sortMap.put(machine.getName(), num);
 			}
 			List<Map.Entry<String, Double>> content = sortMap(sortMap);
 			result.put("content", content);
-		} catch (Exception e) {
-			success = false;
-			JSONObject erroMessage = new JSONObject();
-			erroMessage.put("erroPublisTopic", topic);
-			erroMessage.put("Reason", e.getMessage());
-			result.put("Message", erroMessage);
-		}
-		result.put("success", success);
-		return result;
+			result.put("code", topic);
+			TextMessage textMessage = new TextMessage(new JSONObject(result).toJSONString());
+			MyWsHandler.sendMessageToClient(textMessage);
+			return result;
 	}
-
+	
 	private List<Map.Entry<String, Double>> sortMap(Map<String, Double> map) {
 		List<Map.Entry<String, Double>> list = new ArrayList<Map.Entry<String, Double>>(map.entrySet());
 		Collections.sort(list, new Comparator<Map.Entry<String, Double>>() {
@@ -269,7 +211,9 @@ public class MachineController extends BasePortalController {
 		return list;
 	}
 
-	private Map<String, Object> publishTimeLineCategories() {
+	@RequestMapping(value = "/publishTimeLineCategories", method = RequestMethod.GET)
+	@ResponseBody
+	private Object publishTimeLineCategories() {
 		Boolean success = true;
 		String topic = "timeLineCategories";
 		Map<String, Object> result = new HashMap<>();
@@ -280,6 +224,9 @@ public class MachineController extends BasePortalController {
 				names.add(entity.getName());
 			}
 			result.put("content", names);
+			result.put("code", topic);
+			TextMessage textMessage = new TextMessage(new JSONObject(result).toJSONString());
+			MyWsHandler.sendMessageToClient(textMessage);
 		} catch (Exception e) {
 			success = false;
 			JSONObject erroMessage = new JSONObject();
@@ -287,30 +234,8 @@ public class MachineController extends BasePortalController {
 			erroMessage.put("Reason", e.getMessage());
 			result.put("Message", erroMessage);
 		}
-		result.put("success", success);
-		return result;
-	}
-
-	@RequestMapping(value = "/reportList", method = RequestMethod.GET)
-	@ResponseBody
-	public Object reportList(HttpServletRequest request, HttpServletResponse response) {
-		List<Report> reportsList = bizLogReport.findAll();
-		List<Map<String, Object>> entities = new ArrayList<>();
-		for (Report report : reportsList) {
-			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("machineName", report.getMachineName());
-			map.put("plannedOtime", report.getPlannedOtime() + "H");
-			map.put("actualOtime", report.getActualOtime() + "H");
-			map.put("timeOee", createOee(report.getPlannedOtime(), report.getActualOtime()));
-			map.put("plannedCapacity", report.getPlannedCapacity());
-			map.put("actualCapacity", report.getActualCapacity());
-			map.put("performanceOee", createOee(report.getPlannedCapacity(), report.getActualCapacity()));
-			map.put("number", report.getNumber());
-			map.put("goodNumber", report.getGoodNumber());
-			map.put("goodYield", createOee(report.getNumber(), report.getGoodNumber()));
-			entities.add(map);
-		}
-		return entities;
+			result.put("success", success);
+		 return result;
 	}
 
 	private String createOee(int dividend, int divisor) {
@@ -333,8 +258,8 @@ public class MachineController extends BasePortalController {
 	 * @return
 	 * @throws ParseException
 	 */
-
-	private Map<String, Object> publishTimeLineSeriesData() {
+	@RequestMapping(value = "/publishTimeLineSeriesData", method = RequestMethod.GET)
+	private Object publishTimeLineSeriesData() {
 		String topic = "timeLineSeriesData";
 		List<Machine> machines = bizMachine.findMachine();
 		Map<String, Object> result = new HashMap<>();
@@ -371,10 +296,7 @@ public class MachineController extends BasePortalController {
 				}
 				Long timeDiff = null;
 				if (machine.getStartTime() != null && machine.getEndTime() != null) {
-					timeDiff = DateUtils.getDatePoor(machine.getStartTime(), machine.getEndTime(), "ss");
-					if(timeDiff==0) {
-						timeDiff=1L;
-					}
+					timeDiff = DateUtils.getDatePoor(machine.getStartTime(), machine.getEndTime(), "min");
 				} else {
 					timeDiff = 1L;
 				}
@@ -387,6 +309,9 @@ public class MachineController extends BasePortalController {
 				i++;
 			}
 			result.put("content", list);
+			result.put("code", topic);
+			TextMessage textMessage = new TextMessage(new JSONObject(result).toJSONString());
+			MyWsHandler.sendMessageToClient(textMessage);
 		} catch (Exception e) {
 			success = false;
 			JSONObject erroMessage = new JSONObject();

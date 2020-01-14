@@ -37,18 +37,4 @@
 		<property name="defaultQos" value="${mqtt.defaultQos}" />
 		<property name="completionTimeout" value="${mqtt.completionTimeout}" />
 	</bean>
-	
-<!-- 	<int-mqtt:message-driven-channel-adapter 
- 		id="mqttInbound" 
- 		client-id="CID_20191220" 
- 		url="${mqtt.url}"
-		topics="${mqtt.topics}"
-		qos="${mqtt.defaultQos}" 
-		client-factory="myClientFactory"
-		auto-startup="true"
-		send-timeout="${mqtt.completionTimeout}" 
-		channel="startCase" />
-	<int:channel id="startCase" />
-	<int:service-activator id="startCaseService" input-channel="startCase" ref="mqttCaseService" method="startCase" />
-    <bean id="mqttCaseService" class="cn.hxz.webapp.util.mqtt.MqttService" /> -->
 </beans>

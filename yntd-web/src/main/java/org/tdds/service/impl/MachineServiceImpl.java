@@ -5,13 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import org.springframework.web.util.TagUtils;
 import org.tdds.entity.Machine;
 import org.tdds.entity.MonitoringList;
 import org.tdds.mapper.MachineMapper;
@@ -25,6 +21,8 @@ import org.tdds.service.WarningRecordService;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.hxz.webapp.util.DateUtils;
+import cn.hxz.webapp.util.mqtt.MqttAutoConfiguration;
+import cn.hxz.webapp.util.mqtt.MqttMessagePubClient;
 import net.chenke.playweb.QueryFilters;
 import net.chenke.playweb.support.mybatis.Page;
 import net.chenke.playweb.support.mybatis.PageImpl;
@@ -54,7 +52,7 @@ public class MachineServiceImpl implements MachineService {
 	
 	@Autowired
 	private  MonitoringService bizMonitoring;
-
+	
 	@Override
 	public Long selectMidByName(String machineName) {
 		return machineDao.selectIdByName(machineName);
@@ -110,11 +108,10 @@ public class MachineServiceImpl implements MachineService {
 		return machineDao.exportInfore(id);
 	}
 
-	@Override
-	public int update(Map<String,Object>monitoringList,Machine entity) {
+	private int update(JSONObject monitoringList,Machine entity) {
 		Date date = new Date();
 		String status=entity.getStatus();
-		String mstatus= Objects.toString(monitoringList.get("machineSignal"),null) ;
+		String mstatus= monitoringList.getString("machineSignal");
 		if(StringUtils.isEmpty(mstatus)){
 			mstatus=STATUS[2];
 			monitoringList.put("machineSignal", mstatus);
@@ -124,7 +121,7 @@ public class MachineServiceImpl implements MachineService {
 				 bizRunningRecord.insert(monitoringList, entity);
 			 }else if(status.equals(STATUS[1])){
 				 bizPowerOff.insert(monitoringList, entity);
-			 }else if(status.equals(STATUS[2])){
+			 }else if(status.equals(STATUS[2])){  	
 				 bizWarningRecord.insert(monitoringList, entity);
 			 }else if(status.equals(STATUS[3])){
 				 bizWaitingRecord.insert(monitoringList, entity);
@@ -136,7 +133,7 @@ public class MachineServiceImpl implements MachineService {
 				entity.setEndTime(date);
 		}else{
 			long timediff=DateUtils.getDatePoor(entity.getStartTime(),entity.getEndTime(), "min");
-			if(timediff >5L) {
+			if(timediff >10L) {
 					if(status.equals(STATUS[0])){
 						 bizRunningRecord.insert(monitoringList, entity);
 					}else if(status.equals(STATUS[1])){
@@ -191,6 +188,18 @@ public class MachineServiceImpl implements MachineService {
 		Machine machine = new Machine();
 		machine.setStatus(status);
 		return machineDao.selectCount(machine);
+	}
+
+	@Override
+	public void update(JSONObject monitor) {
+	 String machineName = monitor.getString("machineName");
+	 Machine machine = findMachineByName(machineName);
+	 update(monitor,machine);
+	}
+
+	@Override
+	public void publish(String topic, String content) {
+		 
 	}
 	 
 }

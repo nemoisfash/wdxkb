@@ -60,14 +60,15 @@ public class MqttAutoConfiguration {
         factory.setConnectionOptions(connectOptions);
         return factory;
     }
-
-    public MqttMessagePubClient mqttMessagePubClient() {
-    	MqttMessagePubClient client = new MqttMessagePubClient(getPropertiesValue(MQTT_PUBCLIENTID), clientFactory());
-        client.setAsync(Boolean.valueOf(getPropertiesValue(MQTT_ASYNC)));
-        client.setDefaultQos(Integer.valueOf(getPropertiesValue(MQTT_QOS)));
-        client.setCompletionTimeout(Long.valueOf(getPropertiesValue(MQTT_CONNECTION_TIMEOUT)));
-        return client;
-    }
+	/*
+	 * public MqttMessagePubClient mqttMessagePubClient() { MqttMessagePubClient
+	 * client = new MqttMessagePubClient(getPropertiesValue(MQTT_PUBCLIENTID),
+	 * clientFactory());
+	 * client.setAsync(Boolean.valueOf(getPropertiesValue(MQTT_ASYNC)));
+	 * client.setDefaultQos(Integer.valueOf(getPropertiesValue(MQTT_QOS)));
+	 * client.setCompletionTimeout(Long.valueOf(getPropertiesValue(
+	 * MQTT_CONNECTION_TIMEOUT))); return client; }
+	 */
     
     public MqttMessageSubClient mqttMessageSubClient() {
     	MqttMessageSubClient client = new MqttMessageSubClient(getPropertiesValue(MQTT_SUBCLIENTID), clientFactory());

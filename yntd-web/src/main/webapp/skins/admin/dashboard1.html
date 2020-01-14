@@ -1,4 +1,9 @@
 <@layout.override name="body">
+<style>
+	.panel-body {
+	    padding: 0px;
+	}
+</style>
     <section class="content-header">
       <h1>
         <small>Version 2.0</small>
@@ -9,154 +14,204 @@
       </ol>
     </section>
     <section class="content" ng-app="dashboradApp" ng-controller="myCon">
-      <div class="row">
-        <div class="col-md-3 col-sm-6 col-xs-12">
-          <div class="info-box">
-            <span class="info-box-icon" style="background-color:#00c0ef00">
-            	<img  src="/themes/website/images/alibaba/running.png"/>
-            </span>
-            <div class="info-box-content">
-              <span class="info-box-text">运行</span>
-              <span class="info-box-number">{{running}}台</span>
-            </div>
-          </div>
-        </div>
-        <!-- /.col -->
-        <div class="col-md-3 col-sm-6 col-xs-12">
-          <div class="info-box">
-            <span class="info-box-icon" style="background-color:#00c0ef00">
-            	<img  src="/themes/website/images/alibaba/poweroff.png"/>
-            </span>
-            <div class="info-box-content">
-              <span class="info-box-text">停机</span>
-              <span class="info-box-number">{{poweroff}}台</span>
-            </div>
-            <!-- /.info-box-content -->
-          </div>
-          <!-- /.info-box -->
-        </div>
-        <!-- /.col -->
-
-        <!-- fix for small devices only -->
-        <div class="clearfix visible-sm-block"></div>
-
-        <div class="col-md-3 col-sm-6 col-xs-12">
-          <div class="info-box">
-            <span class="info-box-icon" style="background-color:#00c0ef00">
-            	<img src="/themes/website/images/alibaba/alarm.png"/>
-           	</span>
-            <div class="info-box-content">
-              <span class="info-box-text">报警</span>
-             <span class="info-box-number">{{alarm}}台</span>
-            </div>
-          </div>
-        </div>
-        <!-- /.col -->
-        <div class="col-md-3 col-sm-6 col-xs-12">
-          <div class="info-box">
-            <span class="info-box-icon" style="background-color:#00c0ef00">
-            	<img src="/themes/website/images/alibaba/waiting.png"/>
-            </span>
-            <div class="info-box-content">
-              <span class="info-box-text">等待</span>
-              <span class="info-box-number">{{waiting}}台</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <div class="row">
-         <div class="col-md-6">
-          <div class="box box-success">
-            <div class="box-header with-border">
-              <h3 class="box-title">设备实时状态</h3>
-              <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                </button>
-                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-              </div>
-            </div>
-          	<div class="box-body no-padding" style="height:300px;">
-				<img width="100%" height="80%" src="/themes/website/images/aoshen/aoshen.png"></img>
-				<span id="T005_m" class="circle circle-running headerBox" style="top:4%;left:91%;">
-				</span>
-				<span id="MC009_m" class="circle circle-running headerBox" style="top:4%;left:80%;">
-				</span>
-				<span id="MC008_m" class="circle circle-running headerBox" style="top:4%;left:70%;">
-				</span>
-				<span id="MC007_m" class="circle circle-running headerBox" style="top:4%;left:60%;">
-				</span>
-				<span id="MC005_m" class="circle circle-running headerBox" style="top:4%;left:51%;">
-				</span>
-				<span id="MC006_m" class="circle circle-running headerBox" style="top:4%;left:41%;">
-				</span>
-				<span id="T005_m" class="circle circle-running headerBox" style="top:4%;left:29%;">
-				</span>
-				<span id="MC004_m" class="circle circle-running headerBox" style="top:19%;left:31%;">
-				</span>
-				<span id="D9332_m" class="circle circle-running headerBox" style="top:19%;left:39%;">
-				</span>
-				<span id="MC002_m" class="circle circle-running headerBox" style="top:19%;left:47%;">
-				</span>
-				<span id="D9332_m" class="circle circle-running headerBox" style="top:19%;left:55%;">
-				</span>
-				<span id="D9332_m" class="circle circle-running headerBox" style="top:42%;left:21%;">
-				</span>
-				<span id="T003_m" class="circle circle-running headerBox" style="top:42%;left:31%;">
-				</span>
-				<span id="T002_m" class="circle circle-running headerBox" style="top:42%;left:41%;">
-				</span>
-				<span id="T004_m" class="circle circle-running headerBox" style="top:42%;left:51%;">
-				</span>
-          </div>
-        </div>
-      </div>
-        <div class="col-md-6">
-          <div class="box box-success">
-            <div class="box-header with-border">
-              <h3 class="box-title">每日每台设备状态柱状图</h3>
-              <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                </button>
-                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-              </div>
-            </div>
-          	<div class="box-body" style="height:300px;" bar-Charts>
-          </div>
-        </div>
-      </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
-          <div class="box">
-            <div class="box-header with-border">
-              <h3 class="box-title">所有设备每日运行状态时长折线图</h3>
-              <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                </button>
-              <!--   <div class="btn-group">
-                  <button type="button" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown">
-                    <i class="fa fa-wrench"></i>
-                	</button>
-                </div> -->
-                <button type="button" class="btn btn-box-tool" data-widget="remove">
-                	<i class="fa fa-times"></i>
-                </button>
-              </div>
-            </div>
-            <div class="box-body">
-              <div class="row">
-                <div class="col-md-12" style="height:360px;">
-                  <div style="height:100%;width:100%" line-Charts>
-                  		
-                  </div>
-                </div>
-              </div>
-              <!-- /.row -->
-            </div>
-          </div>
-        </div>
-      </div>
+    <a ></a>
+      <!---------machineInfo start------------>
+ 		<section class="col-lg-3 connectedSortable ui-sortable" style="width:20%">
+ 				<div class="nav-tabs-custom" style="background-color: #081639a1; width:30rem;height:16.92rem;margin-bottom:0px">
+ 					   <img width="100%" height="100%" src="/themes/website/images/default.jpg" class="thumbnail" style="margin-bottom:0px">
+ 				</div>
+ 		</section>
+ 		<section class="col-lg-3 connectedSortable ui-sortable">
+			 <div class="panel panel-default">
+			    <div class="panel-heading">
+			        <h3 class="panel-title">
+			            设备信息
+			        </h3>
+			    </div>
+			    <div class="panel-body">
+				  <table class="table">
+				        <th>设备中文名称</th>
+				        <th>{{cncName}}</th>
+			       	 <tr>
+			        	<th>设备名称</th>
+			        	<th>{{cncName}}</th>
+		        	</tr>
+		        	 <tr>
+				        <th>型号</th>
+				        <th>西门子</th>
+			        </tr>
+			    </table>
+			    </div>
+			</div>
+ 		</section>
+ 		
+ 		<section class="col-lg-3 connectedSortable ui-sortable">
+ 			 <div class="panel panel-default">
+			    <div class="panel-heading">
+			        <h3 class="panel-title">
+			            设备统计分析
+			        </h3>
+			    </div>
+			    <div class="panel-body">
+			      <table class="table">
+				        <th>当天开机率</th>
+				        <th>80%</th>
+			       	 <tr>
+			        	<th>当天加工件数</th>
+			        	<th>{{cncProducts}}</th>
+		        	</tr>
+		        	 <tr>
+			        </tr>
+			    </table>
+			    </div>
+			</div>
+ 		</section>
+ 		<section class="col-lg-3 connectedSortable ui-sortable">
+ 		  <div class="panel panel-default">
+			    <div class="panel-heading">
+			        <h3 class="panel-title">
+			            系统报警
+			        </h3>
+			    </div>
+			    <div class="panel-body">
+				    <table class="table">
+					        <th>报警时间</th>
+					        <th>20ssss</th>
+				       	 <tr>
+				        	<th>报警编号</th>
+				        	<th>sss</th>
+			        	</tr>
+			        	 <tr>
+					        <th>报警信息</th>
+					        <th>sssss</th>
+				        </tr>
+				    </table>
+			    </div>
+			</div>
+ 		</section>
+ 		<section class="col-lg-3 connectedSortable ui-sortable" style="width:45%">
+ 			 <div class="panel panel-default">
+			    <div class="panel-heading">
+			        <h3 class="panel-title">
+			            运行时间
+			        </h3>
+			    </div>
+			    <div class="panel-body">
+				    <table class="table">
+					        <th>当天开机累计时间</th>
+					        <th>{{cncAlivetime}}</th>
+				       	 <tr>
+				        	<th>当天程序循环时间</th>
+				        	<th>{{cncCycletime}}</th>
+			        	</tr>
+			        	 <tr>
+					        <th>当天累计程序循环时间</th>
+					        <th>undefined</th>
+				        </tr>
+				    </table>
+			    </div>
+			</div>
+			<div class="panel panel-default">
+			    <div class="panel-heading">
+			        <h3 class="panel-title">
+			            程序
+			        </h3>
+			    </div>
+			    <div class="panel-body">
+				    <table class="table">
+					        <th>当前程序名称</th>
+					        <th>{{cncMainproname}}</th>
+				       	 <tr>
+				        	<th>当前程序编号</th>
+				        	<th>{{cncSeq}}</th>
+			        	</tr>
+			        	 <tr>
+				        </tr>
+				    </table>
+			    </div>
+			</div>
+			
+		 	<div class="panel panel-default">
+			    <div class="panel-heading">
+			        <h3 class="panel-title">
+			            机器坐标
+			        </h3>
+			    </div>
+			    <div class="panel-body">
+				    <table class="table">
+				    	<tr>
+				    	  	<th>机械坐标</th>
+					        <th>相对坐标</th>
+					        <th>绝对坐标</th>
+					        <th>剩余移动坐标</th>
+				       	 <tr>
+			        	 <tr>
+			        	 	<td>X轴:{{cncMcX}}</td>
+			        	 	<td>X轴:{{cncRcX}}</td>
+			        	 	<td>X轴:{{cncAbX}}</td>
+			        	 	<td>X轴:{{cncRcX}}</td>
+				        </tr>
+				         <tr>
+			        	 	<td>Y轴:{{cncMcY}}</td>
+			        	 	<td>Y轴:{{cncRcY}}</td>
+			        	 	<td>Y轴:{{cncAbY}}</td>
+			        	 	<td>Y轴:{{cncRcY}}</td>
+				        </tr>
+				         <tr>
+			        	 	<td>Z轴:{{cncMcZ}}</td>
+			        	 	<td>Z轴:{{cncRcZ}}</td>
+			        	 	<td>Z轴:{{cncAbZ}}</td>
+			        	 	<td>Z轴:{{cncRcZ}}</td>
+				        </tr>
+				         <tr>
+			        	 	<td>A轴:{{cncMcA}}</td>
+			        	 	<td>A轴:{{cncRcA}}</td>
+			        	 	<td>A轴:{{cncAbA}}</td>
+			        	 	<td>A轴:{{cncRcA}}</td>
+				        </tr>
+				    </table>
+			    </div>
+			</div>
+ 		</section>
+ 		<section class="col-lg-3 connectedSortable ui-sortable" style="width:50%">
+ 		 <div class="panel panel-default">
+			    <div class="panel-heading">
+			        <h3 class="panel-title">
+			            负载
+			        </h3>
+			    </div>
+			    <div class="panel-body" id="lineLoad" style="width:790px;height:200px">
+		 			
+			    </div>
+			</div>
+			 	 <div class="panel panel-default">
+				    <div class="panel-heading">
+				        <h3 class="panel-title">
+				            倍率
+				        </h3>
+				    </div>
+			    	<div id="gagues" class="panel-body" style="width:790px;height:200px">
+	  					 <div style="width:253px;height:200px;float:left">ssss</div>
+	  					 <div style="width:253px;height:200px;float:left">ssss</div>
+	  					 <div style="width:253px;height:200px;float:left">ssss</div>
+					</div>
+				</div>
+		 	<div class="panel panel-default">
+			    <div class="panel-heading">
+			        <h3 class="panel-title">
+			            速度
+			        </h3>
+			    </div>
+			    <div class="panel-body">
+				    <table class="table">
+					        <th>当天开机累计时间</th>
+					        <th>价格</th>
+				    </table>
+			    </div>
+			</div>
+ 		</section>
+ 	 
+      <!---------machineInfo end------------>
     </section>
 </@layout.override>
 <@layout.override name="css">
@@ -166,7 +221,9 @@
 <@layout.override name="js">
 <@layout.super/>
 <script src="/themes/admin/echarts-options/lineOption.js"></script>
+<script src="/themes/admin/echarts-options/loadlineopt.js"></script>
 <script src="/themes/admin/echarts-options/barOption.js"></script>
+<script src="/themes/admin/machine/js/gaugeOption.js"></script>
 <script src="/themes/admin/index/js/dashboard.js"></script>
 </@layout.override>
 <@layout.extends name="_layouts/bootstrap1.html"/>

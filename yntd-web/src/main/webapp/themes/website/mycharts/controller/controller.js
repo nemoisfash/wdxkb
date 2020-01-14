@@ -2,9 +2,13 @@ var app = angular.module('myApp', []);
 app.controller('myCtrl', function($scope,$http,$timeout,$interval) {
 $.get("/member/getAllTopics.json",function(data){
 	if(data.success){
-		var others = ["pies", "ranking", "timeLineCategories","timeLineSeriesData"];
-		var topices=data.data.concat(others);
-		localStorage.setItem("topices",topices);
+		var chatsTopices = ["pies", "ranking", "timeLineCategories","timeLineSeriesData"];
+		localStorage.setItem("chatsTopic",chatsTopices.join("&"));
+		var machineTopices = data.topices;
+		localStorage.setItem("machineTopices",machineTopices.join("&"));
+		var machineNames =data.machineNames;
+		localStorage.setItem("machineNames",machineNames.join("&"));
+		var topices=machineTopices.concat(chatsTopices);
 		$timeout(function(){
 			connection(topices)
 		},1000)
@@ -31,10 +35,8 @@ function connection(topices){
     
     websocket.onmessage=function(evn){
     	var jsonData= JSON.parse(evn.data);
-    	
-    	$timeout(function(){
-    		clearData(jsonData)
-    	},1000)
+    	localStorage.setItem(jsonData["code"],JSON.stringify(jsonData));
+    	initMachineMonitor(jsonData["code"]);
     };
     
     websocket.onopen= function(event) {
@@ -42,10 +44,20 @@ function connection(topices){
     	websocket.send(JSON.stringify({"status":0,"isFinished":false,"topices":topices}));
     }
 }
-	
+
+function initMachineMonitor(str){
+	var jo;
+		 if(localStorage.getItem(str)!=null){
+			 jo=JSON.parse(localStorage.getItem(str));
+		 }else{
+			jo.code=str;
+			jo.machineSignal="POWEROFF";
+			jo.machineSignalZH="关机";
+		 }
+		 clearData(jo);
+}
+
 function clearData(jo){
-		jo["machineName"]=deviceName[jo["machineName"]];
-		if(jo["success"]){
 			if (jo["co1"] && jo["co1"]=="1") {
 				jo["cnc_mode"]="快速移动状态";
 			}
@@ -79,7 +91,7 @@ function clearData(jo){
 		if(jo["device_state"]) {
 			if (jo["device_state"]=="0") {
 				jo["machineSignal"]="RUNNING";
-				jo["machineSignal"]="运行";
+				jo["machineSignalZH"]="运行";
 					if (jo["cnc_runstatus"]) {
 						if (jo["cnc_runstatus"]=="0") {
 							jo["cnc_runstatus"]= "RESET";
@@ -114,10 +126,17 @@ function clearData(jo){
 			}
 		}
 		
-		if(jo["cnc_mecpos"]){
+	if(jo["cnc_mecpos"]){
 			var jsonData= JSON.parse(jo["cnc_mecpos"]);
 			$.each(jsonData,function(){
 				jo["cnc_mc"+this["axis"]]=this["value"]
+			}) 
+		}
+		
+		if(jo["cnc_ablpos"]){
+			var jsonData= JSON.parse(jo["cnc_ablpos"]);
+			$.each(jsonData,function(){
+				jo["cnc_ab"+this["axis"]]=this["value"]
 			}) 
 		}
 		
@@ -154,12 +173,12 @@ function clearData(jo){
 			jo["cnc_rcA"]=jo["rca"];
 		}
 		
-		if(jo["cnc_fload"]){
+	 if(jo["cnc_fload"]){
 			var jsonData= JSON.parse(jo["cnc_fload"]);
 			$.each(jsonData,function(){
 				jo["cnc_l"+this["axis"]]=this["value"]
 			}) 
-		}
+		} 
 		
 		if(jo["lx"]){
 			jo["cnc_lX"]=jo["lx"];
@@ -170,10 +189,8 @@ function clearData(jo){
 		if(jo["lz"]){
 			jo["cnc_lZ"]=jo["lz"];
 		}
-	}else{
-		jo["machineSignal"]="POWEROFF";
-		jo["machineSignalZH"]="关机";
-	}
+		
+	jo.machineName=deviceName[jo["code"]]
 	$timeout(function(){
 		replaceKey(jo)
 	},1000)
@@ -181,75 +198,45 @@ function clearData(jo){
 }	
 
 function replaceKey(jo){
-	if(jo.success){
 		for(var key in deviceParameters){
 			if(jo[key]){
 				deviceParameters[key]=jo[key];
 			}
 		}
-	}else{
-		deviceParameters["machineName"]=jo["machineName"];
-		deviceParameters["machineSignal"]=jo["machineSignal"];
-		deviceParameters["machineSignalZH"]=jo["machineSignalZH"];
-	}
-	console.info(deviceParameters);
 	localStorage.setItem(deviceParameters["machineName"], JSON.stringify(deviceParameters));
 	$scope.switchStatus(deviceParameters);
 }
 
-//0,1,2,3,4,5
-/*var pies = new MyPies();
-var ranking = new Ranking();
-var myTimeLine =new MyTimeLine();
-$scope.onmessage=function(evt) {
-	console.info(evt.data);
-/*	var JsonObject = JSON.parse(evt.data);
-	console.info(JsonObject);
-	$scope.switchStatus(JsonObject["dataList"]);
-	pies.dataPieInit(JsonObject["pies"]); 
-	ranking.dataRankingInit(JsonObject["ranking"]);
-	console.info(JsonObject["timeLineSeriesData"]);
-	myTimeLine.dataTimeLineInit(JsonObject["timeLineCategories"],JsonObject["timeLineSeriesData"]);*/
-
-/*window.close=function(){
-	$scope.ws.onclose();
-}*/
 
 $scope.callbackReportData =function(){
 	 $.get("/member/callbackReportData.json");
 }
 
-$scope.switchStatus=function(){
-		for(var key in deviceName){
-			var obj;
-  			if(localStorage.getItem(deviceName[key])!=null){
-				 obj= JSON.parse(localStorage.getItem(deviceName[key]));
-			}else{
-				 obj={};
-				 obj.machineName=deviceName[key];
-				 obj.machineSignal="POWEROFF";
-				 obj.machineSignalZH="关机";
-			}
-			var status="";
-			if(obj.machineSignal==null||obj.machineSignal==""){
-				status="UNKNOW";
-			}else{
-				status=obj.machineSignal;
-			}
-			var machineName=obj.machineName;
-			$("#"+machineName+"_m").attr("class","")
-			$("#"+machineName+"_m").text(machineName);
-			$("#"+machineName+"_m").addClass("circle"+" "+"circle-"+status.toLowerCase()+" "+"headerBox");
-	 }
+$scope.switchStatus=function(jo){
+		var machineNames = localStorage.getItem("machineNames").split("&");
+		var  obj;
+		if($.inArray(jo["machineName"],machineNames)>0){
+			obj= JSON.parse(localStorage.getItem(jo["machineName"]));
+		var status="";
+		if(obj.machineSignal==null||obj.machineSignal==""){
+			status="UNKNOW";
+		}else{
+			status=obj.machineSignal;
+		}
+		var machineName=obj.machineName;
+		$("#"+machineName+"_m").attr("class","")
+		$("#"+machineName+"_m").text(machineName);
+		$("#"+machineName+"_m").addClass("circle"+" "+"circle-"+status.toLowerCase()+" "+"headerBox");
+	 } 
+		$timeout(function(){
+			 $scope.createList();
+		},2000)
 		
-	$timeout(function(){
-		 $scope.createList();
-	},1000)
 }
 
-$scope.createList=function(){
-	$scope.devices = [];
-	$scope.alarmList=[];
+ $scope.createList=function(){
+	 $scope.devices = [];
+	 $scope.alarmList=[];
 	for(var key in deviceName){
 		if(localStorage.getItem(deviceName[key])!=null){
 			var obj = JSON.parse(localStorage.getItem(deviceName[key]));
@@ -258,14 +245,63 @@ $scope.createList=function(){
 				$scope.alarmList.push(obj);
 			}
 		}
-		insertMontoring(localStorage.getItem(deviceName[key]));
+		
 	}
+	insertMontoring();
+}
+ 
+function insertMontoring(){
+	 var machineNames = localStorage.getItem("machineNames").split("&");
+	 if(machineNames!=null){
+		 for(var i=0;i<machineNames.length;i++){
+			/* console.info(localStorage.getItem(machineNames[i]));
+			 console.info(typeof localStorage.getItem(machineNames[i]))*/
+			 if(localStorage.getItem(machineNames[i])!=null){
+			 	 $.ajax({
+					type: "post",
+					url: "/member/insertMonitor.json",
+					data:localStorage.getItem(machineNames[i]),
+				 	contentType:"application/json;charset=utf-8",
+					dataType:"json",
+					timeout:3000,
+					success:function(data){
+						 if(data.success){
+							 console.info(data.success);
+						 }
+					}
+				 }) 
+			 }
+		 }
+	 }
+	 
+} 
+ 
+$interval(function(){
+	publishPieData()
+},5000)
+function publishPieData(){
+	$.get("/member/publishPieData.json");
+	$timeout(function(){
+		publishRanking()
+	},2000)
 }
 
-function insertMontoring(){
-	$.ajax({
-		method:post
-	}) 
+function publishRanking(){
+	$.get("/member/publishRanking.json") 
+	$timeout(function(){
+		publishTimeLineCategories()
+	},1000)
+}
+
+function publishTimeLineCategories(){
+	$.get("/member/publishTimeLineCategories.json")
+	$timeout(function(){
+		publishTimeLineSeriesData()
+	},5000)
+}
+
+function publishTimeLineSeriesData(){
+	$.get("/member/publishTimeLineSeriesData.json") 
 }
 
 }).directive('myClock',function($interval,$http){

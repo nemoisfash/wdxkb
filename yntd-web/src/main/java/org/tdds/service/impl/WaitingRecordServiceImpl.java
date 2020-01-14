@@ -42,7 +42,6 @@ public class WaitingRecordServiceImpl implements WaitingRecordService {
 		wRecord.setStartTime(entity.getStartTime());
 		wRecord.setEndTime(new Date());
 		wRecord.setTimediff(DateUtils.getDatePoor(entity.getStartTime(), date, "min"));
-		wRecord.setSpindleMode(Objects.toString(monitoringList.get("SpindleMode"), null));
 		daoWaitingRecord.insert(wRecord);
 	}
 

@@ -29,78 +29,103 @@ public class WaitingRecord {
 	private Date  startTime;
 	
 	@Column(name = "end_time")
-	private Date  endTime;
+	private Date endTime;
+	
+	@Column(name = "cnc_products")
+	private Long cncProducts;
+	
+	@Column(name = "cnc_emer")
+	private String cncEmer;
+	
+	@Column(name = "cnc_runtime")
+	private String cncRuntime;
 
-	@Column(name = "machine_mode")
-	private String machineMode;
+	@Column(name = "cnc_srate")
+	private String cncSrate;
 	
-	@Column(name = "machine_status")
-	private String machineStatus;
+	@Column(name = "cnc_actfspeed")
+	private String cncActfspeed;
 	
-	@Column(name = "alarm_no")
-	private String alarmNo;
-	 
-	@Column(name = "alarm_message")
-	private String alarmMessage;
+	@Column(name = "cnc_toolnum")
+	private String cncToolnum;
 	
-	@Column(name = "maintenance_signal")
-	private String maintenanceSignal;
+	@Column(name = "cnc_sload")
+	private String cncSload;
 	
-	@Column(name = "mainProgram_no")
-	private String mainProgramNo;
+	@Column(name = "cnc_setspeed")
+	private String cncSetspeed;
 	
-	@Column(name = "mainProgram_comment")
-	private String mainProgramComment;
+	@Column(name = "cnc_gcode")
+	private String cncGcode;
 	
-	@Column(name = "subProgram_no")
-	private String subProgramNo;
+	@Column(name = "cnc_currentpro")
+	private String cncCurrentpro;
 	
-	@Column(name = "subProgram_comment")
-	private String subProgramComment;
+	@Column(name = "cnc_actspeed")
+	private String cncActspeed;
 	
-	@Column(name = "tool_no")
-	private String toolNo;
+	@Column(name = "cnc_rapidfeed")
+	private String cncRapidfeed;
 	
-	@Column(name = "tool_suffix")
-	private String toolSuffix;
+	@Column(name = "cnc_seq")
+	private String cncSeq;
 	
-	@Column(name = "tool_name")
-	private String toolName;
+	@Column(name = "cnc_cuttime")
+	private String cncCuttime;
 	
-	@Column(name = "tool_part")
-	private String toolPart;
+	@Column(name = "cnc_tooloffsethnum")
+	private String cncTooloffsethnum;
 	
-	@Column(name = "partsCount_target")
-	private String partsCountTarget;
+	@Column(name = "cnc_setfspeed")
+	private String cncSetfspeed;
 	
-	@Column(name = "partsCount_result")
-	private String partsCountResult;
+	@Column(name = "cnc_tooloffsetdnum")
+	private String cncTooloffsetdnum;
 	
-	@Column(name = "machiningTime_progress")
-	private String machiningTimeProgress;
+	@Column(name = "cnc_frate")
+	private String cncFrate;
 	
-	@Column(name = "override_rapid")
-	private String overrideRapid;
+	@Column(name = "cnc_mainproname")
+	private String cncMainproname;
 	
-	@Column(name = "override_spindle")
-	private String overrideSpindle;
+	@Column(name = "cnc_mode")
+	private String cncMode;
 	
-	@Column(name = "override_feed")
-	private String overrideFeed;
-	
-	@Column(name = "spindle_mode")
-	private String spindleMode;
+	@Column(name = "cnc_cycletime")
+	private Integer cncCycletime;
 	
 	@Column(name = "timediff")
 	private Long timediff;
 	
-	public Long getTimediff() {
-		return timediff;
-	}
-
-	public void setTimediff(Long timediff) {
-		this.timediff = timediff;
-	}
+	@Column(name = "cnc_mcX")
+	private String cncMcX;
+	
+	@Column(name = "cnc_mcY")
+	private String cncMcY;
+	
+	@Column(name = "cnc_mcZ")
+	private String cncMcZ;
+	
+	@Column(name = "cnc_mcA")
+	private String cncMcA;
+	
+	@Column(name = "cnc_rcX")
+	private String cncRcX;
+	
+	@Column(name = "cnc_rcZ")
+	private String cncRcZ;
+	
+	@Column(name = "cnc_rcA")
+	private String cncRcA;
+	
+	@Column(name = "cnc_lX")
+	private String cncLX;
+	
+	@Column(name = "cnc_lY")
+	private String cncLY;
+	
+	@Column(name = "cnc_lZ")
+	private String cncLZ;
 
 	public Long getId() {
 		return id;
@@ -116,166 +141,6 @@ public class WaitingRecord {
 
 	public void setMachineId(Long machineId) {
 		this.machineId = machineId;
-	}
-
-	public String getMachineMode() {
-		return machineMode;
-	}
-
-	public void setMachineMode(String machineMode) {
-		this.machineMode = machineMode;
-	}
-
-	public String getMachineStatus() {
-		return machineStatus;
-	}
-
-	public void setMachineStatus(String machineStatus) {
-		this.machineStatus = machineStatus;
-	}
-
-	public String getAlarmNo() {
-		return alarmNo;
-	}
-
-	public void setAlarmNo(String alarmNo) {
-		this.alarmNo = alarmNo;
-	}
-
-	public String getAlarmMessage() {
-		return alarmMessage;
-	}
-
-	public void setAlarmMessage(String alarmMessage) {
-		this.alarmMessage = alarmMessage;
-	}
-
-	public String getMaintenanceSignal() {
-		return maintenanceSignal;
-	}
-
-	public void setMaintenanceSignal(String maintenanceSignal) {
-		this.maintenanceSignal = maintenanceSignal;
-	}
-
-	public String getMainProgramNo() {
-		return mainProgramNo;
-	}
-
-	public void setMainProgramNo(String mainProgramNo) {
-		this.mainProgramNo = mainProgramNo;
-	}
-
-	public String getMainProgramComment() {
-		return mainProgramComment;
-	}
-
-	public void setMainProgramComment(String mainProgramComment) {
-		this.mainProgramComment = mainProgramComment;
-	}
-
-	public String getSubProgramNo() {
-		return subProgramNo;
-	}
-
-	public void setSubProgramNo(String subProgramNo) {
-		this.subProgramNo = subProgramNo;
-	}
-
-	public String getSubProgramComment() {
-		return subProgramComment;
-	}
-
-	public void setSubProgramComment(String subProgramComment) {
-		this.subProgramComment = subProgramComment;
-	}
-
-	public String getToolNo() {
-		return toolNo;
-	}
-
-	public void setToolNo(String toolNo) {
-		this.toolNo = toolNo;
-	}
-
-	public String getToolSuffix() {
-		return toolSuffix;
-	}
-
-	public void setToolSuffix(String toolSuffix) {
-		this.toolSuffix = toolSuffix;
-	}
-
-	public String getToolName() {
-		return toolName;
-	}
-
-	public void setToolName(String toolName) {
-		this.toolName = toolName;
-	}
-
-	public String getToolPart() {
-		return toolPart;
-	}
-
-	public void setToolPart(String toolPart) {
-		this.toolPart = toolPart;
-	}
-
-	public String getPartsCountTarget() {
-		return partsCountTarget;
-	}
-
-	public void setPartsCountTarget(String partsCountTarget) {
-		this.partsCountTarget = partsCountTarget;
-	}
-
-	public String getPartsCountResult() {
-		return partsCountResult;
-	}
-
-	public void setPartsCountResult(String partsCountResult) {
-		this.partsCountResult = partsCountResult;
-	}
-
-	public String getMachiningTimeProgress() {
-		return machiningTimeProgress;
-	}
-
-	public void setMachiningTimeProgress(String machiningTimeProgress) {
-		this.machiningTimeProgress = machiningTimeProgress;
-	}
-
-	public String getOverrideRapid() {
-		return overrideRapid;
-	}
-
-	public void setOverrideRapid(String overrideRapid) {
-		this.overrideRapid = overrideRapid;
-	}
-
-	public String getOverrideSpindle() {
-		return overrideSpindle;
-	}
-
-	public void setOverrideSpindle(String overrideSpindle) {
-		this.overrideSpindle = overrideSpindle;
-	}
-
-	public String getOverrideFeed() {
-		return overrideFeed;
-	}
-
-	public void setOverrideFeed(String overrideFeed) {
-		this.overrideFeed = overrideFeed;
-	}
-
-	public String getSpindleMode() {
-		return spindleMode;
-	}
-
-	public void setSpindleMode(String spindleMode) {
-		this.spindleMode = spindleMode;
 	}
 
 	public String getMachineName() {
@@ -301,4 +166,262 @@ public class WaitingRecord {
 	public void setEndTime(Date endTime) {
 		this.endTime = endTime;
 	}
+
+	public Long getCncProducts() {
+		return cncProducts;
+	}
+
+	public void setCncProducts(Long cncProducts) {
+		this.cncProducts = cncProducts;
+	}
+
+	public String getCncEmer() {
+		return cncEmer;
+	}
+
+	public void setCncEmer(String cncEmer) {
+		this.cncEmer = cncEmer;
+	}
+
+	public String getCncRuntime() {
+		return cncRuntime;
+	}
+
+	public void setCncRuntime(String cncRuntime) {
+		this.cncRuntime = cncRuntime;
+	}
+
+	public String getCncSrate() {
+		return cncSrate;
+	}
+
+	public void setCncSrate(String cncSrate) {
+		this.cncSrate = cncSrate;
+	}
+
+	public String getCncActfspeed() {
+		return cncActfspeed;
+	}
+
+	public void setCncActfspeed(String cncActfspeed) {
+		this.cncActfspeed = cncActfspeed;
+	}
+
+	public String getCncToolnum() {
+		return cncToolnum;
+	}
+
+	public void setCncToolnum(String cncToolnum) {
+		this.cncToolnum = cncToolnum;
+	}
+
+	public String getCncSload() {
+		return cncSload;
+	}
+
+	public void setCncSload(String cncSload) {
+		this.cncSload = cncSload;
+	}
+
+	public String getCncSetspeed() {
+		return cncSetspeed;
+	}
+
+	public void setCncSetspeed(String cncSetspeed) {
+		this.cncSetspeed = cncSetspeed;
+	}
+
+	public String getCncGcode() {
+		return cncGcode;
+	}
+
+	public void setCncGcode(String cncGcode) {
+		this.cncGcode = cncGcode;
+	}
+
+	public String getCncCurrentpro() {
+		return cncCurrentpro;
+	}
+
+	public void setCncCurrentpro(String cncCurrentpro) {
+		this.cncCurrentpro = cncCurrentpro;
+	}
+
+	public String getCncActspeed() {
+		return cncActspeed;
+	}
+
+	public void setCncActspeed(String cncActspeed) {
+		this.cncActspeed = cncActspeed;
+	}
+
+	public String getCncRapidfeed() {
+		return cncRapidfeed;
+	}
+
+	public void setCncRapidfeed(String cncRapidfeed) {
+		this.cncRapidfeed = cncRapidfeed;
+	}
+
+	public String getCncSeq() {
+		return cncSeq;
+	}
+
+	public void setCncSeq(String cncSeq) {
+		this.cncSeq = cncSeq;
+	}
+
+	public String getCncCuttime() {
+		return cncCuttime;
+	}
+
+	public void setCncCuttime(String cncCuttime) {
+		this.cncCuttime = cncCuttime;
+	}
+
+	public String getCncTooloffsethnum() {
+		return cncTooloffsethnum;
+	}
+
+	public void setCncTooloffsethnum(String cncTooloffsethnum) {
+		this.cncTooloffsethnum = cncTooloffsethnum;
+	}
+
+	public String getCncSetfspeed() {
+		return cncSetfspeed;
+	}
+
+	public void setCncSetfspeed(String cncSetfspeed) {
+		this.cncSetfspeed = cncSetfspeed;
+	}
+
+	public String getCncTooloffsetdnum() {
+		return cncTooloffsetdnum;
+	}
+
+	public void setCncTooloffsetdnum(String cncTooloffsetdnum) {
+		this.cncTooloffsetdnum = cncTooloffsetdnum;
+	}
+
+	public String getCncFrate() {
+		return cncFrate;
+	}
+
+	public void setCncFrate(String cncFrate) {
+		this.cncFrate = cncFrate;
+	}
+
+	public String getCncMainproname() {
+		return cncMainproname;
+	}
+
+	public void setCncMainproname(String cncMainproname) {
+		this.cncMainproname = cncMainproname;
+	}
+
+	public String getCncMode() {
+		return cncMode;
+	}
+
+	public void setCncMode(String cncMode) {
+		this.cncMode = cncMode;
+	}
+
+	public Integer getCncCycletime() {
+		return cncCycletime;
+	}
+
+	public void setCncCycletime(Integer cncCycletime) {
+		this.cncCycletime = cncCycletime;
+	}
+
+	public Long getTimediff() {
+		return timediff;
+	}
+
+	public void setTimediff(Long timediff) {
+		this.timediff = timediff;
+	}
+
+	public String getCncMcX() {
+		return cncMcX;
+	}
+
+	public void setCncMcX(String cncMcX) {
+		this.cncMcX = cncMcX;
+	}
+
+	public String getCncMcY() {
+		return cncMcY;
+	}
+
+	public void setCncMcY(String cncMcY) {
+		this.cncMcY = cncMcY;
+	}
+
+	public String getCncMcZ() {
+		return cncMcZ;
+	}
+
+	public void setCncMcZ(String cncMcZ) {
+		this.cncMcZ = cncMcZ;
+	}
+
+	public String getCncMcA() {
+		return cncMcA;
+	}
+
+	public void setCncMcA(String cncMcA) {
+		this.cncMcA = cncMcA;
+	}
+
+	public String getCncRcX() {
+		return cncRcX;
+	}
+
+	public void setCncRcX(String cncRcX) {
+		this.cncRcX = cncRcX;
+	}
+
+	public String getCncRcZ() {
+		return cncRcZ;
+	}
+
+	public void setCncRcZ(String cncRcZ) {
+		this.cncRcZ = cncRcZ;
+	}
+
+	public String getCncRcA() {
+		return cncRcA;
+	}
+
+	public void setCncRcA(String cncRcA) {
+		this.cncRcA = cncRcA;
+	}
+
+	public String getCncLX() {
+		return cncLX;
+	}
+
+	public void setCncLX(String cncLX) {
+		this.cncLX = cncLX;
+	}
+
+	public String getCncLY() {
+		return cncLY;
+	}
+
+	public void setCncLY(String cncLY) {
+		this.cncLY = cncLY;
+	}
+
+	public String getCncLZ() {
+		return cncLZ;
+	}
+
+	public void setCncLZ(String cncLZ) {
+		this.cncLZ = cncLZ;
+	}
+	
+	
 }

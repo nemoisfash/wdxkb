@@ -44,6 +44,12 @@ var deviceParameters={
 	"cnc_rcY":"cnc_rcY",
 	"cnc_rcZ":"cnc_rcZ",
 	"cnc_rcA":"cnc_rcA",
+	
+	"cnc_abX":"cnc_abX",
+	"cnc_abY":"cnc_abY",
+	"cnc_abZ":"cnc_abZ",
+	"cnc_abA":"cnc_abA",
+	
 	"cnc_lX":"cnc_lX",
 	"cnc_lY":"cnc_lY",
 	"cnc_lZ":"cnc_lZ",

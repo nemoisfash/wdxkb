@@ -6,6 +6,8 @@ import java.util.Map;
 import org.tdds.entity.Machine;
 import org.tdds.entity.MonitoringList;
 
+import com.alibaba.fastjson.JSONObject;
+
 import net.chenke.playweb.QueryFilters;
 import net.chenke.playweb.support.mybatis.Page;
 import net.chenke.playweb.support.mybatis.PageRequest;
@@ -26,8 +28,6 @@ public interface MachineService{
 
 	List<Map<String, Object>> exportInfore(Long id);
 
-	int update(Map<String, Object> monitor,Machine entity);
-
 	Machine findMachineByName(String machineName);
 	
 	void insert(MonitoringList monitoringList);
@@ -37,5 +37,10 @@ public interface MachineService{
 	List<Machine> findMachines(QueryFilters filters);
 
 	Integer findStatusNum(String status);
+
+
+	void update(JSONObject monitor);
+
+	void publish(String topic, String jsonString);
 
 }

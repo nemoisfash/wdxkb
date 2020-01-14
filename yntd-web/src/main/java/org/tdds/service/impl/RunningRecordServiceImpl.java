@@ -42,16 +42,6 @@ public class RunningRecordServiceImpl implements RunningRecordService {
 		entity.setStartTime(machine.getStartTime());
 		entity.setEndTime(date);
 		entity.setTimediff(DateUtils.getDatePoor(machine.getStartTime(), date, "min"));
-		entity.setMachineMode(Objects.toString(monitoringList.get("machineMode"), null));
-		entity.setMachineStatus(Objects.toString(monitoringList.get("machineStatus"), null));
-		entity.setMachineStatus(Objects.toString(monitoringList.get("machiningTimeProgress"), null));
-		entity.setMachineStatus(Objects.toString(monitoringList.get("mainprogramNo"), null));
-		entity.setMachineStatus(Objects.toString(monitoringList.get("maintenanceSignal"), null));
-		entity.setMachineStatus(Objects.toString(monitoringList.get("overrideFeed"), null));
-		entity.setMachineStatus(Objects.toString(monitoringList.get("overrideRapid"), null));
-		entity.setMachineStatus(Objects.toString(monitoringList.get("overrideSpindle"), null));
-		entity.setMachineStatus(Objects.toString(monitoringList.get("partscountResult"), null));
-		entity.setMachineStatus(Objects.toString(monitoringList.get("partscountTarget"), null));
 		runningRecordDao.insert(entity);
 	}
 

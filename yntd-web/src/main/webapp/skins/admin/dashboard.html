@@ -1,156 +1,176 @@
+<@layout.override name="body">
+    <section class="content-header">
+      <h1>
+        <small>Version 2.0</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i>后台管理</a></li>
+        <li class="active">首页</li>
+      </ol>
+    </section>
+    <section class="content" ng-app="dashboradApp" ng-controller="myCon">
+      <div class="row">
+        <div class="col-md-3 col-sm-6 col-xs-12">
+          <div class="info-box">
+            <span class="info-box-icon" style="background-color:#00c0ef00">
+            	<img  src="/themes/website/images/alibaba/running.png"/>
+            </span>
+            <div class="info-box-content">
+              <span class="info-box-text">运行</span>
+              <span class="info-box-number">{{running}}台</span>
+            </div>
+          </div>
+        </div>
+        <!-- /.col -->
+        <div class="col-md-3 col-sm-6 col-xs-12">
+          <div class="info-box">
+            <span class="info-box-icon" style="background-color:#00c0ef00">
+            	<img  src="/themes/website/images/alibaba/poweroff.png"/>
+            </span>
+            <div class="info-box-content">
+              <span class="info-box-text">停机</span>
+              <span class="info-box-number">{{poweroff}}台</span>
+            </div>
+            <!-- /.info-box-content -->
+          </div>
+          <!-- /.info-box -->
+        </div>
+        <!-- /.col -->
+
+        <!-- fix for small devices only -->
+        <div class="clearfix visible-sm-block"></div>
+
+        <div class="col-md-3 col-sm-6 col-xs-12">
+          <div class="info-box">
+            <span class="info-box-icon" style="background-color:#00c0ef00">
+            	<img src="/themes/website/images/alibaba/alarm.png"/>
+           	</span>
+            <div class="info-box-content">
+              <span class="info-box-text">报警</span>
+             <span class="info-box-number">{{alarm}}台</span>
+            </div>
+          </div>
+        </div>
+        <!-- /.col -->
+        <div class="col-md-3 col-sm-6 col-xs-12">
+          <div class="info-box">
+            <span class="info-box-icon" style="background-color:#00c0ef00">
+            	<img src="/themes/website/images/alibaba/waiting.png"/>
+            </span>
+            <div class="info-box-content">
+              <span class="info-box-text">等待</span>
+              <span class="info-box-number">{{waiting}}台</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="row">
+         <div class="col-md-6">
+          <div class="box box-success">
+            <div class="box-header with-border">
+              <h3 class="box-title">设备实时状态</h3>
+              <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+              </div>
+            </div>
+          	<div class="box-body no-padding" style="height:300px;">
+				<img width="100%" height="80%" src="/themes/website/images/aoshen/aoshen.png"></img>
+				<span id="T005_m" class="circle circle-running headerBox" style="top:4%;left:91%;">
+				</span>
+				<span id="1160-2_m" class="circle circle-running headerBox" style="top:4%;left:80%;" ng-click="getMahineinfo('1160-2')">
+				</span>
+				<span id="1160-1_m" class="circle circle-running headerBox" style="top:4%;left:70%;" ng-click="getMahineinfo('1160-1')">
+				</span>
+				<span id="MC007_m" class="circle circle-running headerBox" style="top:4%;left:60%;" ng-click="getMahineinfo('MC007')">
+				</span>
+				<span id="V8_m" class="circle circle-running headerBox" style="top:4%;left:51%;" ng-click="getMahineinfo('V8')">
+				</span>
+				<span id="966_m" class="circle circle-running headerBox" style="top:4%;left:41%;" ng-click="getMahineinfo('966')">
+				</span>
+				<span id="SR-32JM_m" class="circle circle-running headerBox" style="top:4%;left:29%;" ng-click="getMahineinfo('SR-32JM')">
+				</span>
+				<span id="V10_m" class="circle circle-running headerBox" style="top:19%;left:31%;" ng-click="getMahineinfo('V10')">
+				</span>
+				<span id="D9332_m" class="circle circle-running headerBox" style="top:19%;left:39%;" >
+				</span>
+				<span id="MC002_m" class="circle circle-running headerBox" style="top:19%;left:47%;" ng-click="getMahineinfo('MC002')">
+				</span>
+				<span id="D9332_m" class="circle circle-running headerBox" style="top:19%;left:55%;" >
+				</span>
+				<span id="D9332_m" class="circle circle-running headerBox" style="top:42%;left:21%;">
+				</span>
+				<span id="T003_m" class="circle circle-running headerBox" style="top:42%;left:31%;" ng-click="getMahineinfo('T003')">
+				</span>
+				<span id="MX-T150R_m" class="circle circle-running headerBox" style="top:42%;left:41%;" ng-click="getMahineinfo('MX-T150R')">
+				</span>
+				<span id="T004_m" class="circle circle-running headerBox" style="top:42%;left:51%;" ng-click="getMahineinfo('T004')">
+				</span>
+          </div>
+        </div>
+      </div>
+        <div class="col-md-6">
+          <div class="box box-success">
+            <div class="box-header with-border">
+              <h3 class="box-title">每日每台设备状态柱状图</h3>
+              <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+              </div>
+            </div>
+          	<div class="box-body" style="height:300px;" bar-Charts>
+          </div>
+        </div>
+      </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="box">
+            <div class="box-header with-border">
+              <h3 class="box-title">所有设备每日运行状态时长折线图</h3>
+              <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                </button>
+              <!--   <div class="btn-group">
+                  <button type="button" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown">
+                    <i class="fa fa-wrench"></i>
+                	</button>
+                </div> -->
+                <button type="button" class="btn btn-box-tool" data-widget="remove">
+                	<i class="fa fa-times"></i>
+                </button>
+              </div>
+            </div>
+            <div class="box-body">
+              <div class="row">
+                <div class="col-md-12" style="height:360px;">
+                  <div style="height:100%;width:100%" line-Charts>
+                  		
+                  </div>
+                </div>
+              </div>
+              <!-- /.row -->
+            </div>
+          </div>
+        </div>
+      </div>
+      <!---------machineInfo start------------>
+      
+      	
+      <!---------machineInfo end------------>
+    </section>
+</@layout.override>
 <@layout.override name="css">
 <@layout.super/>
+<link rel="stylesheet" href="/themes/admin/index/css/css/dashboard.css">
 </@layout.override>
 <@layout.override name="js">
 <@layout.super/>
-<script src="/assets/echarts/3.2.3/echarts.min.js" type="text/javascript"></script>
+<script src="/themes/admin/echarts-options/lineOption.js"></script>
+<script src="/themes/admin/echarts-options/barOption.js"></script>
+<script src="/themes/admin/index/js/dashboard.js"></script>
 </@layout.override>
-<@layout.override name="body">
-<section class="content-header">
-	<h1>首页<small>工作台</small></h1>
-	<ol class="breadcrumb">
-		<li><a href="javascript:;"><i class="fa fa-fw fa-dashboard"></i> 首页</a></li>
-		<li class="active">工作台</li>
-	</ol>
-</section>
-
-<section class="content">
-
-<div class="row">
-<@sys.currentUser; user>
-	<section class="col-md-4">
-		<div class="box box-widget widget-user-2">
-			<div class="widget-user-header bg-teal">
-				<div class="widget-user-image">
-					<img class="img-circle" src="/themes/${skin!}/img/avatar04.png" alt="User Avatar">
-				</div>
-				<h3 class="widget-user-username">您好：${(user.name)!}</h3>
-				<h5>&nbsp;</h5>
-			</div>
-			<div class="box-footer no-padding">
-				<ul class="nav nav-stacked">
-					<li><a href="javascript:;">您的登录帐户，${(user.username)!}</a></li>
-					<li><a href="javascript:;">上次登录时间：${(user.loginTime ?string('yyyy-MM-dd HH:mm:ss'))!}</a></li>
-					<li><a href="javascript:;">&nbsp;</a></li>
-				</ul>
-			</div>
-		</div>
-	</section>
-</@sys.currentUser>
-	<section class="col-md-8">
-<div class="row">
-<@cms.channelList id="170"; item>
-<a href="${adminPath}/cms/news/${item.code}/list.html" >
-	<div class="col-md-3">
-		<div class="small-box bg-green">
-			<div class="inner">
-				<@cms.articleCount filters={'channelId':'${(item.id)!}'}; cnt>
-							<h3>${cnt!}</h3>
-				</@cms.articleCount>
-				<p>${(item.name)!}</p>
-			</div>
-			<div class="icon"><i class="ion ion-bag"></i></div>
-		</div>
-	</div>
-</a>
-</@cms.channelList>
-</div>
-	</section>
-</div>
-  
-  <!-- Main row -->
-  <div class="row">
-    <!-- Left col -->
-    <section class="col-md-7 connectedSortable">
-      <!-- Custom tabs (Charts with tabs)-->
-      
-      <!-- /.nav-tabs-custom -->
-      <div class="box" style="height: 310px">
-        <div class="box-header">
-          <h3 class="box-title"></h3>
-        </div>
-        <div class="box-body" style="position: relative; height: 240px;margin-top: -2%">
-         <@cms.articlesList  page=page size=6 iterate=false orderBy='create_time DESC'; items>
-          <#list items.content as item>
-               <div class="cc" style="width:49.99%; float:left">
-					<div class="com_index_rue_list cc mb10 mr10" style="box-sizing:border-box;margin-top: 16px;margin-left: 16px">
-						<dl style="margin-bottom: 6px">
-							<dd style="float:left">
-								<a class="tooltips width150" style="color: #1874CD" href="/article/${(item.id)!}.html" target="_blank" title="${(item.title)!}">${fn.clipHtml((item.title)!,24,'...')}</a>
-							</dd>
-						</dl>
-						<div class="6" >
-							<span class="com_index_rue_listspan" style="height: 6px">发布时间：${(item.createTime?string('yyyy-MM-dd HH:mm:ss'))!}</span> 
-							<span class="com_index_rue_listspan" style="height: 6px;margin-left:34px">所属栏目：<@cms.channel id='${(item.channelId)!}';channel>${(channel.name)!}</@cms.channel></span> 
-				        </div>
-					</div>
-				</div>
-					</#list>
-		 </@cms.articlesList>
-         </div>
-      </div>
-      
-      <div class="box">
-        <div class="box-header">
-          <h3 class="box-title">开发团队</h3>
-        </div>
-        <div class="box-body" style="position: relative; height: 220px;">
-            <p>开发团队：宁夏华信智信息科技有限公司</p>
-            <p>联系地址：银川市金凤区IBI育成中心</p> 
-        </div>
-      </div>
-    </section>
-    <!-- /.Left col -->
-    
-    <!-- right col (We are only adding the ID to make the widgets sortable)-->
-    <section class="col-md-5 connectedSortable">
-      <div class="box">
-        <div class="box-header">
-          <h3 class="box-title">微专题数据统计</h3>
-        </div>
-        <div class="box-body" style="height: 262px">
-          
-          <@cms.channelList id="1"; item>
-          <div class="col-md-4 ">
-           <a href="${adminPath}/content/article/list/${(item.id)!}.html">
-            <div class="small-box bg-aqua">
-              <div class="inner">
-              <@cms.articleCount filters={'channelId':'${(item.id)!}'}; cnt>
-                <h3>${cnt!}</h3>
-              </@cms.articleCount>
-                <p>${(item.name)!}</p>
-              </div>
-              <div class="icon">
-                <i class="ion ion-pie-graph"></i>
-              </div>
-            </div>
-            </a>
-          </div>
-          
-          </@cms.channelList>
-          
-
-        </div>
-        <!-- /.box-body -->
-      </div>
-    
-      <div class="box" style="margin-top: 24px">
-        <div class="box-header">
-          <h3 class="box-title">系统信息</h3>
-        </div>
-        <div class="box-body" style="height: 220px;">
-        
-		<p style="clear:both;">服务器软件：Apache/7.0.68 (Windows)</p>
-        <p>可用空间(磁盘区)：246938.76&nbsp;M</p>
-        <p>MySQL 版本：5.5.55-0</p>
-        
-        </div>
-      </div>
-    </section>
-    <!-- right col -->
-  </div>
-  <!-- /.row (main row) -->
-
-</section>
-</@layout.override>
-<@layout.extends name="layouts/bootstrap.html"/>
+<@layout.extends name="_layouts/bootstrap1.html"/>

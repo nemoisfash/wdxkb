@@ -31,12 +31,9 @@ public class MonitoringServiceImpl implements MonitoringService {
 	@Autowired
 	private Map<String, String> lostMap = new HashMap<String, String>();
 
-	/*
-	 * @Resource private MqttPahoMessageHandler mh;
-	 * 
-	 * @Resource private DefaultMqttPahoClientFactory df;
-	 */
-
+	 
+	 
+	 
 	private String mqttMsg;
 
 	@Override

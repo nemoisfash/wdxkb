@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.tdds.entity.Machine;
-import org.tdds.entity.MonitoringList;
 import org.tdds.entity.RunningRecord;
 
 import net.chenke.playweb.QueryFilters;

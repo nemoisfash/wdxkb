@@ -1,5 +1,5 @@
 var gaugeOption = {
-		  backgroundColor: 'white',
+			backgroundColor:'#f5f5f5',
 			title : {
 				top : 5,
 				left : 'center',

@@ -263,7 +263,7 @@ public class EchartsSupport {
 				}
 			}
 			if (monitor != null && !monitor.isEmpty()) {
-				bizMachine.update(monitor, machine);
+				/* bizMachine.update(monitor, machine); */
 				entities.add(monitor);
 			}
 		}

@@ -42,16 +42,6 @@ public class WarningRecordServiceImpl implements WarningRecordService {
 		warningRecord.setStartTime(entity.getStartTime());
 		warningRecord.setEndTime(date);
 		warningRecord.setTimediff(DateUtils.getDatePoor(entity.getStartTime(), date, "min"));
-		warningRecord.setSpindleMode(Objects.toString(monitoringList.get("alarmMessage"), null));
-		warningRecord.setSpindleMode(Objects.toString(monitoringList.get("alarmNo"), null));
-		warningRecord.setSpindleMode(Objects.toString(monitoringList.get("machineMode"), null));
-		warningRecord.setSpindleMode(Objects.toString(monitoringList.get("maintenanceSignal"), null));
-		warningRecord.setSpindleMode(Objects.toString(monitoringList.get("overrideFeed"), null));
-		warningRecord.setSpindleMode(Objects.toString(monitoringList.get("overrideRapid"), null));
-		warningRecord.setSpindleMode(Objects.toString(monitoringList.get("overrideSpindle"), null));
-		warningRecord.setSpindleMode(Objects.toString(monitoringList.get("partscountResult"), null));
-		warningRecord.setSpindleMode(Objects.toString(monitoringList.get("partscountTarget"), null));
-		warningRecord.setSpindleMode(Objects.toString(monitoringList.get("spindleMode"), null));
 		daoWarningRecord.insert(warningRecord);
 	}
 

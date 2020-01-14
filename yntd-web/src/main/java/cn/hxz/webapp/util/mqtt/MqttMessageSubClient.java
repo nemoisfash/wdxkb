@@ -28,7 +28,7 @@ public class MqttMessageSubClient implements MqttCallback{
 	
 	public  String content;
 
-	private  Map<String, Object> preRecord = new HashMap<String, Object>();
+	private  Map<String, Object> offlinemessage = new HashMap<String, Object>();
 	
 	public static final long DEFAULT_COMPLETION_TIMEOUT = 30000L;
 
@@ -47,9 +47,26 @@ public class MqttMessageSubClient implements MqttCallback{
 				@Override
 				public void messageArrived(String topic, MqttMessage message) throws Exception {
 					String msg = new String(message.getPayload());
-					preRecord.put(topic, msg);
-					TextMessage textMessage = new TextMessage(new JSONObject(preRecord).toJSONString());
-					MyWsHandler.sendMessageToClient(textMessage);
+					if(JSONObject.isValid(msg)){
+						if(msg.indexOf("limo")>-1) {
+							Map<String, Object> limoMap = new HashMap<String, Object>();
+							limoMap.put("code",topic.split("/")[1]);
+							limoMap.put("machineSignal","POWEROFF");
+							limoMap.put("machineSignalZH","关机");
+							TextMessage textMessage = new TextMessage(new JSONObject(limoMap).toJSONString());
+							MyWsHandler.sendMessageToClient(textMessage);
+						}
+						TextMessage textMessage = new TextMessage(msg);
+						MyWsHandler.sendMessageToClient(textMessage);
+					}else {
+						Map<String, Object> map = new HashMap<String, Object>();
+						map.put("code",topic.split("/")[1]);
+						map.put("machineSignal","POWEROFF");
+						map.put("machineSignalZH","关机");
+						TextMessage textMessage = new TextMessage(new JSONObject(map).toJSONString());
+						MyWsHandler.sendMessageToClient(textMessage);
+					}
+					
 				}
 				@Override
 				public void deliveryComplete(IMqttDeliveryToken token) {
@@ -67,7 +84,7 @@ public class MqttMessageSubClient implements MqttCallback{
 			});
 		} catch (MqttException e) {
 			System.out.print(e.getMessage());
-			TextMessage textMessage = new TextMessage(new JSONObject(preRecord).toJSONString());
+			TextMessage textMessage = new TextMessage(new JSONObject(offlinemessage).toJSONString());
 			MyWsHandler.sendMessageToClient(textMessage);
 		}
 	}
