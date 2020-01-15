@@ -29,16 +29,19 @@
 	.circle{
 		display:inline-block;
 		border-radius:50%;
-		height:45px;
+		height:65px;
 		width:65px;
 		text-align:center;
-		line-height:44px;
-		position:absolute;
+		line-height:61px;
+		font-size:27px;
+		position:relative;
 		color:#FFF0FF;
 		background:#07070a69;
+		top: 50px;
+    	left: -6px;
 	}
 	.circle-running{
-		border:3px solid #12b07b;
+		/* border:5px solid #12b07b; */
 	}
 	.circle-poweroff{
 		border:3px solid #a6a5a5;

@@ -76,14 +76,14 @@
 			    <div class="panel-body">
 				    <table class="table">
 					        <th>报警时间</th>
-					        <th>20ssss</th>
+					        <th></th>
 				       	 <tr>
 				        	<th>报警编号</th>
-				        	<th>sss</th>
+				        	<th></th>
 			        	</tr>
 			        	 <tr>
 					        <th>报警信息</th>
-					        <th>sssss</th>
+					        <th></th>
 				        </tr>
 				    </table>
 			    </div>
@@ -180,23 +180,58 @@
 			            负载
 			        </h3>
 			    </div>
-			    <div class="panel-body" id="lineLoad" style="width:790px;height:200px">
-		 			
-			    </div>
+			   <div id="myCarousel" class="panel-body carousel slide">
+			   		<div class="carousel-inner" style="height:200px;">
+			   			<div class="item active">
+			   				<div  name="loadChartsContainer" data-type="cnc_lX" style="width:700px;height:200px;float:left;">
+			   				</div>
+				   			 <div style="width:90px;height:200px;float:right;text-align:center;">
+							    	 <span class="label" style="position:relative;top:45px;color:black;">X轴负载</span>
+						    	 <span class="circle circle-running headerBox">{{cnc_lX}}</span>
+				   	 		</div>
+			   			</div>
+				   		<div class="item">
+					   		<div name="loadChartsContainer" data-type="cnc_lY"  style="width:700px;height:200px;float:left;">
+					   		</div>
+					   	 	<div style="width:90px;height:200px;float:right;text-align:center;">
+						    	 <span class="label" style="position:relative;top:45px;color:black;">Y轴负载</span>
+						    	 <span class="circle circle-running headerBox">{{cnc_lY}}</span>
+					   	 	</div>
+					   		<div class="item" name="loadChartsContainer" data-type="cnc_lZ" style="width:700px;height:200px;float:left;">
+					   		</div>
+				   		</div>
+				   		<div class="item">
+					   		 <div name="loadChartsContainer" data-type="cnc_lZ" style="width:700px;height:200px;float:left;">
+					   		</div>
+					 		<div style="width:90px;height:200px;float:right;text-align:center;">
+						    	 <span class="label" style="position:relative;top:45px;color:black;">Z轴负载</span>
+						    	 <span class="circle circle-running headerBox">{{cnc_lZ}}</span>
+					   	 	</div>
+				   	 	</div>
+				   		 <div class="item">
+					   		 <div name="loadChartsContainer" data-type="cnc_lA" style="width:700px;height:200px;float:left;">
+					   		</div>
+					 		<div style="width:90px;height:200px;float:right;text-align:center;">
+						    	 <span class="label" style="position:relative;top:45px;color:black;">A轴负载</span>
+						    	 <span class="circle circle-running headerBox">{{cnc_lA}}</span>
+					   	 	</div>
+				   	 	</div>
+			  		 </div>
+			  	</div>
 			</div>
-			 	 <div class="panel panel-default">
+			<div class="panel panel-default">
 				    <div class="panel-heading">
 				        <h3 class="panel-title">
 				            倍率
 				        </h3>
 				    </div>
 			    	<div id="gagues" class="panel-body" style="width:790px;height:200px">
-	  					 <div style="width:253px;height:200px;float:left">ssss</div>
-	  					 <div style="width:253px;height:200px;float:left">ssss</div>
-	  					 <div style="width:253px;height:200px;float:left">ssss</div>
+	  					 <div data-type="cnc_srate" style="width:253px;height:200px;float:left"></div>
+	  					 <div data-type="cnc_frate" style="width:253px;height:200px;float:left"></div>
+	  					 <div data-type="cnc_rapidfeed" style="width:253px;height:200px;float:left"></div>
 					</div>
-				</div>
-		 	<div class="panel panel-default">
+			 </div>
+		 	<!-- <div class="panel panel-default">
 			    <div class="panel-heading">
 			        <h3 class="panel-title">
 			            速度
@@ -208,7 +243,7 @@
 					        <th>价格</th>
 				    </table>
 			    </div>
-			</div>
+			</div> -->
  		</section>
  	 
       <!---------machineInfo end------------>
