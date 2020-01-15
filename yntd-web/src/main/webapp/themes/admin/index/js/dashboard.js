@@ -3,6 +3,20 @@
  */
 var app = angular.module('dashboradApp', []);
 app.controller('myCon', function($scope,$http,$interval) {
+	$(function(){
+		$('#machineInfo').slideReveal({
+			width: '100%',
+			push: false,
+			position: 'top',
+			show: function (obj) {
+				
+			},
+			hide: function (obj) {
+			},
+			hidden: function (obj) {
+			},
+		});
+	})
 	 $interval(function(){
 			$http({
 					method: 'GET',
@@ -41,9 +55,13 @@ app.controller('myCon', function($scope,$http,$interval) {
 			 $("#"+machineName+"_m").addClass("circle"+" "+"circle-"+status.toLowerCase()+" "+"headerBox");
 		})
 	}
- getMahineinfo();
- function getMahineinfo(){
-	   var cnc= JSON.parse(localStorage.getItem("V10"));
+  
+	$scope.getMahineinfo=function(name){
+		$('#machineInfo').slideReveal('show');
+	    var cnc= JSON.parse(localStorage.getItem(name));
+		if(cnc==null){
+	    	return;
+	    }
 		$scope.cncName=cnc["machineName"];
 		/***********机械坐标**************/
 		$scope.cncMcX=cnc["cnc_mcX"];
@@ -70,12 +88,14 @@ app.controller('myCon', function($scope,$http,$interval) {
 		$scope.cncCycletime=cnc["cnc_cycletime"];
 		$scope.cncCycletime=cnc["cnc_cycletime"];
 		$scope.cncProducts=cnc["cnc_products"];
+		
+		$scope.cncActfspeed=cnc["cnc_actfspeed"];
+		$scope.cncActspeed=cnc["cnc_actspeed"];
+		 setTimeout(function(){
+			 initLoadLine(name)
+		 },1000)
 	}
- 
-	 setTimeout(function(){
-		 initLoadLine()
-	 },1000)
-	 function initLoadLine(){
+	 function initLoadLine(machineName){
 		 	 var lineLoadObj=[];
 			 var loadChartsContrainer =$("div[name='loadChartsContainer']");
 			 var chartsArry=[];
@@ -86,20 +106,17 @@ app.controller('myCon', function($scope,$http,$interval) {
 				  chartsArry.push(k);
 			 })
 			 
-			  $('#myCarousel').carousel({
-				  interval:6000,
-			  });
-			 
 			  $interval(function(){
-				  initLoadLineOption(chartsArry)
+				  initLoadLineOption(chartsArry,machineName)
 			  },1000)
-			
+			  
 	 }
 	 
-	 function initLoadLineOption(eArrays){
+	 function initLoadLineOption(eArrays,machineName){
 		 var now = new Date();
 		 var time = now.getHours()+":"+now.getMinutes()+":"+now.getSeconds();
-		 var cnc= JSON.parse(localStorage.getItem("V10"));
+		 var cnc= JSON.parse(localStorage.getItem(machineName));
+		 console.info(cnc);
 		 $.each(eArrays,function(i,em){
 			 var name=this.name;
 			 if(cnc[name]){
@@ -121,10 +138,15 @@ app.controller('myCon', function($scope,$http,$interval) {
 			 }
 			
 		 })
+		 
+		  $('#myCarousel').carousel({
+				  interval:6000,
+		  });
+		 intiGauge(machineName)
 	 }
 	 
-	 intiGauge();
-	 function intiGauge(){
+	 
+	 function intiGauge(machineName){
 		 var gagueCharts = $("#gagues").children("div");
 		 var gagueArrays=[];
 		 $.each(gagueCharts,function(){
@@ -135,19 +157,19 @@ app.controller('myCon', function($scope,$http,$interval) {
 		 })
 		 
 		  $interval(function(){
-			   setGagueoPtion(gagueArrays);
+			   setGagueoPtion(gagueArrays,machineName);
 		  },1000)
 		 
 	 }
 	 
 	 var dataZH={
-			 cnc_srate:"主轴倍率",
-			 cnc_frate:"进给倍率",
-			 cnc_rapidfeed:"快速移动倍率"
+		 cnc_srate:"主轴倍率",
+		 cnc_frate:"进给倍率",
+		 cnc_rapidfeed:"快速移动倍率"
 	 }
 	 
-	 function setGagueoPtion(eArrays){
-		 var cnc= JSON.parse(localStorage.getItem("V10"));
+	 function setGagueoPtion(eArrays,machineName){
+		 var cnc= JSON.parse(localStorage.getItem(machineName));
 		 $.each(eArrays,function(i,em){
 			 var name=this.name;
 			 var n = Number(cnc[name]);

@@ -26,7 +26,7 @@
 		    opacity: 1.0;
 		}
 	}
-	.circle{
+	.device-circle{
 		display:inline-block;
 		border-radius:50%;
 		height:65px;
@@ -40,8 +40,26 @@
 		top: 50px;
     	left: -6px;
 	}
-	.circle-running{
+	.device-circle-running{
 		/* border:5px solid #12b07b; */
+	}
+ 
+ .circle{
+	display: inline-block;
+    border-radius: 50%;
+    height: 39px;
+    width: 69px;
+    text-align: center;
+    line-height: 25px;
+    position: absolute;
+    color: #35a5e7;
+    background: #07070a69;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+	.circle-running{
+		border:3px solid #12b07b;
 	}
 	.circle-poweroff{
 		border:3px solid #a6a5a5;
@@ -53,6 +71,7 @@
 		border:3px solid #feb501;
 	}
 	
-	.circle-manual{
+	.circle-unknow{
 		border:3px solid #feb501;
-	} 
+}
+ 

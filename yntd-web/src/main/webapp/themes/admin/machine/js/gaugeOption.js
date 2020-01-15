@@ -80,7 +80,7 @@ var gaugeOptions = [{
 				},
 				title : {
 					textStyle : {
-						fontSize : 16,
+						fontSize : 10,
 						fontWeight : 'bolder',
 						fontStyle : 'normal',
 						color : "black"
@@ -172,7 +172,7 @@ var gaugeOptions = [{
 		},
 		title : {
 			textStyle : {
-				fontSize : 16,
+				fontSize : 10,
 				fontWeight : 'bolder',
 				fontStyle : 'normal',
 				color : "black"
