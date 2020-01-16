@@ -207,7 +207,6 @@ function replaceKey(jo){
 	$scope.switchStatus(deviceParameters);
 }
 
-
 $scope.callbackReportData =function(){
 	 $.get("/member/callbackReportData.json");
 }
@@ -225,7 +224,6 @@ $scope.switchStatus=function(jo){
 		}
 		var machineName=obj.machineName;
 		$("#"+machineName+"_m").attr("class","")
-		$("#"+machineName+"_m").text(machineName);
 		$("#"+machineName+"_m").addClass("circle"+" "+"circle-"+status.toLowerCase()+" "+"headerBox");
 	 } 
 		$timeout(function(){

@@ -55,9 +55,10 @@ public class MqttMessageSubClient implements MqttCallback{
 							limoMap.put("machineSignalZH","关机");
 							TextMessage textMessage = new TextMessage(new JSONObject(limoMap).toJSONString());
 							MyWsHandler.sendMessageToClient(textMessage);
+						}else {
+							TextMessage textMessage = new TextMessage(msg);
+							MyWsHandler.sendMessageToClient(textMessage);
 						}
-						TextMessage textMessage = new TextMessage(msg);
-						MyWsHandler.sendMessageToClient(textMessage);
 					}else {
 						Map<String, Object> map = new HashMap<String, Object>();
 						map.put("code",topic.split("/")[1]);
