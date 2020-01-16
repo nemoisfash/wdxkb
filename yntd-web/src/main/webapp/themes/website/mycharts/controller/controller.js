@@ -2,7 +2,7 @@ var app = angular.module('myApp', []);
 app.controller('myCtrl', function($scope,$http,$timeout,$interval) {
 $.get("/member/getAllTopics.json",function(data){
 	if(data.success){
-		var chatsTopices = ["pies", "ranking", "timeLineCategories","timeLineSeriesData"];
+		var chatsTopices = ["pies", "ranking", "timeLine"];
 		localStorage.setItem("chatsTopic",chatsTopices.join("&"));
 		var machineTopices = data.topices;
 		localStorage.setItem("machineTopices",machineTopices.join("&"));
@@ -289,19 +289,12 @@ function publishPieData(){
 function publishRanking(){
 	$.get("/member/publishRanking.json") 
 	$timeout(function(){
-		publishTimeLineCategories()
-	},1000)
-}
-
-function publishTimeLineCategories(){
-	$.get("/member/publishTimeLineCategories.json")
-	$timeout(function(){
-		publishTimeLineSeriesData()
+		publishTimeLine()
 	},5000)
 }
 
-function publishTimeLineSeriesData(){
-	$.get("/member/publishTimeLineSeriesData.json") 
+function publishTimeLine(){
+		$.get("/member/timeLine.json")
 }
 
 }).directive('myClock',function($interval,$http){

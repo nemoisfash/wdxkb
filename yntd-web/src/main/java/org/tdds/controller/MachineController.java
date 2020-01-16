@@ -12,23 +12,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.enterprise.inject.New;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.socket.TextMessage;
 import org.tdds.entity.Machine;
-import org.tdds.entity.Report;
 import org.tdds.service.LogRecordService;
 import org.tdds.service.MachineService;
 import org.tdds.service.MonitoringService;
@@ -211,11 +206,11 @@ public class MachineController extends BasePortalController {
 		return list;
 	}
 
-	@RequestMapping(value = "/publishTimeLineCategories", method = RequestMethod.GET)
+	@RequestMapping(value = "/timeLine", method = RequestMethod.GET)
 	@ResponseBody
 	private Object publishTimeLineCategories() {
 		Boolean success = true;
-		String topic = "timeLineCategories";
+		String topic = "timeLine";
 		Map<String, Object> result = new HashMap<>();
 		try {
 			List<Machine> machines = bizMachine.findMachine();
@@ -223,8 +218,13 @@ public class MachineController extends BasePortalController {
 			for (Machine entity : machines) {
 				names.add(entity.getName());
 			}
-			result.put("content", names);
+			
 			result.put("code", topic);
+			Map<String, Object> map =publishTimeLineSeriesData();
+			if((boolean) map.get("success")) {
+				result.put("categories", names);
+				result.put("seriesdata", map.get("content"));
+			}
 			TextMessage textMessage = new TextMessage(new JSONObject(result).toJSONString());
 			MyWsHandler.sendMessageToClient(textMessage);
 		} catch (Exception e) {
@@ -238,33 +238,16 @@ public class MachineController extends BasePortalController {
 		 return result;
 	}
 
-	private String createOee(int dividend, int divisor) {
-		String f = null;
-		if (dividend != 0) {
-			if (dividend == divisor) {
-				f = "100";
-			} else {
-				Double numDouble = (Double.valueOf(divisor) / Double.valueOf(dividend)) * 100;
-				f = new DecimalFormat("#.00").format(numDouble);
-			}
-		} else {
-			f = "0";
-		}
-		return f + "%";
-	}
-
 	/**
 	 * 
 	 * @return
 	 * @throws ParseException
 	 */
-	@RequestMapping(value = "/publishTimeLineSeriesData", method = RequestMethod.GET)
-	private Object publishTimeLineSeriesData() {
-		String topic = "timeLineSeriesData";
+	private Map<String, Object> publishTimeLineSeriesData() {
 		List<Machine> machines = bizMachine.findMachine();
 		Map<String, Object> result = new HashMap<>();
 		Boolean success = true;
-		String df = "yyyy-MM-dd HH:mm:ss";
+		String df = "yyyy-MM-dd HH:mm";
 		try {
 			int i = 0;
 			List<Map<String, Object>> list = new LinkedList<Map<String, Object>>();
@@ -309,13 +292,9 @@ public class MachineController extends BasePortalController {
 				i++;
 			}
 			result.put("content", list);
-			result.put("code", topic);
-			TextMessage textMessage = new TextMessage(new JSONObject(result).toJSONString());
-			MyWsHandler.sendMessageToClient(textMessage);
 		} catch (Exception e) {
 			success = false;
 			JSONObject erroMessage = new JSONObject();
-			erroMessage.put("erroPublisTopic", topic);
 			erroMessage.put("Reason", e.getMessage());
 			result.put("Message", erroMessage);
 		}

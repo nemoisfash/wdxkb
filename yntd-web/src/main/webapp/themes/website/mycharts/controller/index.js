@@ -6,21 +6,21 @@ function initCharts() {
 	var pies = new MyPies();
 	var ranking = new Ranking();
 	var myTimeLine=  new MyTimeLine();
-	setInterval(function(){
+	
 		if(localStorage.getItem("pies")!=null){
 			var	piesData = JSON.parse(localStorage.getItem("pies"));
-			  console.info(piesData["content"]);
 			  pies.dataPieInit(piesData["content"]);
 		}
 		if(localStorage.getItem("ranking")!=null){
 			var	rankingData = JSON.parse(localStorage.getItem("ranking"));
 			ranking.dataRankingInit(rankingData["content"]);
 		}
-		if(localStorage.getItem("timeLineCategories")!=null && localStorage.getItem("timeLineSeriesData")!=null){
-			var	timeLineCategoriesData = JSON.parse(localStorage.getItem("timeLineCategories"));
-			var seriousData = JSON.parse(localStorage.getItem("timeLineSeriesData"));
-			console.info(seriousData);
-			myTimeLine.dataTimeLineInit(timeLineCategoriesData["content"],seriousData["content"]);
+		if(localStorage.getItem("timeLine")!=null){
+			var	timeLineData = JSON.parse(localStorage.getItem("timeLine"));
+			myTimeLine.dataTimeLineInit(timeLineData["categories"],timeLineData["seriesdata"]);
 		}
-	},1000)
+		
+	 setTimeout(function(){
+		initCharts()
+	 },10000)
 } 

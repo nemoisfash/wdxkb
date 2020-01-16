@@ -12,8 +12,10 @@ app.controller('myCon', function($scope,$http,$interval) {
 				
 			},
 			hide: function (obj) {
+				 window.location.reload();
 			},
 			hidden: function (obj) {
+				window.location.reload();
 			},
 		});
 	})
@@ -91,9 +93,14 @@ app.controller('myCon', function($scope,$http,$interval) {
 		
 		$scope.cncActfspeed=cnc["cnc_actfspeed"];
 		$scope.cncActspeed=cnc["cnc_actspeed"];
+		 $('#myCarousel').carousel({
+			  interval:100000,
+		 });
+		 
 		 setTimeout(function(){
 			 initLoadLine(name)
 		 },1000)
+
 	}
 	 function initLoadLine(machineName){
 		 	 var lineLoadObj=[];
@@ -108,7 +115,7 @@ app.controller('myCon', function($scope,$http,$interval) {
 			 
 			  $interval(function(){
 				  initLoadLineOption(chartsArry,machineName)
-			  },1000)
+			  },3000)
 			  
 	 }
 	 
@@ -116,14 +123,17 @@ app.controller('myCon', function($scope,$http,$interval) {
 		 var now = new Date();
 		 var time = now.getHours()+":"+now.getMinutes()+":"+now.getSeconds();
 		 var cnc= JSON.parse(localStorage.getItem(machineName));
-		 console.info(cnc);
 		 $.each(eArrays,function(i,em){
 			 var name=this.name;
 			 if(cnc[name]){
 				 var lineLoadOpt=loadoptions[i];
-				 var seriesData= lineLoadOpt.series[0];
-				 var xAxisData =lineLoadOpt.xAxis[0].data;
+				/* lineLoadOpt.series[0]
+				 lineLoadOpt.xAxis[0].data*/
+				 var seriesData=[];
+				 var xAxisData =[];
+				 /* var yAxisData =lineLoadOpt.yAxis[0].data;*/
 				 xAxisData.push(time);
+				 lineLoadOpt.xAxis[0].data=lineLoadOpt.xAxis[0].data.concat(xAxisData);
 				 var n = Number(cnc[name]);
 				 var i=0;
 				 if(cnc[name] && !isNaN(n)){
@@ -131,17 +141,17 @@ app.controller('myCon', function($scope,$http,$interval) {
 				 }else{
 					 i=0;
 				 }
-				 seriesData.data.push(i);
+				 seriesData.push(i);
+				/* yAxisData.push(i);*/
 				 $scope[name]=i;
 				 seriesData.name=name;
+				 lineLoadOpt.series[0].data= lineLoadOpt.series[0].data.concat(seriesData);
 				 this.charts.setOption(lineLoadOpt,true);
 			 }
 			
 		 })
 		 
-		  $('#myCarousel').carousel({
-				  interval:6000,
-		  });
+		
 		 intiGauge(machineName)
 	 }
 	 

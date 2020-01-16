@@ -115,13 +115,12 @@ MyTimeLine.prototype={
 				 this.initCharts();
 			},initCharts:function(){
 				var _this=this;
-				_this.timeLine=e.init($("#timeLine").get(0));/*.showLoading('default', {text:'数据统计中...',maskColor: '#07112a61',textColor: '#36b0f3',});*/
+				_this.timeLine=e.init($("#timeLine").get(0));
 			},dataTimeLineInit:function(timeLineCategories,timeLineSeriesData){
 				var _this=this;
 				option.yAxis.data=timeLineCategories
-				var c=option.series[0].data.concat(timeLineSeriesData);
-				option.series[0].data=c;
-				/*_this.timeLine.hideLoading();*/
+				option.series[0].data=option.series[0].data.concat(timeLineSeriesData);
+				console.info(option.series[0].data);
 				_this.timeLine.setOption(option,{
 				    notMerge:true,
 				    lazyUpdate:false,
