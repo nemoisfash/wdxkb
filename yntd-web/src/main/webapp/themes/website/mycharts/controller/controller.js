@@ -36,7 +36,9 @@ function connection(topices){
     websocket.onmessage=function(evn){
     	var jsonData= JSON.parse(evn.data);
     	localStorage.setItem(jsonData["code"],JSON.stringify(jsonData));
-    	initMachineMonitor(jsonData["code"]);
+    	$timeout(function(){
+    		initMachineMonitor(jsonData["code"]);
+    	},1000)
     };
     
     websocket.onopen= function(event) {
@@ -141,15 +143,31 @@ function clearData(jo){
 		}
 		
 		if(jo["cnc_relpos"]){
-			var jsonData= JSON.parse(jo["cnc_mecpos"]);
+			var jsonData= JSON.parse(jo["cnc_relpos"]);
 			$.each(jsonData,function(){
-				jo["cnc_rc"+this["axis"]]=this["value"]
+				jo["cnc_rc"+this["axis"]]=this["value"];
 			}) 
 		}
 		
 		if(jo["mcx"]){
 			jo["cnc_mcX"]=jo["mcx"];
 		}
+		
+		if(jo["cnc_actfspeed"]){
+			 var cncActfspeed =jo["cnc_actfspeed"];
+			 if(cncActfspeed.indexOf(".")>-1){
+				 jo["cnc_actfspeed"]=cncActfspeed.split(".")[0];
+			 }
+		}
+	 
+		if(jo["cnc_actspeed"]){
+			 var cncActspeed =jo["cnc_actspeed"];
+			 if(cncActfspeed.indexOf(".")>-1){
+				 jo["cnc_actspeed"]=cncActfspeed.split(".")[0];
+			 }
+		}
+		
+		
 		if(jo["mcy"]){
 			jo["cnc_mcY"]=jo["mcy"];
 		}
@@ -292,7 +310,12 @@ function publishRanking(){
 }
 
 function publishTimeLine(){
-		$.get("/member/timeLine.json")
+	 $.get("/member/timeLine.json")
+	 publicMachineInfo();
+}
+
+function publicMachineInfo(){
+	 $.get("/member/publicMachineInfo.json")
 }
 
 }).directive('myClock',function($interval,$http){

@@ -1,6 +1,5 @@
 package org.tdds.controller;
 
-import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,9 +27,7 @@ import org.tdds.entity.Machine;
 import org.tdds.service.LogRecordService;
 import org.tdds.service.MachineService;
 import org.tdds.service.MonitoringService;
-import org.tdds.service.ReportService;
 import org.tdds.service.RunningRecordService;
-import org.tdds.service.WarningRecordService;
 
 import com.alibaba.fastjson.JSONObject;
 import com.serotonin.modbus4j.exception.ErrorResponseException;
@@ -51,12 +49,9 @@ public class MachineController extends BasePortalController {
 
 	@Autowired
 	private MachineService bizMachine;
-
+	
 	@Autowired
 	private MonitoringService bizMonitoring;
-
-	@Autowired
-	private WarningRecordService bizWarningRecord;
 
 	@Autowired
 	private RunningRecordService bizRunningRecord;
@@ -64,14 +59,9 @@ public class MachineController extends BasePortalController {
 	@Autowired
 	private LogRecordService bizLogRecord;
 
-	@Autowired
-	private ReportService bizLogReport;
-
 	private static final String[] STATUS = { "RUNNING", "POWEROFF", "ALARM", "WAITING", "MANUAL" };
 
 	private static final String[] COLOR = { "#12b07b", "#a6a5a5", "#e65a65", "#feb501", "#feb501" };
-
-	private static final String[] topics = { "dataList", "pies", "ranking", "timeLineCategories","timeLineSeriesData" };
 
 	List<Map<String, Object>> statuslist = new ArrayList<>();
 	
@@ -124,14 +114,44 @@ public class MachineController extends BasePortalController {
 	@RequestMapping(value = "line", method = RequestMethod.GET)
 	private Object line(HttpServletRequest request, HttpServletResponse res) {
 		Map<String, Object> map = new HashMap<>();
-		List<String> times = new ArrayList<>();
 		List<Map<String, Object>> maps = new ArrayList<>();
-		List<Machine> machines = bizMachine.findMachine();
 		map.put("xAxis", DateUtils.DateToString(new Date(), "yyyy-MM-dd HH:mm:ss"));
 		map.put("series", maps);
 		return map;
 	}
 
+	@ResponseBody
+	@RequestMapping(value = "publicMachineInfo", method = RequestMethod.GET)
+	private Object publicMachineInfo(HttpServletRequest request, HttpServletResponse res) {
+		Map<String, Object> map = new HashMap<>();
+		List<Machine> machineList = bizMachine.findMachineByIo(2);
+		Boolean success=true;
+		for(Machine machine:machineList) {
+			Map<String, Object> monitoring=new HashMap<String, Object>();
+			if(machine.getIo()==0) {
+				monitoring = bizMonitoring.findByName(machine);
+				String machineSignal = Objects.toString(monitoring.get("machineSignal"), null);
+				if(machineSignal.equalsIgnoreCase("offline")) {
+					monitoring.put("machineSignal", "POWEROFF");
+				}
+			} 
+			if(machine.getIo()==1){
+				monitoring =new HashMap<String, Object>();
+				monitoring.put("code", machine.getName());
+				monitoring.put("machineSignal",getStatus(machine.getmIp()));
+			} 
+			try {
+				TextMessage textMessage = new TextMessage(new JSONObject(monitoring).toJSONString());
+				MyWsHandler.sendMessageToClient(textMessage);
+			} catch (Exception e) {
+				success=false;
+			}
+			map.put("success", success);
+			
+		}
+		return map;
+	}
+	
 	/**
 	 * @param request
 	 * @param res

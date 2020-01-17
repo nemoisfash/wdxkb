@@ -7,9 +7,6 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.integration.mqtt.support.MqttHeaders;
-import org.springframework.integration.support.MessageBuilder;
-import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
 import org.tdds.entity.Machine;
 import org.tdds.entity.MonitoringList;
@@ -39,14 +36,6 @@ public class MonitoringServiceImpl implements MonitoringService {
 	@Override
 	public Map<String, Object> findByName(Machine machine) {
 		Map<String, Object> map = daoMonitoring.selectOneByName(machine.getName());
-		try {
-			Message<String> message = MessageBuilder.withPayload(new JSONObject(map).toJSONString())
-					.setHeader(MqttHeaders.TOPIC, machine.getMqttSorce()).build();
-			/* mh.handleMessage(message); */
-		} catch (Exception e) {
-			System.out.println(e.getMessage().toString());
-		}
-
 		return map;
 	}
 

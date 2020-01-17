@@ -120,7 +120,6 @@ MyTimeLine.prototype={
 				var _this=this;
 				option.yAxis.data=timeLineCategories
 				option.series[0].data=option.series[0].data.concat(timeLineSeriesData);
-				console.info(option.series[0].data);
 				_this.timeLine.setOption(option,{
 				    notMerge:true,
 				    lazyUpdate:false,

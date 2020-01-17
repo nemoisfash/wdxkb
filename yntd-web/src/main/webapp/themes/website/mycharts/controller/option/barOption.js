@@ -42,7 +42,7 @@ var optionBar = {
 	        axisLine:{
 	        	show:true
 	        },
-	        offset: '30',
+	        offset: '5',
 	        axisLabel: {
 	           interval:0,
 	        	margin:10,

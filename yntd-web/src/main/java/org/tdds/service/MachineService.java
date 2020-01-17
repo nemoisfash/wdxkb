@@ -43,4 +43,6 @@ public interface MachineService{
 
 	void publish(String topic, String jsonString);
 
+	List<Machine> findMachineByIo(Integer i);
+
 }

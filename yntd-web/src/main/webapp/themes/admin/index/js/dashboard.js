@@ -18,19 +18,10 @@ app.controller('myCon', function($scope,$http,$interval) {
 				window.location.reload();
 			},
 		});
+		switchStatus();
 	})
-	 $interval(function(){
-			$http({
-					method: 'GET',
-					url:"/admin/index/datalist.json",
-					cache:false,
-					async:false}).then(function(res){
-					$scope.switchStatus(res.data.resault);
-					$scope.getStatusData()
-			})
-	},10000)
-		 
-	$scope.getStatusData=function(){
+	
+	$interval(function(){
 		$http({
 			method: 'GET',
 			url:"/admin/index/data.json",
@@ -41,30 +32,61 @@ app.controller('myCon', function($scope,$http,$interval) {
 			$scope.alarm=res.data.ALARM;
 			$scope.waiting=res.data.WAITING;
 		})
-	},
+	},10000)
 	
-	$scope.switchStatus=function(obj){
-		$.each(obj,function(){
-			var status="";
-			 if(this.machineSignal==null||this.machineSignal==""){
-				 status="UNKNOW";
-			 }else{
-				 status=this.machineSignal;
-			 }
-			 var machineName=this.machineName;
-			 $("#"+machineName+"_m").attr("class","")
-			 $("#"+machineName+"_m").text(machineName);
-			 $("#"+machineName+"_m").addClass("circle"+" "+"circle-"+status.toLowerCase()+" "+"headerBox");
-		})
-	}
+	
+	function switchStatus(){
+		var machineNames = localStorage.getItem("machineNames").split("&");
+		$.each(machineNames,function(){
+			var obj= JSON.parse(localStorage.getItem(this));
+			if(obj!=null){
+					var status="";
+					if(obj.machineSignal==null||obj.machineSignal==""){
+						status="UNKNOW";
+					}else{
+						status=obj.machineSignal;
+					}
+						var machineName=obj.machineName;
+						$("#"+machineName+"_m").attr("class","")
+						$("#"+machineName+"_m").addClass("circle"+" "+"circle-"+status.toLowerCase()+" "+"headerBox");
+				}
+			})
+			 setTimeout(function(){
+				switchStatus()
+			},2000);
+	 };
   
 	$scope.getMahineinfo=function(name){
 		$('#machineInfo').slideReveal('show');
 	    var cnc= JSON.parse(localStorage.getItem(name));
+	    console.info(cnc);
 		if(cnc==null){
 	    	return;
 	    }
 		$scope.cncName=cnc["machineName"];
+		$scope.cncMainproname=cnc["cnc_mainproname"];
+		$scope.cncSeq=cnc["cnc_seq"];
+		$scope.cncAlivetime=cnc["cnc_alivetime"];
+		$scope.cncCycletime=cnc["cnc_cycletime"];
+		$scope.cncCycletime=cnc["cnc_cycletime"];
+		$scope.cncProducts=cnc["cnc_products"];
+		
+		$scope.cncActfspeed=cnc["cnc_actfspeed"];
+		$scope.cncActspeed=cnc["cnc_actspeed"];
+		 $('#myCarousel').carousel({
+			  interval:10000,
+		 });
+		 
+		 setTimeout(function(){
+			 initLoadLine(name)
+		 },1000)
+		 
+		 $interval(function(){
+			  initCoordinate(cnc)
+		 },1000)
+	}
+	
+	function initCoordinate(cnc){
 		/***********机械坐标**************/
 		$scope.cncMcX=cnc["cnc_mcX"];
 		$scope.cncMcY=cnc["cnc_mcY"];
@@ -84,24 +106,8 @@ app.controller('myCon', function($scope,$http,$interval) {
 		$scope.cncAbZ=cnc["cnc_abZ"];
 		$scope.cncAbA=cnc["cnc_abA"];
 		/***********绝对坐标**************/
-		$scope.cncMainproname=cnc["cnc_mainproname"];
-		$scope.cncSeq=cnc["cnc_seq"];
-		$scope.cncAlivetime=cnc["cnc_alivetime"];
-		$scope.cncCycletime=cnc["cnc_cycletime"];
-		$scope.cncCycletime=cnc["cnc_cycletime"];
-		$scope.cncProducts=cnc["cnc_products"];
-		
-		$scope.cncActfspeed=cnc["cnc_actfspeed"];
-		$scope.cncActspeed=cnc["cnc_actspeed"];
-		 $('#myCarousel').carousel({
-			  interval:100000,
-		 });
-		 
-		 setTimeout(function(){
-			 initLoadLine(name)
-		 },1000)
-
 	}
+	
 	 function initLoadLine(machineName){
 		 	 var lineLoadObj=[];
 			 var loadChartsContrainer =$("div[name='loadChartsContainer']");
@@ -116,7 +122,6 @@ app.controller('myCon', function($scope,$http,$interval) {
 			  $interval(function(){
 				  initLoadLineOption(chartsArry,machineName)
 			  },3000)
-			  
 	 }
 	 
 	 function initLoadLineOption(eArrays,machineName){

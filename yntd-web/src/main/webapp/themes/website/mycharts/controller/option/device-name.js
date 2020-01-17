@@ -4,7 +4,7 @@ var deviceName = {
 	"device_lamp_2":"1160-1",
 	"MC007":"MC007",
 	"MC005":"V8",
-	"device_lamp_9":"996",
+	"device_lamp_9":"966",
 	"device_lamp_22":"V10",
 	"MC002":"TNV-40",
 	"device_lamp_21":"CX4360",

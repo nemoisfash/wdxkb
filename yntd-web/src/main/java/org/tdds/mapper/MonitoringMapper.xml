@@ -9,22 +9,20 @@
     </sql>
 		<select id="selectOneByName" resultType="java.util.HashMap">
 		<![CDATA[
-			SELECT
-				Machine_Name as machineName,
-				Machine_Signal as machineSignal,
-				PartsCount_Result as cncProducts,
-				ifnull(Override_Rapid,'0')as cncRapidFeed,
-				ifnull(Override_Spindle,'0')as cncSrate,
-				(SELECT SYSDATE()) as currentTime,
-				Alarm_Message as cncAlarm,
-				Machine_Mode as cncMode,
-				MainProgram_No as cncMainProname,
-				Tool_No as cnc_toolnum,
-				Spindle_Mode as spindleMode
+			 SELECT
+				Machine_Name AS code,
+				Machine_Signal AS machineSignal,
+				PartsCount_Result AS cnc_products,
+				ifnull( Override_Rapid, '0' ) AS cnc_rapidfeed,
+				ifnull( Override_Spindle, '0' ) AS cnc_srate,
+				Alarm_Message AS cnc_alarm_message,
+				Machine_Mode AS cnc_mode,
+				MainProgram_No AS cnc_mainproname,
+				Tool_No AS cnc_toolnum 
 			FROM
-				monitoring_list
-			WHERE 
-				Machine_Name=#{name}
+				monitoring_list 
+			WHERE
+				Machine_Name = #{name}
 			]]>
 		</select>
 		   

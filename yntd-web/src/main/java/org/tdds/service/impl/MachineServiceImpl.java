@@ -12,7 +12,6 @@ import org.tdds.entity.Machine;
 import org.tdds.entity.MonitoringList;
 import org.tdds.mapper.MachineMapper;
 import org.tdds.service.MachineService;
-import org.tdds.service.MonitoringService;
 import org.tdds.service.PowerOffRecordService;
 import org.tdds.service.RunningRecordService;
 import org.tdds.service.WaitingRecordService;
@@ -21,8 +20,6 @@ import org.tdds.service.WarningRecordService;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.hxz.webapp.util.DateUtils;
-import cn.hxz.webapp.util.mqtt.MqttAutoConfiguration;
-import cn.hxz.webapp.util.mqtt.MqttMessagePubClient;
 import net.chenke.playweb.QueryFilters;
 import net.chenke.playweb.support.mybatis.Page;
 import net.chenke.playweb.support.mybatis.PageImpl;
@@ -49,9 +46,6 @@ public class MachineServiceImpl implements MachineService {
 	
 	@Autowired
 	private WaitingRecordService bizWaitingRecord;
-	
-	@Autowired
-	private  MonitoringService bizMonitoring;
 	
 	@Override
 	public Long selectMidByName(String machineName) {
@@ -200,6 +194,14 @@ public class MachineServiceImpl implements MachineService {
 	@Override
 	public void publish(String topic, String content) {
 		 
+	}
+
+	@Override
+	public List<Machine> findMachineByIo(Integer i) {
+		 Example example = new Example(Machine.class);
+		 Criteria criteria = example.createCriteria();
+		 criteria.andNotEqualTo("io", i);
+		return machineDao.selectByExample(example);
 	}
 	 
 }
