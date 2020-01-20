@@ -11,7 +11,6 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
  
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
@@ -37,7 +36,8 @@ public class MyWsHandler extends TextWebSocketHandler{
 	    public void handleTextMessage(WebSocketSession session, TextMessage message) {
 	    	 String payload = message.getPayload();
     		if(JSONObject.isValid(payload)) {
-    			JSONObject jsonObject =new JSONObject().parseObject(payload);
+    			JSONObject jsonObject =new JSONObject();
+    			jsonObject =JSONObject.parseObject(payload);
     			if(jsonObject.containsKey("status") && jsonObject.getInteger("status")==0) {
 					MqttAutoConfiguration clientFactory =new MqttAutoConfiguration();
 					JSONArray jsonArray = jsonObject.getJSONArray("topices");
@@ -57,11 +57,13 @@ public class MyWsHandler extends TextWebSocketHandler{
 	     */
 	    public static boolean sendMessageToClient(TextMessage message) {
 	        WebSocketSession session = clients.get(clientId);
-	        if (!session.isOpen()) {
+	        if (session!=null && !session.isOpen()) {
 	            return false;
 	        }
 	        try {
-	            session.sendMessage(message);
+	        	synchronized(session) {
+	        		 session.sendMessage(message);
+	        	}
 	        } catch (IOException e) {
 	            return false;
 	        }

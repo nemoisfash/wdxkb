@@ -2,13 +2,20 @@ package cn.hxz.webapp.util.mqtt;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 
-import org.eclipse.paho.client.mqttv3.IMqttAsyncClient;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
+import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.springframework.integration.mqtt.core.MqttPahoClientFactory;
 import org.springframework.messaging.MessagingException;
 import org.springframework.web.socket.TextMessage;
@@ -22,7 +29,7 @@ public class MqttMessageSubClient implements MqttCallback{
 	
 	private  String clientId;
 	
-	private  IMqttAsyncClient client;
+	private  MqttClient client;
 	
 	private  MqttConnectOptions connectionOptions;
 	
@@ -31,6 +38,10 @@ public class MqttMessageSubClient implements MqttCallback{
 	private  Map<String, Object> offlinemessage = new HashMap<String, Object>();
 	
 	public static final long DEFAULT_COMPLETION_TIMEOUT = 30000L;
+	
+	private String []topices ;
+	
+	private int []qos;
 
 	public MqttMessageSubClient(String clientId, MqttPahoClientFactory clientFactory) {
 			this.clientFactory = clientFactory;
@@ -38,11 +49,13 @@ public class MqttMessageSubClient implements MqttCallback{
 			this.connectionOptions =clientFactory.getConnectionOptions();
 	}
 	
-	private void subMessage(String[]topics, int[] qos) {
+	private void subMessage() {
 		try {
 			checkConnection();
-			client.subscribe(topics, qos);
-			client.setCallback(new MqttCallback() {
+			client.setTimeToWait(5000);
+			final ExecutorService executorService = new ThreadPoolExecutor(1, 1, 0, TimeUnit.MILLISECONDS,
+			            new LinkedBlockingQueue<Runnable>());
+			client.setCallback(new MqttCallbackExtended() {
 				@SuppressWarnings("static-access")
 				@Override
 				public void messageArrived(String topic, MqttMessage message) throws Exception {
@@ -82,6 +95,23 @@ public class MqttMessageSubClient implements MqttCallback{
 						e.printStackTrace();
 					}
 				}
+				@Override
+				public void connectComplete(boolean reconnect, String serverURI) {
+					 /**
+	                 * 客户端连接成功后就需要尽快订阅需要的 topic
+	                 */
+	                System.out.println("connect success");
+	                executorService.submit(new Runnable() {
+	                    @Override
+	                    public void run() {
+	                        try {
+	                        	client.subscribe(topices, qos);
+	                        } catch (MqttException e) {
+	                            e.printStackTrace();
+	                        }
+	                    }
+	                });
+				}
 			});
 		} catch (MqttException e) {
 			System.out.print(e.getMessage());
@@ -90,7 +120,7 @@ public class MqttMessageSubClient implements MqttCallback{
 		}
 	}
 	
-	private synchronized IMqttAsyncClient checkConnection() throws MqttException {
+	private synchronized MqttClient checkConnection() throws MqttException {
 		if (this.client != null && !this.client.isConnected()) {
 			this.client.setCallback(null);
 			this.client.close();
@@ -99,9 +129,11 @@ public class MqttMessageSubClient implements MqttCallback{
 		if (this.client == null) {
 			try {
 				MqttConnectOptions connectionOptions =this.connectionOptions;
-				this.client = this.clientFactory.getAsyncClientInstance(connectionOptions.getServerURIs()[0], this.clientId);
+				final MemoryPersistence memoryPersistence = new MemoryPersistence();
+				this.client = new MqttClient(connectionOptions.getServerURIs()[0],clientId,memoryPersistence);
 				this.client.setCallback(this);
-				this.client.connect(connectionOptions).waitForCompletion(DEFAULT_COMPLETION_TIMEOUT);
+				this.client.setTimeToWait(5000);
+				this.client.connect(connectionOptions);
 			}
 			catch (MqttException e) {
 				if (this.client != null) {
@@ -117,29 +149,26 @@ public class MqttMessageSubClient implements MqttCallback{
 	 
 	public Boolean subMessage(List<String> topics) {
 		String [] topicLiString = new String [topics.size()];
-		String [] topices= topics.toArray(topicLiString);
+		this.topices=topics.toArray(topicLiString);
 		int[] qos = new int[topices.length];
 		for (int i=0; i<qos.length; i++) {
 			qos[i] = 2;
 		}
-		 subMessage(topices,  qos);
+			this.qos=qos;
+		 subMessage();
 		 return true;
 	}
 
 	@Override
 	public void connectionLost(Throwable cause) {
-		
 	}
 
 	@Override
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void deliveryComplete(IMqttDeliveryToken token) {
-		// TODO Auto-generated method stub
 		
 	};
 }

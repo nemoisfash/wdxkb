@@ -9,12 +9,14 @@ $.get("/member/getAllTopics.json",function(data){
 		var machineNames =data.machineNames;
 		localStorage.setItem("machineNames",machineNames.join("&"));
 		var topices=machineTopices.concat(chatsTopices);
+		$scope.topicesLength=topices.length;
 		$timeout(function(){
 			connection(topices)
 		},1000)
 	}
 })
 
+var msgFactory={"products":[],"isFull":false,"capacity":$scope.topicesLength};
 function connection(topices){
 	var websocket;
 	var host = window.location.host;
@@ -35,10 +37,9 @@ function connection(topices){
     
     websocket.onmessage=function(evn){
     	var jsonData= JSON.parse(evn.data);
-    	localStorage.setItem(jsonData["code"],JSON.stringify(jsonData));
-    	$timeout(function(){
-    		initMachineMonitor(jsonData["code"]);
-    	},1000)
+    	if(!msgFactory.isFull){
+    		msgFactory(jsonData);
+    	}
     };
     
     websocket.onopen= function(event) {
@@ -47,16 +48,21 @@ function connection(topices){
     }
 }
 
-function initMachineMonitor(str){
-	var jo;
-		 if(localStorage.getItem(str)!=null){
-			 jo=JSON.parse(localStorage.getItem(str));
-		 }else{
-			jo.code=str;
-			jo.machineSignal="POWEROFF";
-			jo.machineSignalZH="关机";
-		 }
-		 clearData(jo);
+function msgFactory(obj){
+	if(msgFactory.products.length<=msgFactory.capacity){
+	   msgFactory.products.push(obj);
+	}else{
+	   msgFactory.isFull=true;
+	   $.each(msgFactory.products,function(i,e){
+		   $timeout(function(){
+			   clearData(jo)
+			   msgFactory.products.remove(i);
+		   },1000)
+	   })
+   		if(msgFactory.products.length==0){
+   			msgFactory.isFull=false;
+   		}
+	}
 }
 
 function clearData(jo){
@@ -167,7 +173,6 @@ function clearData(jo){
 			 }
 		}
 		
-		
 		if(jo["mcy"]){
 			jo["cnc_mcY"]=jo["mcy"];
 		}
@@ -191,11 +196,10 @@ function clearData(jo){
 			jo["cnc_rcA"]=jo["rca"];
 		}
 		
-	 if(jo["cnc_fload"]){
-			var jsonData= JSON.parse(jo["cnc_fload"]);
+		if(jo["cnc_fload"] && jo["cnc_fload"].indexOf("[")>-1){
 			$.each(jsonData,function(){
 				jo["cnc_l"+this["axis"]]=this["value"]
-			}) 
+			})
 		} 
 		
 		if(jo["lx"]){
@@ -212,7 +216,6 @@ function clearData(jo){
 	$timeout(function(){
 		replaceKey(jo)
 	},1000)
-	
 }	
 
 function replaceKey(jo){
@@ -231,7 +234,7 @@ $scope.callbackReportData =function(){
 
 $scope.switchStatus=function(jo){
 		var machineNames = localStorage.getItem("machineNames").split("&");
-		var  obj;
+		var obj;
 		if($.inArray(jo["machineName"],machineNames)>0){
 			obj= JSON.parse(localStorage.getItem(jo["machineName"]));
 		var status="";
@@ -247,10 +250,9 @@ $scope.switchStatus=function(jo){
 		$timeout(function(){
 			 $scope.createList();
 		},2000)
-		
 }
 
- $scope.createList=function(){
+$scope.createList=function(){
 	 $scope.devices = [];
 	 $scope.alarmList=[];
 	for(var key in deviceName){
@@ -264,6 +266,23 @@ $scope.switchStatus=function(jo){
 		
 	}
 	insertMontoring();
+	if($scope.alarmList.length>0){
+		alarm();
+	}else{
+		layer.closeAll();
+	}
+}
+
+function alarm(){
+	layer.open({
+		  type: 1,
+		  shade: false,
+		  area: ['600px', '350px'],
+		  title: ["设备报警"],
+		  closeBtn: 0,
+		  content: $('#alarmList'),
+		  scrollbar:false
+	 });
 }
  
 function insertMontoring(){
@@ -368,6 +387,17 @@ function publicMachineInfo(){
 		}
 	}
 }).directive('ngRepeatFinished',function($timeout){
+	return{
+		restrict:'A',
+		link:function(scope,elem,attrs){
+			if(scope.$last==true){
+				$timeout(function() {
+                    scope.$emit('repeatFinished');
+                });
+			}
+		}
+	}
+}).directive('watchDevice',function($timeout){
 	return{
 		restrict:'A',
 		link:function(scope,elem,attrs){

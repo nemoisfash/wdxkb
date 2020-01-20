@@ -4,11 +4,11 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.mqtt.core.DefaultMqttPahoClientFactory;
 
-import cn.hxz.webapp.util.ExcelExportUtil;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Properties;
+
 
 
 /**
@@ -78,7 +78,7 @@ public class MqttAutoConfiguration {
     
     private String getPropertiesValue(String key) {
     	Properties prop = new Properties();
-		InputStream in = ExcelExportUtil.class.getClassLoader().getResourceAsStream(MQTT_PROPERTIES_PATH);
+		InputStream in =MqttAutoConfiguration.class.getClassLoader().getResourceAsStream(MQTT_PROPERTIES_PATH);
 		try {
 			prop.load(new InputStreamReader(in, "utf-8"));
 		} catch (Exception e) {
