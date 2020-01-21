@@ -1,7 +1,6 @@
 var app = angular.module('myApp', []);
 app.controller('myCtrl', function($scope,$http,$timeout,$interval) {
 getTopices()
-
 function getTopices(){
 	$.ajax({
 		method:"get",
@@ -17,7 +16,7 @@ function getTopices(){
 			var machineNames =data.machineNames;
 			localStorage.setItem("machineNames",machineNames.join("&"));
 			$scope.topices=machineTopices.concat(chatsTopices);
-			$scope.topicesLength=topices.length;
+			$scope.topicesLength=$scope.topices.length;
 			connection()
 		}
 		
@@ -45,7 +44,7 @@ function connection(){
     websocket.onmessage=function(evn){
     	var jsonData= JSON.parse(evn.data);
     	if(!msgFactory.isFull){
-    		msgFactory(jsonData);
+    		msgFactoryCreate(jsonData);
     	}
     };
     
@@ -55,7 +54,7 @@ function connection(){
     }
 }
 
-function msgFactory(obj){
+function msgFactoryCreate(obj){
 	if(msgFactory.products.length<=msgFactory.capacity){
 	   msgFactory.products.push(obj);
 	}else{
@@ -68,7 +67,6 @@ function msgFactory(obj){
    			msgFactory.isFull=false;
    		}
 	}
-	
 	return;
 }
 
@@ -231,7 +229,7 @@ function replaceKey(jo){
 			}
 		}
 	localStorage.setItem(deviceParameters["machineName"], JSON.stringify(deviceParameters));
-	$scope.switchStatus(deviceParameters);
+	/*$scope.switchStatus(deviceParameters);*/
 	return;
 }
 
@@ -315,7 +313,7 @@ function insertMontoring(){
 } 
  
 $interval(function(){
-	publishPieData()
+	/*publishPieData()*/
 },5000)
 function publishPieData(){
 	$.get("/member/publishPieData.json");
@@ -344,16 +342,26 @@ function publicMachineInfo(){
 	return{
 		restrict:'A',
 		link:function(scope,elem,attrs){
-			var weekArray = new Array("日", "一", "二", "三", "四", "五", "六");
-			$interval(function(){
-				var now = new Date();
-				var time = now.getHours()+":"+now.getMinutes()+":"+now.getSeconds();
-				if(time==="0:0:0"){
-					localStorage.setItem('flash',"true");
-				}
-				var date = now.getFullYear()+"-"+(now.getMonth()+1)+"-"+now.getDate()+" "+time+" "+"星期"+weekArray[now.getDay()];
-				elem.text(date);
-			},1000)
+			$(function() {
+				var monthNames = [ "1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月" ]; 
+				var dayNames= ["星期一","星期二","星期三","星期四","星期五","星期六","星期天"]
+				var newDate = new Date();
+				newDate.setDate(newDate.getDate());
+				$('#Date').html(newDate.getFullYear() + " " + monthNames[newDate.getMonth()]+ ' ' +newDate.getDate() +"日"+ ' ' +dayNames[newDate.getDay()-1]);
+				setInterval( function() {
+					var seconds = new Date().getSeconds();
+					$("#sec").html(( seconds < 10 ? "0" : "" ) + seconds);
+					},1000);
+				setInterval( function() {
+					var minutes = new Date().getMinutes();
+					$("#min").html(( minutes < 10 ? "0" : "" ) + minutes);
+				    },1000);
+					
+				setInterval( function() {
+					var hours = new Date().getHours();
+					$("#hours").html(( hours < 10 ? "0" : "" ) + hours);
+				    }, 1000);	
+				});
 		}
 	}
 }).directive('myScoller',function($interval){
