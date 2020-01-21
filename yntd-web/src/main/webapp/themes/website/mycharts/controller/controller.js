@@ -1,31 +1,38 @@
 var app = angular.module('myApp', []);
 app.controller('myCtrl', function($scope,$http,$timeout,$interval) {
-$.get("/member/getAllTopics.json",function(data){
-	if(data.success){
-		var chatsTopices = ["pies", "ranking", "timeLine"];
-		localStorage.setItem("chatsTopic",chatsTopices.join("&"));
-		var machineTopices = data.topices;
-		localStorage.setItem("machineTopices",machineTopices.join("&"));
-		var machineNames =data.machineNames;
-		localStorage.setItem("machineNames",machineNames.join("&"));
-		var topices=machineTopices.concat(chatsTopices);
-		$scope.topicesLength=topices.length;
-		$timeout(function(){
-			connection(topices)
-		},1000)
-	}
-})
+getTopices()
 
+function getTopices(){
+	$.ajax({
+		method:"get",
+		url:"/member/getAllTopics.json",
+		async:false,
+		dataType:"json",
+		contentType:"application/json",
+		success:function(data){
+			var chatsTopices = ["pies", "ranking", "timeLine"];
+			localStorage.setItem("chatsTopic",chatsTopices.join("&"));
+			var machineTopices = data.topices;
+			localStorage.setItem("machineTopices",machineTopices.join("&"));
+			var machineNames =data.machineNames;
+			localStorage.setItem("machineNames",machineNames.join("&"));
+			$scope.topices=machineTopices.concat(chatsTopices);
+			$scope.topicesLength=topices.length;
+			connection()
+		}
+		
+	})
+}	
+ 
 var msgFactory={"products":[],"isFull":false,"capacity":$scope.topicesLength};
-function connection(topices){
+function connection(){
 	var websocket;
 	var host = window.location.host;
     if ('WebSocket' in window) {
         websocket = new WebSocket("ws://"+host+"/ws.html");
     }else if ('MozWebSocket' in window) {
         websocket = new MozWebSocket("ws://"+host+"/ws.html");
-    }
-    else {
+    }else {
         websocket = new SockJS("http://"+host+"/ws/socketjs.html");
     }
     websocket.onError=function(){
@@ -44,7 +51,7 @@ function connection(topices){
     
     websocket.onopen= function(event) {
     	console.info("通道已建立");
-    	websocket.send(JSON.stringify({"status":0,"isFinished":false,"topices":topices}));
+    	websocket.send(JSON.stringify({"status":0,"isFinished":false,"topices":$scope.topices}));
     }
 }
 
@@ -54,15 +61,15 @@ function msgFactory(obj){
 	}else{
 	   msgFactory.isFull=true;
 	   $.each(msgFactory.products,function(i,e){
-		   $timeout(function(){
-			   clearData(jo)
-			   msgFactory.products.remove(i);
-		   },1000)
+		   clearData(jo)
+		   msgFactory.products.remove(i);
 	   })
    		if(msgFactory.products.length==0){
    			msgFactory.isFull=false;
    		}
 	}
+	
+	return;
 }
 
 function clearData(jo){
@@ -213,9 +220,8 @@ function clearData(jo){
 		}
 		
 	jo.machineName=deviceName[jo["code"]]
-	$timeout(function(){
-		replaceKey(jo)
-	},1000)
+	replaceKey(jo)
+	return;
 }	
 
 function replaceKey(jo){
@@ -226,10 +232,7 @@ function replaceKey(jo){
 		}
 	localStorage.setItem(deviceParameters["machineName"], JSON.stringify(deviceParameters));
 	$scope.switchStatus(deviceParameters);
-}
-
-$scope.callbackReportData =function(){
-	 $.get("/member/callbackReportData.json");
+	return;
 }
 
 $scope.switchStatus=function(jo){
@@ -247,9 +250,8 @@ $scope.switchStatus=function(jo){
 		$("#"+machineName+"_m").attr("class","")
 		$("#"+machineName+"_m").addClass("circle"+" "+"circle-"+status.toLowerCase()+" "+"headerBox");
 	 } 
-		$timeout(function(){
-			 $scope.createList();
-		},2000)
+		$scope.createList();
+		return;
 }
 
 $scope.createList=function(){
@@ -271,6 +273,7 @@ $scope.createList=function(){
 	}else{
 		layer.closeAll();
 	}
+	return;
 }
 
 function alarm(){
@@ -308,7 +311,7 @@ function insertMontoring(){
 			 }
 		 }
 	 }
-	 
+	 return;
 } 
  
 $interval(function(){
