@@ -106,7 +106,7 @@ init:function(){
 		if(data[i]!=null){
 			optionPie.title.text= data[i].machineName;
 			optionPie.series[0].data=data[i].data;
-			this.setOption(optionPie);
+			this.setOption(optionPie,{notMerge:false,lazyUpdate:true,silent:false});
 		}
 	})
 }

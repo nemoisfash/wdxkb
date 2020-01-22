@@ -121,8 +121,8 @@ MyTimeLine.prototype={
 				option.yAxis.data=timeLineCategories
 				option.series[0].data=option.series[0].data.concat(timeLineSeriesData);
 				_this.timeLine.setOption(option,{
-				    notMerge:true,
-				    lazyUpdate:false,
+				    notMerge:false,
+				    lazyUpdate:true,
 				    silent:false
 				});
 			}

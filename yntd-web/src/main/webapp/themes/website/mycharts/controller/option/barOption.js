@@ -172,7 +172,7 @@ var	_this = this;
 				 optionBar.series[2].data=_otherData;
 			}*/
 			_this.ranking.hideLoading();
-			_this.ranking.setOption(optionBar);
+			_this.ranking.setOption(optionBar,{notMerge:false,lazyUpdate:true,silent:false});
 		}
 	}
 	
