@@ -44,40 +44,31 @@
 				<div class="nav-tabs-custom" style="background-color: #081639a1; height: 24.625rem; margin-top: 8px;">
 					<span class="label label-default">车间设备分布</span>
 					<div style="background-color: #07132d00; width: 100%; height: 80%; margin-top: 20px">
-						<img width="100%" height="100%" src="/themes/website/images/aoshen/aoshen.png"></img> 
-						<span id="T005_m" class="circle circle-poweroff headerBox" style="top: 5%; left: 89%;">
-							T005
+						<img width="100%" height="100%" src="/themes/website/images/xn/bac.jpg"></img>
+						<span id="710PLUS1_m" class="circle circle-poweroff headerBox" style="top: 5%; left: 36%;">
+							710PLUS1
 						</span> 
-						<span id="1160-2_m" class="circle circle-poweroff headerBox" style="top: 5%; left: 78%;">
-							1160-2
+						<span id="710PLUS2_m" class="circle circle-poweroff headerBox" style="top: 5%; left: 45%;">
+							710PLUS2
 						</span> 
-						<span id="1160-1_m" class="circle circle-poweroff headerBox" style="top: 5%; left: 69%;"> 
-							1160-1
+						<span id="430AL_m" class="circle circle-poweroff headerBox" style="top: 5%; left: 54%;"> 
+							430AL
 						</span> 
-						<span id="MC007_m" class="circle circle-poweroff headerBox" style="top: 5%; left: 60%;">
-							MC007
+						<span id="530CL_m" class="circle circle-poweroff headerBox" style="top: 5%; left: 62%;">
+							530CL
 						</span> 
-						<span id="V8_m" class="circle circle-poweroff headerBox" style="top: 5%; left: 51%;">
-							V8
+						<span id="S400L1_m" class="circle circle-poweroff headerBox" style="top: 5%; left: 71%;">
+							S400L1
 						</span> 
-						<span id="966_m" class="circle circle-poweroff headerBox" style="top: 5%; left: 41%;">
-							966
+						<span id="S400L2_m" class="circle circle-poweroff headerBox" style="top: 10%; left: 75%;">
+							S400L2
 						</span>
-						<span id="SR-32JM_m" class="circle circle-poweroff headerBox" style="top: 5%; left: 29%;">
-							SR32JM
+						<span id="V20B_m" class="circle circle-poweroff headerBox" style="top: 10%; left: 59%;">
+							V20B
 						</span>
-						
-						<span id="V10_m" class="circle circle-poweroff headerBox" style="top: 11%; left: 31%;">
-							V10
+						<span id="160AN_m" class="circle circle-poweroff headerBox" style="top: 10%; left: 29%;">
+							160AN
 						</span> 
-						<span id="D9332_m" class="circle circle-poweroff headerBox" style="top: 11%; left: 39%;">
-						</span> 
-						<span id="TNV-40_m" class="circle circle-poweroff headerBox" style="top: 11%; left: 47%;">TNV40</span> 
-						<span id="D9332_m" class="circle circle-poweroff headerBox" style="top: 11%; left: 55%;"> </span> 
-						<span id="D9332_m" class="circle circle-poweroff headerBox" style="top: 16%; left: 23%;"> </span> 
-						<span id="T003_m" class="circle circle-poweroff headerBox" style="top: 16%; left: 32%;">T003</span> 
-						<span id="MX-T150R_m" class="circle circle-poweroff headerBox" style="top: 16%; left: 42%;">MXT150R</span> 
-						<span id="T004_m" class="circle circle-poweroff headerBox" style="top: 16%; left: 51%;">T004</span>
 					</div>
 					<div
 						style="width: 100%; height: 2.25rem; text-align: center; line-height: 2.25rem;">
@@ -96,8 +87,6 @@
 					<span class="label label-default">设备运行分析</span>
 					<div style="width: 100%; height: 80%; margin-top: 11px; overflow: hidden;">
 						<ul class="pies" my-Scoller>
-							<li echarts-type="pie"></li>
-							<li echarts-type="pie"></li>
 							<li echarts-type="pie"></li>
 							<li echarts-type="pie"></li>
 							<li echarts-type="pie"></li>
@@ -157,7 +146,7 @@
 				          </div>
 						</div>
 					</div> -->
-				<div class="nav-tabs-custom" style="background-color: #081639a1; height: 573px; margin-top: 14px; overflow: hidden;">
+				<div class="nav-tabs-custom" style="background-color:#081639b5; height: 573px; margin-top: 14px; overflow: hidden;">
 					<span class="label label-default">设备运行实时数据</span>
 					<div
 						style="width: 100%; height: 100%; margin-top: 0; overflow: hidden;">
@@ -181,7 +170,7 @@
 							</thead>
 							<tbody>
 								<tr role="row" class="odd roll-up" ng-repeat="item in devices" ng-Repeat-Finished>
-									<td>{{item.machineName}}</td>
+									<td>{{item.code}}</td>
 									<td>{{item.machineSignalZH}}</td>
 									<td>{{item.cnc_cycletime}}</td>
 									<td>{{item.cnc_alivetime}}</td>
@@ -203,34 +192,18 @@
 			</section>
 		</div>
 		<footer class="main-footer mainfooter">
-			<strong>技术支持：<a target="blank"
-				href="http://www.huaxinzhi.com">银川华信智信息技术有限公司</a> 电话：0951-6996116
-				邮件：huaxinzhi@huaxinzhi.com
-			</strong> <b>版本</b> 2.4.0
+			<strong>技术支持：<a target="blank" href="http://www.huaxinzhi.com">银川华信智信息技术有限公司</a> 
+			电话：0951-6996116 邮件：huaxinzhi@huaxinzhi.com
+			</strong> 
+			<b>版本</b> 2.4.0
 		</footer>
 	</section>
 	
- 	<div id="alarmList"  class="nav-tabs-custom" style="background-color:#0816396e; width:600px; height:100%;overflow: hidden;display:none;">
-			<div style="width: 100%; height: 100%; margin-top: 0; overflow: hidden;">
-				<table class="table table-bordered" style="margin-top: 10px;">
-					<thead>
-						<tr role="row">
-							<th rowspan="1" colspan="1">设备名称</th>
-							<th rowspan="1" colspan="1">报警时间</th>
-							<th rowspan="1" colspan="1">报警代码</th>
-							<th rowspan="1" colspan="1">报警名称</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr role="row" class="odd" ng-repeat="item in alarmList" ng-Repeat-Finished>
-							<td>{{item.machineName}}</td>
-							<td>{{item.cnc_systemtime|date:"yyyy-MM-dd HH:mm:ss"}}</td>
-							<td>{{item.cnc_alarm_message}}</td>
-							<td>{{item.cnc_alarm_message}}</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
+ 	<div id="alarmList"  class="nav-tabs-custom headerBox" style="background-color:#fefdf900; width:600px; height:100%;overflow: hidden;display:none;text-align:center;">
+		<div ng-repeat="item in alarmList" style="width:30%; height:20%; margin:5px; overflow: hidden;background-color:#e45964;float:left;text-align:center;line-height:30px;color:white;">
+			<span>设备编号：{{item.code}}<span>
+			<h6> 设备报警请及时处理！</h6>
+		</div>
 	 </div>
 <div id="he-plugin-simple"></div>
 <script>

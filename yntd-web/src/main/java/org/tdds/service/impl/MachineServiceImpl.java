@@ -154,6 +154,12 @@ public class MachineServiceImpl implements MachineService {
 		entity.setName(machineName);
 		return machineDao.selectOne(entity);
 	}
+	
+	private Machine findMachineByCode(String code) {
+		Machine entity = new Machine();
+		entity.setCode(code);
+		return machineDao.selectOne(entity);
+	}
 
 	@Override
 	public void insert(MonitoringList monitoringList) {
@@ -186,8 +192,8 @@ public class MachineServiceImpl implements MachineService {
 
 	@Override
 	public void update(JSONObject monitor) {
-	 String machineName = monitor.getString("machineName");
-	 Machine machine = findMachineByName(machineName);
+	 String code = monitor.getString("code");
+	 Machine machine = findMachineByCode(code);
 	 update(monitor,machine);
 	}
 

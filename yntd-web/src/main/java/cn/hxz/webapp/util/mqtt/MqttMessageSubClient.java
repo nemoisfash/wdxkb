@@ -49,12 +49,16 @@ public class MqttMessageSubClient implements MqttCallback{
 			this.connectionOptions =clientFactory.getConnectionOptions();
 	}
 	
-	private void subMessage() {
-		try {
-			checkConnection();
+	private void subMessage() throws MqttException {
+			try {
+				checkConnection();
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
 			client.setTimeToWait(5000);
 			final ExecutorService executorService = new ThreadPoolExecutor(1, 1, 0, TimeUnit.MILLISECONDS,
 			            new LinkedBlockingQueue<Runnable>());
+			client.subscribe(topices, qos);
 			client.setCallback(new MqttCallbackExtended() {
 				@SuppressWarnings("static-access")
 				@Override
@@ -100,7 +104,6 @@ public class MqttMessageSubClient implements MqttCallback{
 					 /**
 	                 * 客户端连接成功后就需要尽快订阅需要的 topic
 	                 */
-	                System.out.println("connect success");
 	                executorService.submit(new Runnable() {
 	                    @Override
 	                    public void run() {
@@ -113,11 +116,6 @@ public class MqttMessageSubClient implements MqttCallback{
 	                });
 				}
 			});
-		} catch (MqttException e) {
-			System.out.print(e.getMessage());
-			TextMessage textMessage = new TextMessage(new JSONObject(offlinemessage).toJSONString());
-			MyWsHandler.sendMessageToClient(textMessage);
-		}
 	}
 	
 	private synchronized MqttClient checkConnection() throws MqttException {
@@ -155,7 +153,11 @@ public class MqttMessageSubClient implements MqttCallback{
 			qos[i] = 2;
 		}
 			this.qos=qos;
-		 subMessage();
+		 try {
+			subMessage();
+		} catch (MqttException e) {
+			e.printStackTrace();
+		}
 		 return true;
 	}
 

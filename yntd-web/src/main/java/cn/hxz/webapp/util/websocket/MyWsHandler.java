@@ -45,9 +45,6 @@ public class MyWsHandler extends TextWebSocketHandler{
 				}
     		}
  	    }
-		
-		
-		 
 	    
 	    /**
 	     * 发送信息给客户端

@@ -75,7 +75,7 @@ public class MachineController extends BasePortalController {
 		List<String> machineNames = new ArrayList<String>();
 		for (Machine machine:machines) {
 			topices.add(machine.getMqttTopic());
-			machineNames.add(machine.getName());
+			machineNames.add(machine.getCode());
 		}
 		if(!CollectionUtils.isEmpty(topices)) {
 			map.put("success", true);
@@ -95,7 +95,6 @@ public class MachineController extends BasePortalController {
 			}
 			result.put("success",true);
 		} catch (Exception e) {
-			// TODO: handle exception
 			result.put("success",false);
 		}
 		return result;
@@ -134,7 +133,13 @@ public class MachineController extends BasePortalController {
 				if(machineSignal.equalsIgnoreCase("offline")) {
 					monitoring.put("machineSignal", "POWEROFF");
 				}
-			} 
+				
+				if(machineSignal.equalsIgnoreCase("manual")) {
+					monitoring.put("machineSignal", "RUNNING");
+				}
+				
+				monitoring.put("code", machine.getCode());
+			}
 			if(machine.getIo()==1){
 				monitoring =new HashMap<String, Object>();
 				monitoring.put("code", machine.getName());

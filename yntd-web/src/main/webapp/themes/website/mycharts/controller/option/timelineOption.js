@@ -33,7 +33,7 @@
 		        }
 		    },
 		    grid: {
-		        left: '10%',
+		        left: '13%',
 		        top: '12%',
 		        right: '2%',
 		        bottom: '8%',
@@ -84,7 +84,7 @@
 		        	margin:10,
 		            textStyle: {
 		                color: '#34a9eb',
-		                fontSize: '15',
+		                fontSize: '12',
 		            }
 		        },
 		        data:[],

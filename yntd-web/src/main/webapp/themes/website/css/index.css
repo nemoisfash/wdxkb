@@ -52,14 +52,14 @@ body{
 	display: inline-block;
     border-radius: 50%;
     height: 39px;
-    width: 69px;
+    width: 73px;
     text-align: center;
-    line-height: 25px;
+    line-height: 33px;
     position: absolute;
     color: #35a5e7;
     background: #07070a69;
     font-weight: bold;
-    font-size: 15px;
+    font-size: 9px;
 }
 
 .circle-running{
@@ -288,5 +288,5 @@ ul li{
     font-size: 14px;
     color: #feb501;
     overflow: hidden;
-    background-color:#08143391;
+    background-color:#fefdf900;
 }

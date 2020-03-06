@@ -2,7 +2,7 @@
 var myColor = ['#eb2100', '#eb3600', '#d0570e', '#d0a00e', '#34da62', '#00e9db', '#00c0e9', '#0096f3', '#33CCFF', '#33FFCC'];
 var optionBar = {
 	    grid: {
-	        left: '10%',
+	        left: '13%',
 	        top: '12%',
 	        right: '2%',
 	        bottom: '8%',
@@ -48,7 +48,7 @@ var optionBar = {
 	        	margin:10,
 	            textStyle: {
 	                color: '#34a9eb',
-	                fontSize: '15',
+	                fontSize: '12',
 	            }
 	        },
 	        data: []

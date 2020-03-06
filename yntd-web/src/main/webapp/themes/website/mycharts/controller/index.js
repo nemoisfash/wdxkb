@@ -6,7 +6,6 @@ function initCharts() {
 	var pies = new MyPies();
 	var ranking = new Ranking();
 	var myTimeLine=  new MyTimeLine();
-	
 		if(localStorage.getItem("pies")!=null){
 			var	piesData = JSON.parse(localStorage.getItem("pies"));
 			  pies.dataPieInit(piesData["content"]);
